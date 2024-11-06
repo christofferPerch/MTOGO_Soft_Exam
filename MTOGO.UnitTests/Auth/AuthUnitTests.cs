@@ -10,7 +10,7 @@ using MTOGO.Services.AuthAPI.Services;
 
 namespace MTOGO.UnitTests.Auth
 {
-    public class AuthUnitTest
+    public class AuthUnitTests
     {
         private readonly DbContextOptions<AppDbContext> _dbContextOptions;
         private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
@@ -20,7 +20,7 @@ namespace MTOGO.UnitTests.Auth
         private readonly AppDbContext _dbContext;
         private readonly AuthService _authService;
 
-        public AuthUnitTest()
+        public AuthUnitTests()
         {
             _dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
                 .UseInMemoryDatabase(databaseName: "AuthServiceTestDb")
