@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using MTOGO.Services.AuthAPI.Models.Dto;
-using MTOGO.Services.AuthAPI.Models;
-using MTOGO.Services.AuthAPI.Services.IServices;
-using System;
-using MTOGO.Services.AuthAPI.Data;
 using Microsoft.EntityFrameworkCore;
+using MTOGO.Services.AuthAPI.Data;
+using MTOGO.Services.AuthAPI.Models;
+using MTOGO.Services.AuthAPI.Models.Dto;
+using MTOGO.Services.AuthAPI.Services.IServices;
 
 namespace MTOGO.Services.AuthAPI.Services
 {
@@ -109,22 +108,20 @@ namespace MTOGO.Services.AuthAPI.Services
 
                     await _userManager.AddToRoleAsync(user, "User");
 
-                    var userToReturn = _db.ApplicationUsers.First(u => u.UserName == registrationRequestDto.Email.ToLower());
-
                     UserDto userDto = new()
                     {
-                        Email = userToReturn.Email,
-                        Id = userToReturn.Id,
-                        FirstName = userToReturn.FirstName,
-                        LastName = userToReturn.LastName,
-                        Address = userToReturn.Address,
-                        City = userToReturn.City,
-                        ZipCode = userToReturn.ZipCode,
-                        Country = userToReturn.Country,
-                        PhoneNumber = userToReturn.PhoneNumber
+                        Email = user.Email,
+                        Id = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Address = user.Address,
+                        City = user.City,
+                        ZipCode = user.ZipCode,
+                        Country = user.Country,
+                        PhoneNumber = user.PhoneNumber
                     };
 
-                    return "";  
+                    return "";
                 }
                 else
                 {

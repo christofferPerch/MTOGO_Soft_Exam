@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MTOGO.MessageBus;
 using MTOGO.Services.AuthAPI.Models.Dto;
 using MTOGO.Services.AuthAPI.Services.IServices;
 
