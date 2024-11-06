@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using MTOGO.MessageBus;
 using MTOGO.Services.AuthAPI.Data;
 using MTOGO.Services.AuthAPI.Models;
 using MTOGO.Services.AuthAPI.Services;
 using MTOGO.Services.AuthAPI.Services.IServices;
-using Microsoft.OpenApi.Models;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,15 +24,18 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMessageBus, MessageBus>();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c => {
+builder.Services.AddSwaggerGen(c =>
+{
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Auth API", Version = "v1" });
 });
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment()) {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
-    app.UseSwaggerUI(c => {
+    app.UseSwaggerUI(c =>
+    {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Auth API");
     });
 }
@@ -46,10 +48,12 @@ app.MapControllers();
 ApplyMigration();
 app.Run();
 
-void ApplyMigration() {
+void ApplyMigration()
+{
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    if (db.Database.GetPendingMigrations().Any()) {
+    if (db.Database.GetPendingMigrations().Any())
+    {
         db.Database.Migrate();
     }
 }

@@ -34,7 +34,7 @@
         {
           "Name": "Auth API",
           "Version": "v1",
-          "Url": "https://localhost:7003/swagger/v1/swagger.json"
+          "Url": "https://localhost:7001/swagger/v1/swagger.json"
         }
       ]
     },
@@ -44,7 +44,7 @@
         {
           "Name": "Restaurant API",
           "Version": "v1",
-          "Url": "https://localhost:7004/swagger/v1/swagger.json"
+          "Url": "https://localhost:7002/swagger/v1/swagger.json"
         }
       ]
     }
