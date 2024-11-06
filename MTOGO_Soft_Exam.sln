@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTOGO.Services.AuthAPI", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTOGO.Services.DataAccess", "MTOGO.Services.DataAccess\MTOGO.Services.DataAccess.csproj", "{C1292966-9F93-4CD4-84D9-56D8945F8037}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTOGO.Services.RestaurantAPI", "MTOGO.Services.RestaurantAPI\MTOGO.Services.RestaurantAPI.csproj", "{7C81DD88-2E7C-4697-84E4-52E6436D7940}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTOGO.Services.RestaurantAPI", "MTOGO.Services.RestaurantAPI\MTOGO.Services.RestaurantAPI.csproj", "{7C81DD88-2E7C-4697-84E4-52E6436D7940}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
