@@ -25,6 +25,19 @@
       "UpstreamPathTemplate": "/restaurant/{everything}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "SwaggerKey": "restaurant"
+    },
+    {
+      "DownstreamPathTemplate": "/api/shoppingcart/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7003
+        }
+      ],
+      "UpstreamPathTemplate": "/shoppingcart/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "SwaggerKey": "shoppingcart"
     }
   ],
   "SwaggerEndPoints": [
@@ -45,6 +58,16 @@
           "Name": "Restaurant API",
           "Version": "v1",
           "Url": "https://localhost:7002/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "shoppingcart",
+      "Config": [
+        {
+          "Name": "Shopping Cart API",
+          "Version": "v1",
+          "Url": "https://localhost:7003/swagger/v1/swagger.json"
         }
       ]
     }
