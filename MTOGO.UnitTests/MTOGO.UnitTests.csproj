@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.10" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="xunit" Version="2.9.2" />
@@ -24,6 +25,7 @@
     <ProjectReference Include="..\MTOGO.Services.AuthAPI\MTOGO.Services.AuthAPI.csproj" />
     <ProjectReference Include="..\MTOGO.Services.DataAccess\MTOGO.Services.DataAccess.csproj" />
     <ProjectReference Include="..\MTOGO.Services.RestaurantAPI\MTOGO.Services.RestaurantAPI.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.ShoppingCartAPI\MTOGO.Services.ShoppingCartAPI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
