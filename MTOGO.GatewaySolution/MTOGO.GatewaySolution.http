@@ -1,6 +1,0 @@
-@MTOGO.GatewaySolution_HostAddress = http://localhost:5270
-
-GET {{MTOGO.GatewaySolution_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
