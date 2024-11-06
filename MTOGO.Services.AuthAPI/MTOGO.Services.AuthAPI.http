@@ -1,0 +1,6 @@
+@MTOGO.Services.AuthAPI_HostAddress = http://localhost:5128
+
+GET {{MTOGO.Services.AuthAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
