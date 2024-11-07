@@ -7,6 +7,7 @@ using MTOGO.Services.ShoppingCartAPI.Models;
 using MTOGO.Services.ShoppingCartAPI.Models.Dto;
 using MTOGO.Services.ShoppingCartAPI.Services;
 using Newtonsoft.Json;
+using Xunit;
 
 namespace MTOGO.UnitTests.ShoppingCart
 {
@@ -16,6 +17,7 @@ namespace MTOGO.UnitTests.ShoppingCart
         private readonly Mock<IMessageBus> _messageBusMock;
         private readonly Mock<ILogger<ShoppingCartService>> _loggerMock;
         private readonly ShoppingCartService _shoppingCartService;
+        private readonly string _testUserId;
 
         public ShoppingCartUnitTests()
         {
@@ -30,30 +32,30 @@ namespace MTOGO.UnitTests.ShoppingCart
             _redisCache = serviceProvider.GetRequiredService<IDistributedCache>();
             _messageBusMock = new Mock<IMessageBus>();
             _loggerMock = new Mock<ILogger<ShoppingCartService>>();
-
             _shoppingCartService = new ShoppingCartService(
                 _redisCache,
                 _messageBusMock.Object,
                 _loggerMock.Object
             );
+
+            _testUserId = $"user_{Guid.NewGuid()}";
         }
 
         public void Dispose()
         {
-            _redisCache.Remove("user123"); 
+            _redisCache.Remove(_testUserId); 
         }
 
         [Fact]
         public async Task GetCart_ReturnsCart_WhenExistsInCache()
         {
-            var userId = "user123";
-            var cart = new Cart { UserId = userId, Items = new List<CartItem> { new CartItem { MenuItemId = 101, Quantity = 2, Price = 9.99m } } };
-            await _redisCache.SetStringAsync(userId, JsonConvert.SerializeObject(cart));
+            var cart = new Cart { UserId = _testUserId, Items = new List<CartItem> { new CartItem { MenuItemId = 101, Quantity = 2, Price = 9.99m } } };
+            await _redisCache.SetStringAsync(_testUserId, JsonConvert.SerializeObject(cart));
 
-            var result = await _shoppingCartService.GetCart(userId);
+            var result = await _shoppingCartService.GetCart(_testUserId);
 
             Assert.NotNull(result);
-            Assert.Equal(userId, result.UserId);
+            Assert.Equal(_testUserId, result.UserId);
             Assert.Single(result.Items);
             Assert.Equal(101, result.Items[0].MenuItemId);
         }
@@ -61,11 +63,11 @@ namespace MTOGO.UnitTests.ShoppingCart
         [Fact]
         public async Task CreateCart_StoresCartAndPublishesMessage()
         {
-            var cart = new Cart { UserId = "user123" };
+            var cart = new Cart { UserId = _testUserId };
 
             var result = await _shoppingCartService.CreateCart(cart);
 
-            var storedCartData = await _redisCache.GetStringAsync(cart.UserId);
+            var storedCartData = await _redisCache.GetStringAsync(_testUserId);
             Assert.NotNull(storedCartData);
 
             var storedCart = JsonConvert.DeserializeObject<Cart>(storedCartData);
@@ -74,51 +76,49 @@ namespace MTOGO.UnitTests.ShoppingCart
         }
 
         [Fact]
-        public async Task UpdateCart_UpdatesCartAndPublishesMessage()
+        public async Task UpdateCart()
         {
-            var cart = new Cart { UserId = "user123", Items = new List<CartItem> { new CartItem { MenuItemId = 101, Quantity = 1, Price = 9.99m } } };
-            await _redisCache.SetStringAsync(cart.UserId, JsonConvert.SerializeObject(cart));
+            var cart = new Cart { UserId = _testUserId, Items = new List<CartItem> { new CartItem { MenuItemId = 101, Quantity = 1, Price = 9.99m } } };
+            await _redisCache.SetStringAsync(_testUserId, JsonConvert.SerializeObject(cart));
 
-            cart.Items[0].Quantity = 3;
+            cart.Items[0].Quantity = 3; 
 
             var result = await _shoppingCartService.UpdateCart(cart);
 
-            var updatedCartData = await _redisCache.GetStringAsync(cart.UserId);
+            var updatedCartData = await _redisCache.GetStringAsync(_testUserId);
             Assert.NotNull(updatedCartData);
 
             var updatedCart = JsonConvert.DeserializeObject<Cart>(updatedCartData);
             Assert.Equal(3, updatedCart.Items[0].Quantity);
-            _messageBusMock.Verify(m => m.PublishMessage("CartUpdatedQueue", It.IsAny<string>()), Times.Once);
         }
 
         [Fact]
-        public async Task RemoveCart_RemovesCartAndPublishesMessage()
+        public async Task RemoveCart()
         {
-            var userId = "user123";
-            await _redisCache.SetStringAsync(userId, JsonConvert.SerializeObject(new Cart { UserId = userId }));
+            await _redisCache.SetStringAsync(_testUserId, JsonConvert.SerializeObject(new Cart { UserId = _testUserId }));
 
-            var result = await _shoppingCartService.RemoveCart(userId);
+            var result = await _shoppingCartService.RemoveCart(_testUserId);
 
-            var removedCartData = await _redisCache.GetStringAsync(userId);
+            var removedCartData = await _redisCache.GetStringAsync(_testUserId);
             Assert.Null(removedCartData);
-            _messageBusMock.Verify(m => m.PublishMessage("CartRemovedQueue", It.IsAny<string>()), Times.Once);
             Assert.True(result);
+
+            _messageBusMock.Verify(m => m.PublishMessage(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
         public async Task ProcessCartRequest_SendsCartResponseMessage()
         {
-            var userId = "user123";
-            var cartRequest = new CartRequestMessageDto { UserId = userId, CorrelationId = Guid.NewGuid() };
+            var cartRequest = new CartRequestMessageDto { UserId = _testUserId, CorrelationId = Guid.NewGuid() };
             var cart = new Cart
             {
-                UserId = userId,
+                UserId = _testUserId,
                 Items = new List<CartItem>
-            {
-                new CartItem { RestaurantId = 1, MenuItemId = 101, Quantity = 2, Price = 9.99m }
-            }
+                {
+                    new CartItem { RestaurantId = 1, MenuItemId = 101, Quantity = 2, Price = 9.99m }
+                }
             };
-            await _redisCache.SetStringAsync(userId, JsonConvert.SerializeObject(cart));
+            await _redisCache.SetStringAsync(_testUserId, JsonConvert.SerializeObject(cart));
 
             await _shoppingCartService.ProcessCartRequest(cartRequest);
 

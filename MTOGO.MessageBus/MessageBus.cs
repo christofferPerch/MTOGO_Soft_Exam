@@ -32,6 +32,16 @@ namespace MTOGO.MessageBus
 
         public async Task PublishMessage(string queueName, string message)
         {
+            if (string.IsNullOrEmpty(queueName))
+            {
+                throw new ArgumentNullException(nameof(queueName), "Queue name cannot be null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(message))
+            {
+                throw new ArgumentNullException(nameof(message), "Message payload cannot be null or empty.");
+            }
+
             try
             {
 
@@ -50,8 +60,15 @@ namespace MTOGO.MessageBus
             }
         }
 
+
+
         public void SubscribeMessage<T>(string queueName, Action<T> onMessageReceived)
         {
+            if (string.IsNullOrEmpty(queueName))
+            {
+                throw new ArgumentNullException(nameof(queueName), "Queue name cannot be null or empty.");
+            }
+
             var channel = _connection.CreateModel();
 
             channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
@@ -80,6 +97,7 @@ namespace MTOGO.MessageBus
 
             channel.BasicConsume(queue: queueName, autoAck: false, consumer: consumer);
         }
+
 
         public void Dispose()
         {
