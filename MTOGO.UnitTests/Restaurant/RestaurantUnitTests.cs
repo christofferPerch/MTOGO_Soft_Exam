@@ -31,7 +31,6 @@ namespace MTOGO.UnitTests.Restaurant
 
         [Fact]
         public async Task AddRestaurant_ShouldReturn_NewRestaurantId() {
-            // Arrange
             var addRestaurantDto = new AddRestaurantDto {
                 RestaurantName = "Test Restaurant",
                 LegalName = "Test Legal Name",
@@ -56,20 +55,16 @@ namespace MTOGO.UnitTests.Restaurant
         }
             };
 
-            // Setup to simulate that @RestaurantId is set to 1 in the stored procedure
             _dataAccessMock.Setup(d => d.ExecuteStoredProcedure<int>("AddRestaurant", It.IsAny<object>()))
                            .Callback<string, object>((procName, dynamicParams) => {
-                               // Cast to DynamicParameters to add the output parameter
                                if (dynamicParams is DynamicParameters parameters) {
                                    parameters.Add("@RestaurantId", 1, DbType.Int32, ParameterDirection.Output);
                                }
                            })
                            .ReturnsAsync(1);
 
-            // Act
             var result = await _restaurantService.AddRestaurant(addRestaurantDto);
 
-            // Assert
             Assert.Equal(1, result);
             _dataAccessMock.Verify(d => d.ExecuteStoredProcedure<int>("AddRestaurant", It.IsAny<object>()), Times.Once);
         }
@@ -79,7 +74,6 @@ namespace MTOGO.UnitTests.Restaurant
 
         [Fact]
         public async Task AddMenuItem_ShouldReturn_NewMenuItemId() {
-            // Arrange
             var addMenuItemDto = new AddMenuItemDto {
                 RestaurantId = 1,
                 Name = "Test Dish",
@@ -91,17 +85,14 @@ namespace MTOGO.UnitTests.Restaurant
             _dataAccessMock.Setup(d => d.InsertAndGetId<int?>(It.IsAny<string>(), It.IsAny<object>()))
                 .ReturnsAsync(5);
 
-            // Act
             var result = await _restaurantService.AddMenuItem(addMenuItemDto);
 
-            // Assert
             Assert.Equal(5, result);
             _dataAccessMock.Verify(d => d.InsertAndGetId<int?>(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
         }
 
         [Fact]
         public async Task GetRestaurantById_ShouldReturn_RestaurantDto() {
-            // Arrange
             var restaurantId = 1;
             var expectedRestaurant = new RestaurantDto {
                 Id = restaurantId,
@@ -126,10 +117,8 @@ namespace MTOGO.UnitTests.Restaurant
             _dataAccessMock.Setup(d => d.GetAll<FoodCategoryDto>(It.IsAny<string>(), It.IsAny<object>()))
                 .ReturnsAsync(new List<FoodCategoryDto>());
 
-            // Act
             var result = await _restaurantService.GetRestaurantById(restaurantId);
 
-            // Assert
             Assert.NotNull(result);
             Assert.Equal(restaurantId, result?.Id);
             Assert.Equal("Test Restaurant", result?.RestaurantName);
@@ -139,7 +128,6 @@ namespace MTOGO.UnitTests.Restaurant
 
         [Fact]
         public async Task UpdateRestaurant_ShouldReturn_AffectedRows() {
-            // Arrange
             var updateRestaurantDto = new UpdateRestaurantDto {
                 Id = 1,
                 RestaurantName = "Updated Restaurant",
@@ -153,50 +141,42 @@ namespace MTOGO.UnitTests.Restaurant
             _dataAccessMock.Setup(d => d.ExecuteStoredProcedure<int>("UpdateRestaurant", It.IsAny<object>()))
                            .ReturnsAsync(1);
 
-            // Act
             var result = await _restaurantService.UpdateRestaurant(updateRestaurantDto);
 
-            // Assert
             Assert.Equal(1, result);
             _dataAccessMock.Verify(d => d.ExecuteStoredProcedure<int>("UpdateRestaurant", It.IsAny<object>()), Times.Once);
         }
 
         [Fact]
         public async Task DeleteRestaurant_ShouldReturn_AffectedRows() {
-            // Arrange
             int restaurantId = 1;
 
             _dataAccessMock.Setup(d => d.Delete(It.IsAny<string>(), It.IsAny<object>()))
                            .ReturnsAsync(1);
 
-            // Act
             var result = await _restaurantService.DeleteRestaurant(restaurantId);
 
-            // Assert
             Assert.Equal(1, result);
             _dataAccessMock.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
         }
 
         [Fact]
         public async Task RemoveMenuItem_ShouldReturn_AffectedRows() {
-            // Arrange
+
             int restaurantId = 1;
             int menuItemId = 1;
 
             _dataAccessMock.Setup(d => d.Delete(It.IsAny<string>(), It.IsAny<object>()))
                            .ReturnsAsync(1);
 
-            // Act
             var result = await _restaurantService.RemoveMenuItem(restaurantId, menuItemId);
 
-            // Assert
             Assert.Equal(1, result);
             _dataAccessMock.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
         }
 
         [Fact]
         public async Task GetAllRestaurants_ShouldReturn_ListOfRestaurants() {
-            // Arrange
             var restaurants = new List<RestaurantDto>
             {
         new RestaurantDto { Id = 1, RestaurantName = "Restaurant 1" },
@@ -206,10 +186,8 @@ namespace MTOGO.UnitTests.Restaurant
             _dataAccessMock.Setup(d => d.GetAll<RestaurantDto>(It.IsAny<string>(), null))
                            .ReturnsAsync(restaurants);
 
-            // Act
             var result = await _restaurantService.GetAllRestaurants();
 
-            // Assert
             Assert.Equal(2, result.Count);
             _dataAccessMock.Verify(d => d.GetAll<RestaurantDto>(It.IsAny<string>(), null), Times.Once);
         }
