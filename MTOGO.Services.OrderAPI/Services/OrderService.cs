@@ -28,7 +28,7 @@ namespace MTOGO.Services.OrderAPI.Services
         }
 
         #region Subscribe Methods
-        private void SubscribeToPaymentSuccessQueue()
+        public void SubscribeToPaymentSuccessQueue()
         {
             _messageBus.SubscribeMessage<PaymentRequestDto>("PaymentSuccessQueue", async paymentRequest =>
             {
@@ -178,7 +178,7 @@ namespace MTOGO.Services.OrderAPI.Services
             }
         }
 
-        private async Task PublishCartRemovalMessage(string userId)
+        public async Task PublishCartRemovalMessage(string userId)
         {
             try
             {
