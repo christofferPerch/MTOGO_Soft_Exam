@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using MTOGO.MessageBus;
 using MTOGO.Services.ShoppingCartAPI.Models;
 using MTOGO.Services.ShoppingCartAPI.Models.Dto;
@@ -51,14 +52,16 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
         {
             try
             {
-                _messageBus.SubscribeMessage<CartRemovedMessageDto>("CartRemovedQueue", async (cartRemovedMessage) =>
+                _messageBus.SubscribeMessage<CartRemovedMessageDto>("CartRemovedQueue", async cartRemovedMessage =>
                 {
                     if (cartRemovedMessage == null || string.IsNullOrEmpty(cartRemovedMessage.UserId))
                     {
+                        _logger.LogWarning("Received an invalid cart removal message.");
                         return;
                     }
 
                     await RemoveCart(cartRemovedMessage.UserId);
+                    _logger.LogInformation($"Cart removed successfully for user: {cartRemovedMessage.UserId}");
                 });
             }
             catch (Exception ex)
@@ -67,6 +70,7 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
                 throw;
             }
         }
+
 
         public async Task<Cart?> GetCart(string userId)
         {
@@ -82,7 +86,7 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
             }
         }
 
-        public async Task<Cart> CreateCart(Cart cart)
+        public async Task<Cart?> CreateCart(Cart cart)
         {
             try
             {
@@ -93,7 +97,6 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
                 }
 
                 await _redisCache.SetStringAsync(cart.UserId, JsonConvert.SerializeObject(cart));
-                await _messageBus.PublishMessage("CartCreatedQueue", JsonConvert.SerializeObject(cart));
 
                 return cart;
             }
@@ -109,7 +112,6 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
             try
             {
                 await _redisCache.SetStringAsync(cart.UserId, JsonConvert.SerializeObject(cart));
-                await _messageBus.PublishMessage("CartUpdatedQueue", JsonConvert.SerializeObject(cart));
 
                 return await GetCart(cart.UserId);
             }
@@ -125,8 +127,6 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
             try
             {
                 await _redisCache.RemoveAsync(userId);
-                await _messageBus.PublishMessage("CartRemovedQueue", $"Cart for user {userId} removed");
-
                 return true;
             }
             catch (Exception ex)

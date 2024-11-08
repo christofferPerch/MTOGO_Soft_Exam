@@ -38,6 +38,19 @@
       "UpstreamPathTemplate": "/shoppingcart/{everything}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "SwaggerKey": "shoppingcart"
+    },
+    {
+      "DownstreamPathTemplate": "/api/order/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7004
+        }
+      ],
+      "UpstreamPathTemplate": "/order/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "SwaggerKey": "order"
     }
   ],
   "SwaggerEndPoints": [
@@ -68,6 +81,16 @@
           "Name": "Shopping Cart API",
           "Version": "v1",
           "Url": "https://localhost:7003/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "order",
+      "Config": [
+        {
+          "Name": "Order API",
+          "Version": "v1",
+          "Url": "https://localhost:7004/swagger/v1/swagger.json"
         }
       ]
     }
