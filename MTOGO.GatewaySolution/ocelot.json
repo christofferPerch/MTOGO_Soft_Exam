@@ -40,25 +40,12 @@
       "SwaggerKey": "shoppingcart"
     },
     {
-      "DownstreamPathTemplate": "/api/payment/{everything}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7004
-        }
-      ],
-      "UpstreamPathTemplate": "/payment/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "SwaggerKey": "payment"
-    },
-    {
       "DownstreamPathTemplate": "/api/order/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7005
+          "Port": 7004
         }
       ],
       "UpstreamPathTemplate": "/order/{everything}",
@@ -98,22 +85,12 @@
       ]
     },
     {
-      "Key": "payment",
-      "Config": [
-        {
-          "Name": "Payment API",
-          "Version": "v1",
-          "Url": "https://localhost:7004/swagger/v1/swagger.json"
-        }
-      ]
-    },
-    {
       "Key": "order",
       "Config": [
         {
           "Name": "Order API",
           "Version": "v1",
-          "Url": "https://localhost:7005/swagger/v1/swagger.json"
+          "Url": "https://localhost:7004/swagger/v1/swagger.json"
         }
       ]
     }

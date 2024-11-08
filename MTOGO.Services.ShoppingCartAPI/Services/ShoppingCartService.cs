@@ -23,6 +23,7 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
             try
             {
                 SubscribeToCartRequestQueue();
+                SubscribeToCartRemovedQueue();
             }
             catch (Exception ex)
             {
@@ -46,6 +47,30 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
                 throw;
             }
         }
+
+        private void SubscribeToCartRemovedQueue()
+        {
+            try
+            {
+                _messageBus.SubscribeMessage<CartRemovedMessageDto>("CartRemovedQueue", async cartRemovedMessage =>
+                {
+                    if (cartRemovedMessage == null || string.IsNullOrEmpty(cartRemovedMessage.UserId))
+                    {
+                        _logger.LogWarning("Received an invalid cart removal message.");
+                        return;
+                    }
+
+                    await RemoveCart(cartRemovedMessage.UserId);
+                    _logger.LogInformation($"Cart removed successfully for user: {cartRemovedMessage.UserId}");
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error subscribing to CartRemovedQueue.");
+                throw;
+            }
+        }
+
 
         public async Task<Cart?> GetCart(string userId)
         {
@@ -72,7 +97,6 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
                 }
 
                 await _redisCache.SetStringAsync(cart.UserId, JsonConvert.SerializeObject(cart));
-                await _messageBus.PublishMessage("CartCreatedQueue", JsonConvert.SerializeObject(cart));
 
                 return cart;
             }

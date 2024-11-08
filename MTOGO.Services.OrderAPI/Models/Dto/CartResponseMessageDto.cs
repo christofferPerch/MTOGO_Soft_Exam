@@ -1,4 +1,4 @@
-﻿namespace MTOGO.Services.PaymentAPI.Models.Dto
+﻿namespace MTOGO.Services.OrderAPI.Models.Dto
 {
     public class CartResponseMessageDto
     {

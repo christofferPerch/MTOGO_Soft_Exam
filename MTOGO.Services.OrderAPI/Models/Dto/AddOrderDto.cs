@@ -5,6 +5,6 @@
         public string UserId { get; set; }
         public decimal TotalAmount { get; set; }
         public decimal VATAmount { get; set; }
-        public List<OrderItemDto> Items { get; set; }
+        public List<CartItem> Items { get; set; }
     }
 }

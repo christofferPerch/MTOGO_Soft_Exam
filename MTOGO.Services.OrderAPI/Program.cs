@@ -17,7 +17,7 @@ if (string.IsNullOrEmpty(connectionString))
 builder.Services.AddSingleton<IDataAccess, DataAccess>(sp => new DataAccess(connectionString));
 
 builder.Services.AddScoped<IOrderService, OrderService>();
-builder.Services.AddScoped<IMessageBus, MessageBus>(); 
+builder.Services.AddSingleton<IMessageBus, MessageBus>(); 
 
 
 builder.Services.AddDistributedMemoryCache();

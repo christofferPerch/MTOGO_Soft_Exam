@@ -4,11 +4,12 @@ using MTOGO.Services.DataAccess;
 using MTOGO.Services.OrderAPI.Models;
 using MTOGO.Services.OrderAPI.Models.Dto;
 using MTOGO.Services.OrderAPI.Services.IServices;
+using Newtonsoft.Json;
 using System.Data;
 
 namespace MTOGO.Services.OrderAPI.Services
 {
-    public class OrderService : IOrderService, IHostedService
+    public class OrderService : IOrderService
     {
         private readonly IDataAccess _dataAccess;
         private readonly ILogger<OrderService> _logger;
@@ -26,6 +27,7 @@ namespace MTOGO.Services.OrderAPI.Services
             SubscribeToPaymentSuccessQueue();
         }
 
+        #region Subscribe Methods
         private void SubscribeToPaymentSuccessQueue()
         {
             _messageBus.SubscribeMessage<PaymentRequestDto>("PaymentSuccessQueue", async paymentRequest =>
@@ -48,6 +50,7 @@ namespace MTOGO.Services.OrderAPI.Services
                 {
                     int orderId = await CreateOrder(order);
                     _logger.LogInformation($"Order created successfully with Order ID: {orderId}");
+                    await PublishCartRemovalMessage(paymentRequest.UserId);
                 }
                 catch (Exception ex)
                 {
@@ -55,7 +58,85 @@ namespace MTOGO.Services.OrderAPI.Services
                 }
             });
         }
+        #endregion
 
+        #region Payment Methods
+        public async Task<PaymentResponseDto> ProcessPayment(PaymentRequestDto paymentRequest)
+        {
+            var cartDetails = await GetCartDetails(paymentRequest.UserId, paymentRequest.CorrelationId);
+            if (cartDetails == null)
+            {
+                return new PaymentResponseDto
+                {
+                    UserId = paymentRequest.UserId,
+                    CorrelationId = paymentRequest.CorrelationId,
+                    IsSuccessful = false,
+                    Message = "Failed to retrieve shopping cart details."
+                };
+            }
+
+            paymentRequest.Items = cartDetails.Items;
+            paymentRequest.TotalAmount = cartDetails.Items.Sum(item => item.Price * item.Quantity);
+
+            bool isPaymentValid = ValidatePaymentDetails(paymentRequest);
+
+            var paymentResponse = new PaymentResponseDto
+            {
+                UserId = paymentRequest.UserId,
+                CorrelationId = paymentRequest.CorrelationId,
+                IsSuccessful = isPaymentValid,
+                Message = isPaymentValid ? "Payment processed successfully." : "Payment failed."
+            };
+
+            if (isPaymentValid)
+            {
+                await _messageBus.PublishMessage("PaymentSuccessQueue", JsonConvert.SerializeObject(paymentRequest));
+            }
+
+            return paymentResponse;
+        }
+        public async Task<CartResponseMessageDto?> GetCartDetails(string userId, Guid correlationId)
+        {
+            var cartRequest = new CartRequestMessageDto
+            {
+                UserId = userId,
+                CorrelationId = correlationId
+            };
+
+            string cartRequestQueue = "CartRequestQueue";
+            await _messageBus.PublishMessage(cartRequestQueue, JsonConvert.SerializeObject(cartRequest));
+
+            var tcs = new TaskCompletionSource<CartResponseMessageDto>();
+
+            _messageBus.SubscribeMessage<CartResponseMessageDto>("CartResponseQueue", message =>
+            {
+                if (message.CorrelationId == correlationId)
+                {
+                    tcs.SetResult(message);
+                }
+            });
+
+            var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(TimeSpan.FromSeconds(30)));
+            if (completedTask == tcs.Task)
+            {
+                return tcs.Task.Result;
+            }
+            else
+            {
+                _logger.LogWarning("Timeout waiting for cart response.");
+                return null;
+            }
+        }
+
+        private bool ValidatePaymentDetails(PaymentRequestDto paymentRequest)
+        {
+            return !string.IsNullOrEmpty(paymentRequest.CardNumber) &&
+                   !string.IsNullOrEmpty(paymentRequest.ExpiryDate) &&
+                   !string.IsNullOrEmpty(paymentRequest.CVV);
+        }
+        #endregion
+
+        #region Order Methods
         public async Task<int> CreateOrder(AddOrderDto order)
         {
             try
@@ -97,6 +178,20 @@ namespace MTOGO.Services.OrderAPI.Services
             }
         }
 
+        private async Task PublishCartRemovalMessage(string userId)
+        {
+            try
+            {
+                var cartRemovedMessage = new CartRemovedMessageDto { UserId = userId };
+                await _messageBus.PublishMessage("CartRemovedQueue", JsonConvert.SerializeObject(cartRemovedMessage));
+                _logger.LogInformation("Published cart removal message for user: {UserId}", userId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to publish cart removal message for user {userId}.");
+            }
+        }
+
         public async Task<OrderDto?> GetOrderById(int id)
         {
             try
@@ -135,5 +230,7 @@ namespace MTOGO.Services.OrderAPI.Services
                 throw;
             }
         }
+        #endregion
+
     }
 }
