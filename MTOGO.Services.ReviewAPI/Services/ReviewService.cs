@@ -24,7 +24,6 @@ namespace MTOGO.Services.ReviewAPI.Services {
             _distributedCache = distributedCache;
             _logger = logger;
 
-            // Subscribe to OrderStatusQueue for receiving updates
             SubscribeToOrderStatusQueue();
         }
 
@@ -32,17 +31,15 @@ namespace MTOGO.Services.ReviewAPI.Services {
             _messageBus.SubscribeMessage<OrderStatusUpdateDto>(OrderStatusQueue, async (statusUpdate) => {
                 _logger.LogInformation($"Received order status update for OrderId {statusUpdate.OrderId}, StatusId: {statusUpdate.StatusId}");
 
-                // Cache the order status
                 var cacheKey = GetOrderStatusCacheKey(statusUpdate.OrderId);
                 await _distributedCache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(statusUpdate.StatusId), new DistributedCacheEntryOptions {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30) // Set a suitable expiration time
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30) 
                 });
             });
         }
 
         public async Task<int> AddDeliveryReviewAsync(DeliveryReviewDto deliveryReviewDto) {
             try {
-                // Check order status from cache
                 var cacheKey = GetOrderStatusCacheKey(deliveryReviewDto.OrderId);
                 var orderStatusJson = await _distributedCache.GetStringAsync(cacheKey);
 
@@ -50,7 +47,6 @@ namespace MTOGO.Services.ReviewAPI.Services {
                     throw new InvalidOperationException("Cannot submit Review for unconfirmed orders.");
                 }
 
-                // Insert Review if order is confirmed
                 var sql = @"
                     INSERT INTO DeliveryReview (OrderId, CustomerId, DeliveryAgentId, DeliveryExperienceRating, Comments, ReviewTimestamp)
                     VALUES (@OrderId, @CustomerId, @DeliveryAgentId, @DeliveryExperienceRating, @Comments, @ReviewTimestamp);

@@ -3,7 +3,7 @@ using MTOGO.Services.ReviewAPI.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MTOGO.Services.ReviewAPI.Controllers {
-    [Route("api/[controller]")]
+    [Route("api/review")]
     [ApiController]
     public class ReviewController : ControllerBase {
         private readonly IReviewService _ReviewService;
