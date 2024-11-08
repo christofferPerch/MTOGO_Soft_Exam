@@ -1,14 +1,24 @@
 using Microsoft.OpenApi.Models;
 using MTOGO.MessageBus;
-using MTOGO.Services.PaymentAPI.Extensions;
-using MTOGO.Services.PaymentAPI.Models;
-using MTOGO.Services.PaymentAPI.Services;
-using MTOGO.Services.PaymentAPI.Services.IServices;
+using MTOGO.Services.DataAccess;
+using MTOGO.Services.OrderAPI.Extensions;
+using MTOGO.Services.OrderAPI.Services;
+using MTOGO.Services.OrderAPI.Services.IServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IPaymentService, PaymentService>();
-builder.Services.AddScoped<IMessageBus, MessageBus>();
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Database connection string 'DefaultConnection' is not configured.");
+}
+
+builder.Services.AddSingleton<IDataAccess, DataAccess>(sp => new DataAccess(connectionString));
+
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IMessageBus, MessageBus>(); 
+
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -32,7 +42,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Payment API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Order API", Version = "v1" });
 });
 
 builder.AddAppAuthetication();
@@ -44,7 +54,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Payment API");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Order API");
     });
 }
 

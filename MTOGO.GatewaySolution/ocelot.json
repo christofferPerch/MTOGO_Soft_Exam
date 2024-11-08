@@ -51,6 +51,19 @@
       "UpstreamPathTemplate": "/payment/{everything}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "SwaggerKey": "payment"
+    },
+    {
+      "DownstreamPathTemplate": "/api/order/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7005
+        }
+      ],
+      "UpstreamPathTemplate": "/order/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "SwaggerKey": "order"
     }
   ],
   "SwaggerEndPoints": [
@@ -91,6 +104,16 @@
           "Name": "Payment API",
           "Version": "v1",
           "Url": "https://localhost:7004/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "order",
+      "Config": [
+        {
+          "Name": "Order API",
+          "Version": "v1",
+          "Url": "https://localhost:7005/swagger/v1/swagger.json"
         }
       ]
     }
