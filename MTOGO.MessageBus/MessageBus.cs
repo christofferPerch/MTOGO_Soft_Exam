@@ -27,7 +27,6 @@ namespace MTOGO.MessageBus
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
             _channel.BasicQos(prefetchSize: 0, prefetchCount: 10, global: false);
-
         }
 
         public async Task PublishMessage(string queueName, string message)
@@ -44,7 +43,6 @@ namespace MTOGO.MessageBus
 
             try
             {
-
                 _channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
                 var body = Encoding.UTF8.GetBytes(message);
@@ -60,8 +58,6 @@ namespace MTOGO.MessageBus
             }
         }
 
-
-
         public void SubscribeMessage<T>(string queueName, Action<T> onMessageReceived)
         {
             if (string.IsNullOrEmpty(queueName))
@@ -69,13 +65,11 @@ namespace MTOGO.MessageBus
                 throw new ArgumentNullException(nameof(queueName), "Queue name cannot be null or empty.");
             }
 
-            var channel = _connection.CreateModel();
+            // Use the shared _channel instead of creating a new one
+            _channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+            _channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
 
-            channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
-
-            channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
-
-            var consumer = new EventingBasicConsumer(channel);
+            var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += (model, ea) =>
             {
                 try
@@ -85,19 +79,24 @@ namespace MTOGO.MessageBus
                     var data = JsonConvert.DeserializeObject<T>(message);
                     onMessageReceived?.Invoke(data);
 
-                    channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+                    // Acknowledge message after processing
+                    if (_channel.IsOpen)
+                    {
+                        _channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+                    }
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex);
-                    channel.BasicNack(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true);
-
+                    if (_channel.IsOpen)
+                    {
+                        _channel.BasicNack(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true);
+                    }
                 }
             };
 
-            channel.BasicConsume(queue: queueName, autoAck: false, consumer: consumer);
+            _channel.BasicConsume(queue: queueName, autoAck: false, consumer: consumer);
         }
-
 
         public void Dispose()
         {
@@ -119,6 +118,5 @@ namespace MTOGO.MessageBus
 
             _disposed = true;
         }
-
     }
 }

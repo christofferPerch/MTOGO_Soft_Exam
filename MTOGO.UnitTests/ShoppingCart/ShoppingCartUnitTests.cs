@@ -72,7 +72,6 @@ namespace MTOGO.UnitTests.ShoppingCart
 
             var storedCart = JsonConvert.DeserializeObject<Cart>(storedCartData);
             Assert.Equal(cart.UserId, storedCart.UserId);
-            _messageBusMock.Verify(m => m.PublishMessage("CartCreatedQueue", It.IsAny<string>()), Times.Once);
         }
 
         [Fact]

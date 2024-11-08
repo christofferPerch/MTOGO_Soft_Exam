@@ -1,4 +1,4 @@
-﻿namespace MTOGO.Services.PaymentAPI.Models
+﻿namespace MTOGO.Services.OrderAPI.Models
 {
     public class CartItem
     {

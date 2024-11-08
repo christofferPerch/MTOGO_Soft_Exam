@@ -12,19 +12,19 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["MTOGO.Services.PaymentAPI/MTOGO.Services.PaymentAPI.csproj", "MTOGO.Services.PaymentAPI/"]
-RUN dotnet restore "./MTOGO.Services.PaymentAPI/MTOGO.Services.PaymentAPI.csproj"
+COPY ["MTOGO.Services.OrderAPI/MTOGO.Services.OrderAPI.csproj", "MTOGO.Services.OrderAPI/"]
+RUN dotnet restore "./MTOGO.Services.OrderAPI/MTOGO.Services.OrderAPI.csproj"
 COPY . .
-WORKDIR "/src/MTOGO.Services.PaymentAPI"
-RUN dotnet build "./MTOGO.Services.PaymentAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/MTOGO.Services.OrderAPI"
+RUN dotnet build "./MTOGO.Services.OrderAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./MTOGO.Services.PaymentAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./MTOGO.Services.OrderAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "MTOGO.Services.PaymentAPI.dll"]
+ENTRYPOINT ["dotnet", "MTOGO.Services.OrderAPI.dll"]
