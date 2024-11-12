@@ -6,9 +6,6 @@ using Microsoft.Extensions.Logging;
 using MTOGO.MessageBus;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
-using MTOGO.Services.OrderAPI.Models.Dto;
-using MTOGO.Services.OrderAPI.Models;
-
 
 namespace MTOGO.Services.ReviewAPI.Services {
     public class ReviewService : IReviewService {
@@ -17,6 +14,8 @@ namespace MTOGO.Services.ReviewAPI.Services {
         private readonly IMessageBus _messageBus;
         private readonly IDistributedCache _distributedCache;
         private const string OrderStatusQueue = "OrderStatusQueue";
+        private const string OrderStatusRequestQueue = "OrderStatusRequestQueue";
+        private const string OrderStatusResponseQueue = "OrderStatusResponseQueue";
 
         public ReviewService(IDataAccess dataAccess, IMessageBus messageBus, IDistributedCache distributedCache, ILogger<ReviewService> logger) {
             _dataAccess = dataAccess;
@@ -28,23 +27,29 @@ namespace MTOGO.Services.ReviewAPI.Services {
         }
 
         private void SubscribeToOrderStatusQueue() {
-            _messageBus.SubscribeMessage<OrderStatusUpdateDto>(OrderStatusQueue, async (statusUpdate) => {
-                _logger.LogInformation($"Received order status update for OrderId {statusUpdate.OrderId}, StatusId: {statusUpdate.StatusId}");
+            _messageBus.SubscribeMessage<OrderStatusResponseDto>(OrderStatusQueue, async (statusUpdate) =>
+            {
+                if (statusUpdate != null) {
+                    _logger.LogInformation($"Received order status update for OrderId {statusUpdate.OrderId}, StatusId: {statusUpdate.StatusId}");
 
-                var cacheKey = GetOrderStatusCacheKey(statusUpdate.OrderId);
-                await _distributedCache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(statusUpdate.StatusId), new DistributedCacheEntryOptions {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30) 
-                });
+                    var cacheKey = GetOrderStatusCacheKey(statusUpdate.OrderId);
+                    await _distributedCache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(statusUpdate.StatusId), new DistributedCacheEntryOptions {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+                    });
+                } else {
+                    _logger.LogWarning("Received a null order status update message.");
+                }
             });
         }
 
+
         public async Task<int> AddDeliveryReviewAsync(DeliveryReviewDto deliveryReviewDto) {
             try {
-                var cacheKey = GetOrderStatusCacheKey(deliveryReviewDto.OrderId);
-                var orderStatusJson = await _distributedCache.GetStringAsync(cacheKey);
+                // Fetch or request Order Status from OrderService
+                var orderStatus = await GetOrderStatus(deliveryReviewDto.OrderId);
 
-                if (string.IsNullOrEmpty(orderStatusJson) || JsonConvert.DeserializeObject<int>(orderStatusJson) != (int)OrderStatus.Delivered) {
-                    throw new InvalidOperationException("Cannot submit Review for unconfirmed orders.");
+                if (orderStatus != (int)OrderStatus.Delivered) {
+                    throw new InvalidOperationException("Cannot submit Review for orders that are not delivered.");
                 }
 
                 var sql = @"
@@ -67,6 +72,37 @@ namespace MTOGO.Services.ReviewAPI.Services {
                 _logger.LogError(ex, "Error adding delivery Review.");
                 throw;
             }
+        }
+
+        private async Task<int> GetOrderStatus(int orderId) {
+            var cacheKey = GetOrderStatusCacheKey(orderId);
+            var orderStatusJson = await _distributedCache.GetStringAsync(cacheKey);
+
+            if (!string.IsNullOrEmpty(orderStatusJson)) {
+                return JsonConvert.DeserializeObject<int>(orderStatusJson);
+            }
+
+            var orderStatusRequest = new OrderStatusRequestDto { OrderId = orderId };
+            var tcs = new TaskCompletionSource<int>();
+
+            _messageBus.PublishMessage(OrderStatusRequestQueue, JsonConvert.SerializeObject(orderStatusRequest));
+
+            _messageBus.SubscribeMessage<OrderStatusResponseDto>(OrderStatusResponseQueue, response => {
+                if (response.OrderId == orderId) {
+                    tcs.SetResult(response.StatusId);
+                }
+            });
+
+            var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(TimeSpan.FromSeconds(30)));
+            if (completedTask == tcs.Task) {
+                int statusId = tcs.Task.Result;
+                await _distributedCache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(statusId), new DistributedCacheEntryOptions {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+                });
+                return statusId;
+            }
+
+            throw new TimeoutException("Failed to retrieve order status from OrderService.");
         }
 
         public async Task<int> AddRestaurantReviewAsync(RestaurantReviewDto restaurantReviewDto) {
