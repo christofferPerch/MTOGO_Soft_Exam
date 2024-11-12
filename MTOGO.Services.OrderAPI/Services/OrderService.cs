@@ -217,19 +217,39 @@ namespace MTOGO.Services.OrderAPI.Services
             }
         }
 
-        public async Task<int> UpdateOrderStatus(int orderId, int statusId)
-        {
-            try
-            {
+        public async Task<int> UpdateOrderStatus(int orderId, int statusId) {
+            try {
                 var sql = "UPDATE [Order] SET OrderStatusId = @StatusId WHERE Id = @OrderId;";
-                return await _dataAccess.Update(sql, new { OrderId = orderId, StatusId = statusId });
-            }
-            catch (Exception ex)
-            {
+                var result = await _dataAccess.Update(sql, new { OrderId = orderId, StatusId = statusId });
+
+                if (result > 0) {
+                    var statusUpdateMessage = new OrderStatusUpdateDto {
+                        OrderId = orderId,
+                        StatusId = statusId
+                    };
+
+                    await PublishOrderStatusUpdateMessage(statusUpdateMessage);
+                } else {
+                    _logger.LogWarning($"Order with ID {orderId} not found, status update was not applied.");
+                }
+
+                return result;
+            } catch (Exception ex) {
                 _logger.LogError(ex, $"Error updating order status for ID {orderId}");
                 throw;
             }
         }
+
+        private async Task PublishOrderStatusUpdateMessage(OrderStatusUpdateDto statusUpdateMessage) {
+            try {
+                string message = JsonConvert.SerializeObject(statusUpdateMessage);
+                await _messageBus.PublishMessage("OrderStatusQueue", message);
+                _logger.LogInformation($"Order status update published for Order ID: {statusUpdateMessage.OrderId}, Status ID: {statusUpdateMessage.StatusId}");
+            } catch (Exception ex) {
+                _logger.LogError(ex, $"Failed to publish order status update for Order ID: {statusUpdateMessage.OrderId}");
+            }
+        }
+
         #endregion
 
     }

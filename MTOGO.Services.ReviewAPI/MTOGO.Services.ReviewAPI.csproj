@@ -13,7 +13,6 @@
   <ItemGroup>
     <ProjectReference Include="..\MTOGO.MessageBus\MTOGO.MessageBus.csproj" />
     <ProjectReference Include="..\MTOGO.Services.DataAccess\MTOGO.Services.DataAccess.csproj" />
-    <ProjectReference Include="..\MTOGO.Services.OrderAPI\MTOGO.Services.OrderAPI.csproj" />
   </ItemGroup>
 
 </Project>
