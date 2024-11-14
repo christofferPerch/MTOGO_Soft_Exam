@@ -3,6 +3,7 @@ using MTOGO.Services.ReviewAPI.Services;
 using MTOGO.Services.ReviewAPI.Services.IServices;
 using MTOGO.Services.DataAccess;
 using Microsoft.OpenApi.Models;
+using MTOGO.Services.ReviewAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Review API", Version = "v1" });
 });
+
+builder.AddAppAuthetication();
 
 var app = builder.Build();
 

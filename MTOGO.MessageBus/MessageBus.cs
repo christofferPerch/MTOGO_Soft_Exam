@@ -65,7 +65,6 @@ namespace MTOGO.MessageBus
                 throw new ArgumentNullException(nameof(queueName), "Queue name cannot be null or empty.");
             }
 
-            // Use the shared _channel instead of creating a new one
             _channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
             _channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
 
@@ -79,7 +78,6 @@ namespace MTOGO.MessageBus
                     var data = JsonConvert.DeserializeObject<T>(message);
                     onMessageReceived?.Invoke(data);
 
-                    // Acknowledge message after processing
                     if (_channel.IsOpen)
                     {
                         _channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);

@@ -1,21 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>1209ac0f-7da3-42b5-89aa-640423336ccd</UserSecretsId>
+    <UserSecretsId>77121d22-2d8a-417b-bccf-79a07309cd70</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MTOGO.MessageBus\MTOGO.MessageBus.csproj" />
-    <ProjectReference Include="..\MTOGO.Services.DataAccess\MTOGO.Services.DataAccess.csproj" />
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>
