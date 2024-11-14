@@ -1,0 +1,128 @@
+﻿/* Profile container and general layout */
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+    /* Profile header */
+    .profile-container h1 {
+        font-size: 2.2rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+/* Tab navigation styling */
+.profile-tabs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+    .profile-tabs a {
+        color: #333;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 10px;
+    }
+
+        .profile-tabs a.active {
+            font-weight: bold;
+            color: #000;
+            border-bottom: 2px solid #000;
+        }
+
+/* Personal Info and Settings Section Styling */
+.setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+    .setting-item label {
+        font-weight: bold;
+        color: #666;
+    }
+
+.setting-value {
+    color: #007bff;
+    font-weight: 500;
+}
+
+/* Non-clickable values in Personal Info section */
+.personal-info .setting-value {
+    cursor: default;
+    color: #007bff;
+    text-decoration: none;
+}
+
+/* Clickable values in Settings section */
+.settings .setting-value.clickable {
+    cursor: pointer;
+}
+
+    .settings .setting-value.clickable:hover {
+        text-decoration: underline;
+    }
+
+/* Modal styling */
+.modal-content {
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header h5 {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.edit-image img {
+    max-width: 100px;
+    margin-bottom: 15px;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #555;
+}
+
+.btn-close {
+    background-color: transparent;
+    border: none;
+    font-size: 1.5rem;
+}
+
+.modal-footer .btn {
+    width: 100px;
+    font-weight: bold;
+}
+
+/* Make Delete Account and Log Out red */
+.account-action {
+    color: red;
+    cursor: pointer;
+}
+
+.action-action {
+    color: red;
+    cursor: pointer;
+}
+
+/* Make the "Save" and "Cancel" buttons for the modal more distinct */
+.modal-footer .btn-danger {
+    background-color: red;
+}

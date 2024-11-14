@@ -2,7 +2,57 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="home-banner">
+    <!-- Image element to display the background picture -->
+    <img src="~/images/food.jpg" alt="Delicious food" class="home-banner-image">
+
+    <!-- Text content in front of the image -->
+    <div class="home-banner-content">
+        <h1>Craving food?</h1>
+        <form class="zipcode-form">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Enter zip code or city name" aria-label="Enter zipcode">
+            </div>
+        </form>
+    </div>
 </div>
+<div class="city-explorer text-center my-5">
+    <h2 class="explore-heading">Explore cities, where MTOGO is available in.</h2>
+    <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 mt-4">
+            <div class="col">
+                <button class="btn btn-outline-secondary w-100 text-start city-button">Aarhus</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-outline-secondary w-100 text-start city-button">Aalborg</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-outline-secondary w-100 text-start city-button">Odense</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-outline-secondary w-100 text-start city-button">Esbjerg</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-outline-secondary w-100 text-start city-button">Frederiksberg</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-outline-secondary w-100 text-start city-button">Horsens</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-outline-secondary w-100 text-start city-button">Randers</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-outline-secondary w-100 text-start city-button">Kolding</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-outline-secondary w-100 text-start city-button">Herning</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-outline-secondary w-100 text-start city-button">Vejle</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />

@@ -7,5 +7,7 @@ namespace MTOGO.Web.Services.IServices
         Task<ResponseDto?> LoginAsync(LoginRequestDto loginRequestDto);
         Task<ResponseDto?> RegisterAsync(RegistrationRequestDto registrationRequestDto);
         Task<ResponseDto?> AssignRoleAsync(RegistrationRequestDto registrationRequestDto);
+        Task<ResponseDto?> UpdateProfileSettings(string userId, UpdateProfileDto updateProfileDto);
+        Task<ResponseDto?> DeleteProfile(string userId);
     }
 }
