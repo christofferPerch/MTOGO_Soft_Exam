@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/messagecontainer.css" asp-append-version="true" />
 </head>
+<input type="hidden" id="userId" value="@User.FindFirst("UserId")?.Value" />
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
@@ -37,9 +39,7 @@
 
                                 <!-- Dropdown Menu -->
                                 <ul class="dropdown-menu dropdown-menu-end profile-dropdown" aria-labelledby="userDropdown">
-                                    <!-- Profile Information Section -->
                                     <li>
-                                        <!-- Wrap profile info in a link to the profile page -->
                                         <a href="~/Auth/Profile" class="profile-link">
                                             <div class="d-flex align-items-center p-3 profile-header">
                                                 <div class="user-initials-sm rounded-circle d-flex align-items-center justify-content-center me-2">
@@ -53,23 +53,21 @@
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <!-- Log out option -->
                                     <li><a class="dropdown-item logout-item" asp-controller="Auth" asp-action="Logout">Log out</a></li>
                                 </ul>
                             </div>
 
-                            <!-- Shopping cart icon with badge -->
-                            <a href="#" class="btn position-relative ms-3">
+                            <!-- Shopping cart icon with badge (always visible) -->
+                            <a href="#" id="cartButton" class="btn position-relative ms-3">
                                 <i class="bi bi-cart3" style="font-size: 1.5rem;"></i>
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
-                                    2 <!-- Placeholder count for cart items -->
+                                <span id="cartItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
+                                    0 <!-- Default cart item count -->
                                 </span>
                             </a>
                         </div>
                     }
                     else
                     {
-                        <!-- Not logged-in view -->
                         <a class="btn btn-outline-primary me-2" asp-area="" asp-controller="Auth" asp-action="Login">Log In</a>
                         <a class="btn btn-primary" asp-area="" asp-controller="Auth" asp-action="Register">Register</a>
                     }
@@ -77,6 +75,24 @@
             </div>
         </nav>
     </header>
+
+    <!-- Shopping Cart Drawer -->
+    <div id="shoppingCartDrawer" class="shopping-cart-drawer" style="display: none;">
+        <div class="shopping-cart-header">
+            <h5>Din bestilling</h5>
+            <button type="button" class="close-btn" onclick="toggleCart()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div id="shoppingCartItems" class="shopping-cart-items">
+            <p id="emptyCartMessage">Your cart is empty.</p>
+        </div>
+        <div class="shopping-cart-footer">
+            <button class="btn btn-primary w-100">Gå til kasse</button>
+        </div>
+    </div>
+
+    <div id="messageContainer" class="message" style="display: none;"></div>
 
     <div class="container">
         <main role="main" class="pb-3">

@@ -1,4 +1,5 @@
 ﻿using MTOGO.Web.Models;
+using MTOGO.Web.Models.Auth;
 using MTOGO.Web.Services.IServices;
 using MTOGO.Web.Utility;
 
