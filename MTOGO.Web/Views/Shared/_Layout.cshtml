@@ -3,33 +3,81 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - MTOGO.Web</title>
+    <title>@ViewData["Title"] - MTOGO</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/MTOGO.Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MTOGO.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+                <!-- Brand name on the left -->
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MTOGO</a>
+
+                <!-- Right side (Conditional rendering for Log In/Register or User Info and Cart) -->
+                <div class="d-flex ms-auto align-items-center">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="d-flex align-items-center">
+                            <!-- User initials and dropdown -->
+                            @{
+                                var firstName = User.FindFirst("FirstName")?.Value ?? "User";
+                                var lastName = User.FindFirst("LastName")?.Value ?? "Name";
+                                var initials = $"{firstName[0]}{lastName[0]}".ToUpper();
+                            }
+
+                            <!-- Profile Button with Initials -->
+                            <div class="dropdown">
+                                <a href="#" class="user-profile-button" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="user-initials-circle">@initials</span>
+                                    <i class="bi bi-chevron-down dropdown-arrow"></i>
+                                </a>
+
+                                <!-- Dropdown Menu -->
+                                <ul class="dropdown-menu dropdown-menu-end profile-dropdown" aria-labelledby="userDropdown">
+                                    <!-- Profile Information Section -->
+                                    <li>
+                                        <!-- Wrap profile info in a link to the profile page -->
+                                        <a href="~/Auth/Profile" class="profile-link">
+                                            <div class="d-flex align-items-center p-3 profile-header">
+                                                <div class="user-initials-sm rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                    @initials
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold">@firstName @lastName</div>
+                                                    <small class="text-muted">Profile</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <!-- Log out option -->
+                                    <li><a class="dropdown-item logout-item" asp-controller="Auth" asp-action="Logout">Log out</a></li>
+                                </ul>
+                            </div>
+
+                            <!-- Shopping cart icon with badge -->
+                            <a href="#" class="btn position-relative ms-3">
+                                <i class="bi bi-cart3" style="font-size: 1.5rem;"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
+                                    2 <!-- Placeholder count for cart items -->
+                                </span>
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Not logged-in view -->
+                        <a class="btn btn-outline-primary me-2" asp-area="" asp-controller="Auth" asp-action="Login">Log In</a>
+                        <a class="btn btn-primary" asp-area="" asp-controller="Auth" asp-action="Register">Register</a>
+                    }
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -38,7 +86,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - MTOGO.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; MTOGO
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

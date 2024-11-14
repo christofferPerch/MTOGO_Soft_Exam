@@ -1,22 +1,59 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+/* Ensure the entire viewport is used */
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 body {
-  margin-bottom: 60px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+}
+
+/* Ensure the main content expands to fill available space */
+.container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Center the main content vertically */
+main {
+    flex-grow: 1;
+    padding-bottom: 60px; /* Space for footer */
+}
+
+/* Style adjustments for smaller and larger screens */
+/* Larger screens (e.g., desktops) */
+@media (min-width: 992px) {
+    .navbar .ms-auto {
+        margin-right: 20px; /* Standard spacing for desktops */
+    }
+}
+
+/* Medium screens (e.g., tablets) */
+@media (min-width: 768px) and (max-width: 991px) {
+    .navbar .ms-auto {
+        margin-right: 10px; /* Slightly reduced spacing for tablets */
+    }
+}
+
+/* Small screens (e.g., mobile) */
+@media (max-width: 767px) {
+    .navbar .ms-auto {
+        margin-right: 5px; /* Minimal spacing for mobile */
+    }
+    /* Center align items for small screens */
+    .container-fluid {
+        justify-content: center;
+    }
+}
+
+
+/* Footer styling */
+.footer {
+    text-align: center;
+    padding: 1rem 0;
 }

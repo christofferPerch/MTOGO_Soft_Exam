@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MTOGO.Services.AuthAPI.Models.Dto;
 using MTOGO.Services.AuthAPI.Services.IServices;
+using System.Security.Claims;
 
 namespace MTOGO.Services.AuthAPI.Controllers
 {
@@ -58,6 +59,42 @@ namespace MTOGO.Services.AuthAPI.Controllers
             }
             return Ok(_response);
 
+        }
+
+        [HttpPost("UpdateProfile")]
+        public async Task<IActionResult> UpdateProfile([FromQuery] string userId, [FromBody] UpdateProfileDto updateProfileDto)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest(new { message = "User ID is required." });
+            }
+
+            var updatedUser = await _authService.UpdateUserSettings(userId, updateProfileDto);
+
+            if (updatedUser != null)
+            {
+                return Ok(new { isSuccess = true, result = updatedUser, message = "Profile updated successfully." });
+            }
+
+            return BadRequest(new { isSuccess = false, message = "Failed to update profile." });
+        }
+
+        [HttpDelete("DeleteProfile")]
+        public async Task<IActionResult> DeleteProfile([FromQuery] string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest(new { message = "User ID not found." });
+            }
+
+            var isDeleted = await _authService.DeleteAccount(userId);
+
+            if (isDeleted)
+            {
+                return Ok(new { message = "Account deleted successfully." });
+            }
+
+            return BadRequest(new { message = "Failed to delete account." });
         }
     }
 }

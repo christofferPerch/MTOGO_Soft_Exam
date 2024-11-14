@@ -1,0 +1,108 @@
+﻿/* Home Banner Section */
+.home-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centers the content horizontally */
+    position: relative;
+    margin-top: -16px; /* Moves the banner up to meet the navbar */
+    height: 47vh; /* Keep the original banner height */
+    padding-left: 5%; /* Consistent padding for content */
+    background-color: #eae9ef; /* Background color to fill 100% width */
+    width: 100vw; /* Ensures the background color fills the screen */
+    left: 50%;
+    transform: translateX(-50%); /* Center aligns the banner container */
+    overflow: hidden;
+}
+
+/* Image Styling */
+.home-banner-image {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100%;
+    width: auto; /* Adjust width to keep the image aspect ratio */
+    object-fit: contain; /* Keep the whole image visible */
+    z-index: 0;
+    opacity: 0.9; /* Slight opacity to blend with background */
+}
+
+/* Banner Content Styling */
+.home-banner-content {
+    position: relative;
+    z-index: 1; /* Place content above the image */
+
+    padding: 2rem;
+    border-radius: 8px;
+    margin-left: -750px;
+}
+
+    /* Heading Styling */
+    .home-banner-content h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 1.5rem;
+    }
+
+/* Zipcode Input Container */
+.zipcode-form .input-group {
+    display: flex;
+    width: 100%;
+    background: none; /* Ensures background is transparent */
+    box-shadow: none; /* Removes any shadow from the input container */
+    border: none; /* Removes any border around the container */
+}
+
+
+.input-group-text {
+    background-color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+}
+
+/* Styled Input Box */
+.form-control {
+    border: 1px solid #ccc; /* Light gray border for normal state */
+    border-radius: 20px; /* Rounded corners */
+    font-size: 1rem;
+    padding: 0.5rem 1rem; /* Adds padding for better appearance */
+    box-shadow: none; /* Removes any shadow if previously set */
+}
+
+    /* Placeholder color */
+    .form-control::placeholder {
+        color: #aaa;
+        opacity: 1; /* Ensures placeholder color is not too light */
+    }
+
+    /* Hover and focus effect for input box */
+    .form-control:hover, .form-control:focus {
+        border-color: #5bc0de; /* Light blue border on hover and focus */
+        outline: none; /* Removes the default outline on focus */
+        box-shadow: 0 0 5px rgba(91, 192, 222, 0.5); /* Adds a subtle light blue glow on focus */
+    }
+
+/* Arrow icon on the right side of each button */
+.btn-outline-secondary::after {
+    content: '›';
+    font-weight: bold;
+    float: right;
+    color: #6c757d; /* Matches the default Bootstrap secondary color */
+}
+
+/* Text Hover Effect for City Buttons */
+.city-button:hover {
+    color: #5bc0de; /* Light blue color on hover */
+    background-color: #f9f9f9; /* Keeps background color the same on hover */
+}
+
+/* Heading Styling for "Explore Cities" */
+.explore-heading {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    font-family: 'Arial Rounded MT Bold', sans-serif; /* Use a rounded font or similar */
+    margin-bottom: 1.5rem;
+}

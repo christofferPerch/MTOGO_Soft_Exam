@@ -1,0 +1,95 @@
+﻿.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 250px; /* Force it to ensure it applies */
+    width: 100%;
+}
+
+
+/* Smaller, more compact form box */
+.auth-card {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 700px; /* Adjust to make it smaller */
+}
+
+h2 {
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Label styling */
+.form-group label, .col label {
+    color: #555;
+    font-weight: 500;
+}
+
+/* Styling for form rows to align inputs in columns */
+.row {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Column layout for form inputs */
+.col {
+    flex: 1;
+}
+
+.form-control {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1rem;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+    .form-control:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 8px rgba(78, 115, 223, 0.25);
+    }
+
+.btn-primary {
+    background-color: #4e73df;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .btn-primary:hover {
+        background-color: #3b5cb8;
+        box-shadow: 0 4px 10px rgba(59, 92, 184, 0.3);
+    }
+
+.text-center a {
+    color: #4e73df;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+    .text-center a:hover {
+        color: deepskyblue;
+    }
+
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+.mt-3 {
+    margin-top: 1rem !important;
+}
+
+.w-100 {
+    width: 100% !important;
+}

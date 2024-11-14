@@ -1,0 +1,166 @@
+﻿/* Center the brand name and make it bold */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+/* Style the buttons for login and register */
+.navbar .btn-outline-primary {
+    color: #007bff;
+    border-color: #007bff;
+    margin-right: 10px;
+}
+
+    .navbar .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+.navbar .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+    .navbar .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+/* Adjust the padding for a clean look */
+.navbar {
+    padding: 1rem 2rem;
+}
+
+/* Adjust the spacing between the brand and the buttons */
+.container-fluid {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1000px; /* Optional: to limit the width */
+}
+
+/* Add some spacing to bring the buttons closer to the center */
+.navbar .ms-auto {
+    margin-right: 20px; /* Adjust this value as needed */
+}
+
+/* Profile button with initials on the left and chevron on the right */
+.user-profile-button {
+    display: flex;
+    align-items: center;
+    background-color: #f5f5f5;
+    color: #555;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 4px 10px;
+    border-radius: 20px; /* Rounded corners for the "pill" shape */
+    border: 1px solid #ddd;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+/* Circle for initials on the left */
+.user-initials-circle {
+    background-color: #f5e7c6;
+    color: #666;
+    font-weight: bold;
+    font-size: 0.9rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* Makes the background circular */
+    margin-right: 8px;
+}
+
+/* Chevron icon on the right */
+.dropdown-arrow {
+    font-size: 0.8rem;
+    color: #555;
+    margin-left: auto;
+}
+
+/* Hover effect for profile button */
+.user-profile-button:hover {
+    background-color: #eaeaea;
+}
+
+/* Profile dropdown menu styling */
+.profile-dropdown {
+    width: 280px;
+    padding: 0;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border: none;
+}
+
+/* Profile header in dropdown */
+.profile-header {
+    background-color: #ffffff;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    border-radius: 12px 12px 0 0;
+}
+
+/* Small initials icon inside dropdown */
+.user-initials-sm {
+    background-color: #f5e7c6;
+    color: #555;
+    font-weight: bold;
+    font-size: 0.875rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+
+/* Profile dropdown text styling */
+.profile-dropdown .fw-bold {
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.2;
+}
+
+.profile-dropdown small {
+    font-size: 0.8rem;
+    color: #777;
+}
+
+/* Right arrow in profile section */
+.profile-header .bi-chevron-right {
+    font-size: 1rem;
+    color: #bbb;
+}
+
+/* Dropdown divider style */
+.profile-dropdown .dropdown-divider {
+    margin: 0;
+    border-color: #ddd;
+}
+
+/* Dropdown items */
+.profile-dropdown .dropdown-item {
+    font-size: 0.9rem;
+    color: #333;
+    padding: 10px 15px;
+}
+
+    .profile-dropdown .dropdown-item:hover {
+        background-color: #f9f9f9;
+    }
+
+/* Logout item styling */
+.logout-item {
+    color: #d9534f;
+    font-weight: 500;
+}
+.profile-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+    .profile-link:hover {
+        text-decoration: none;
+        color: inherit;
+    }
+

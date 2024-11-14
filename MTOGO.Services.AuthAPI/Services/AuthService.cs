@@ -61,7 +61,7 @@ namespace MTOGO.Services.AuthAPI.Services
             UserDto userDTO = new()
             {
                 Email = user.Email,
-                Id = user.Id,
+                UserId = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
@@ -111,7 +111,7 @@ namespace MTOGO.Services.AuthAPI.Services
                     UserDto userDto = new()
                     {
                         Email = user.Email,
-                        Id = user.Id,
+                        UserId = user.Id,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         Address = user.Address,
@@ -132,6 +132,95 @@ namespace MTOGO.Services.AuthAPI.Services
             {
                 _logger.LogError(ex, "Error during user registration");
                 return "Error encountered during registration.";
+            }
+        }
+
+        public async Task<UserDto?> UpdateUserSettings(string userId, UpdateProfileDto updateProfileDto)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                _logger.LogWarning($"User with ID {userId} not found.");
+                return null;
+            }
+
+            bool isUpdated = false;
+
+            if (!string.IsNullOrEmpty(updateProfileDto.Email) && updateProfileDto.Email != user.Email)
+            {
+                user.Email = updateProfileDto.Email;
+                user.UserName = updateProfileDto.Email;
+                isUpdated = true;
+            }
+
+            if (!string.IsNullOrEmpty(updateProfileDto.PhoneNumber) && updateProfileDto.PhoneNumber != user.PhoneNumber)
+            {
+                user.PhoneNumber = updateProfileDto.PhoneNumber;
+                isUpdated = true;
+            }
+
+            if (!string.IsNullOrEmpty(updateProfileDto.Address) && updateProfileDto.Address != user.Address)
+            {
+                user.Address = updateProfileDto.Address;
+                isUpdated = true;
+            }
+
+            if (isUpdated)
+            {
+                var result = await _userManager.UpdateAsync(user);
+                if (!result.Succeeded)
+                {
+                    _logger.LogError("Failed to update user profile.");
+                    return null;
+                }
+            }
+
+            return new UserDto
+            {
+                UserId = user.Id,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address,
+                City = user.City,
+                ZipCode = user.ZipCode,
+                Country = user.Country,
+                FirstName = user.FirstName,
+                LastName = user.LastName
+            };
+        }
+
+        public async Task<bool> DeleteAccount(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                _logger.LogWarning($"User with ID {userId} not found for deletion.");
+                return false;
+            }
+
+            try
+            {
+                var result = await _userManager.DeleteAsync(user);
+
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation($"User with ID {userId} has been successfully deleted.");
+                    return true;
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        _logger.LogError($"Error deleting user with ID {userId}: {error.Description}");
+                    }
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An exception occurred while deleting user with ID {userId}");
+                return false;
             }
         }
     }

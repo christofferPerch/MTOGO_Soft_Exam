@@ -1,0 +1,107 @@
+﻿@{
+    ViewData["Title"] = "Profile";
+}
+
+<link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
+
+<input type="hidden" id="userId" value="@User.FindFirst("UserId")?.Value" />
+<div class="profile-container">
+    <!-- Profile header and tab navigation -->
+    <h1>Profile</h1>
+    <nav class="profile-tabs">
+        <a href="#" class="tab-link active" data-tab="personal-info">Personal Information</a>
+        <a href="#" class="tab-link" data-tab="order-history">Order History</a>
+        <a href="#" class="tab-link" data-tab="settings">Settings</a>
+    </nav>
+
+    <!-- Personal Information Section -->
+    <div class="tab-content" id="personal-info">
+        <h2>Personal Information</h2>
+        <div class="setting-item">
+            <label><strong>Email</strong></label>
+            <span class="personal-info-value">@User.FindFirst("Email")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Mobile Number</strong></label>
+            <span class="personal-info-value">@User.FindFirst("PhoneNumber")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Full Name</strong></label>
+            <span class="personal-info-value">@($"{User.FindFirst("FirstName")?.Value} {User.FindFirst("LastName")?.Value}")</span>
+        </div>
+    </div>
+
+    <!-- Order History Section -->
+    <div class="tab-content" id="order-history" style="display: none;">
+        <h2>Order History</h2>
+        <p>Order history content goes here.</p>
+    </div>
+
+    <!-- Settings Section -->
+    <div class="tab-content" id="settings" style="display: none;">
+        <h2>Settings</h2>
+        <div class="setting-item">
+            <label><strong>Email</strong></label>
+            <span class="setting-value clickable" data-field="Email">@User.FindFirst("Email")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Phone Number</strong></label>
+            <span class="setting-value clickable" data-field="PhoneNumber">@User.FindFirst("PhoneNumber")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Address</strong></label>
+            <span class="setting-value clickable" data-field="Address" id="addressField">@User.FindFirst("Address")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Delete Account</strong></label>
+            <span class="account-action clickable" id="deleteAccountBtn" style="color: red; cursor: pointer;">Delete</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Log Out of MTOGO</strong></label>
+            <span class="action-action clickable" id="logoutBtn" style="color: red; cursor: pointer;">Log out</span>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group mb-3">
+                    <label for="editInput">New Value</label>
+                    <input type="text" class="form-control" id="editInput" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveChangesBtn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/profile.js"></script>

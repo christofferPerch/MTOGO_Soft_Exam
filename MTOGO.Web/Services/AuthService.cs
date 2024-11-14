@@ -41,5 +41,25 @@ namespace MTOGO.Web.Services
                 Url = SD.AuthAPIBase + "/api/auth/register"
             }, withBearer: false);
         }
+
+        public async Task<ResponseDto?> UpdateProfileSettings(string userId, UpdateProfileDto updateProfileDto)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = SD.ApiType.POST,
+                Data = updateProfileDto,
+                Url = $"{SD.AuthAPIBase}/api/auth/UpdateProfile?userId={userId}",
+                ContentType = SD.ContentType.Json               
+            }, withBearer: false);
+        }
+
+        public async Task<ResponseDto?> DeleteProfile(string userId)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = SD.ApiType.DELETE,
+                Url = $"{SD.AuthAPIBase}/api/auth/DeleteProfile?userId={userId}"
+            }, withBearer: false);
+        }
     }
 }
