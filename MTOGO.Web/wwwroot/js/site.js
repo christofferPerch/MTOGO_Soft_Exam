@@ -2,6 +2,7 @@
     const cartIcon = $("#cartIcon");
     const cartItemsContainer = $("#cartItemsContainer");
     const cartItemCount = $("#cartItemCount");
+    const totalPrice = $("#totalPrice");
     const userId = $("#userId").val();
 
     // Fetch the cart item count when the page loads
@@ -9,8 +10,26 @@
 
     // Event: Clicking the cart icon opens the modal and fetches cart items
     cartIcon.on("click", function () {
+        openCartModal();
         fetchCartItems();
-        $("#shoppingCartModal").modal("show");
+    });
+
+    // Open and close modal functions
+    function openCartModal() {
+        $("#shoppingCartModal").addClass("show");
+    }
+
+    window.closeCartModal = function () {
+        $("#shoppingCartModal").removeClass("show");
+        $("body").removeClass("modal-open"); // Allow background scroll
+    };
+
+    // Close modal when clicking outside the modal content
+    $(document).on("mousedown", function (event) {
+        // Only close if modal is open and click is outside modal content
+        if ($("#shoppingCartModal").hasClass("show") && !$(event.target).closest(".modal-content").length) {
+            window.closeCartModal();
+        }
     });
 
     // Fetch items for the cart
@@ -27,6 +46,7 @@
                 console.log("API Response:", response);
                 if (response.items && response.items.length > 0) {
                     populateCart(response.items);
+                    updateTotalPrice(response.items);
                 } else {
                     handleEmptyCart();
                 }
@@ -40,29 +60,33 @@
 
     // Populate cart items in the modal
     function populateCart(items) {
-        let html = `<ul class="list-group">`;
+        let html = `<div class="cart-item-list">`;
         items.forEach(item => {
             html += `
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Menu Item ID: ${item.menuItemId} (Quantity: ${item.quantity}) 
-                    <span>$${item.price.toFixed(2)}</span>
-                    <button class="btn btn-danger btn-sm remove-item" data-id="${item.menuItemId}">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </li>`;
+                <div class="cart-item">
+                    <span class="cart-item-name">Menu Item ID: ${item.menuItemId}</span>
+                    <div class="quantity-control">
+                        <button onclick="decreaseQuantity(${item.menuItemId})">-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="increaseQuantity(${item.menuItemId})">+</button>
+                        <button onclick="removeCartItem(${item.menuItemId})"><i class="bi bi-trash"></i></button>
+                    </div>
+                    <span class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</span>
+                </div>`;
         });
-        html += `</ul>`;
+        html += `</div>`;
         cartItemsContainer.html(html);
+    }
 
-        // Attach event handlers to remove buttons
-        $(".remove-item").on("click", function () {
-            const itemId = $(this).data("id");
-            removeCartItem(itemId);
-        });
+    // Update total price display
+    function updateTotalPrice(items) {
+        const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        totalPrice.text(`Total: $${total.toFixed(2)}`);
+        cartItemCount.text(items.length); // Update cart item count badge
     }
 
     // Handle removing an item from the cart
-    function removeCartItem(itemId) {
+    window.removeCartItem = function (itemId) {
         if (!userId) {
             console.error("User ID is missing.");
             return;
@@ -79,7 +103,7 @@
                 console.error("Error removing cart item", err);
             }
         });
-    }
+    };
 
     // Fetch the cart item count
     function fetchCartItemCount() {
@@ -109,6 +133,7 @@
     // Handle when the cart is empty
     function handleEmptyCart() {
         cartItemsContainer.html('<p>Your cart is empty.</p>');
+        totalPrice.text("Total: $0.00");
         cartItemCount.text(0); // Reset badge count
     }
 });

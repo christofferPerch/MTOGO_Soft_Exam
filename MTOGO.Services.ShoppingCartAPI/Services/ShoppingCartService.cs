@@ -179,7 +179,6 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
                     return false;
                 }
 
-                // Find the item to remove
                 var itemToRemove = cart.Items.FirstOrDefault(item => item.MenuItemId == menuItemId);
                 if (itemToRemove == null)
                 {
@@ -187,10 +186,8 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
                     return false;
                 }
 
-                // Remove the item
                 cart.Items.Remove(itemToRemove);
 
-                // If the cart is now empty, remove the entire cart from Redis
                 if (!cart.Items.Any())
                 {
                     await _redisCache.RemoveAsync(userId);
@@ -198,7 +195,6 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
                     return true;
                 }
 
-                // Update the cart in Redis
                 await _redisCache.SetStringAsync(userId, JsonConvert.SerializeObject(cart));
                 _logger.LogInformation($"MenuItemId {menuItemId} removed from cart for user {userId}, and Redis updated.");
                 return true;
@@ -209,9 +205,5 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
                 throw;
             }
         }
-
-
-
-
     }
 }

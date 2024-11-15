@@ -28,5 +28,49 @@ namespace MTOGO.Web.Controllers
             return View(new List<RestaurantDto>());
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Search(string location)
+        {
+            var response = await _restaurantService.SearchRestaurants(location);
+            if (response != null && response.IsSuccess && response.Result != null)
+            {
+                var restaurants = JsonConvert.DeserializeObject<List<RestaurantDto>>(response.Result.ToString());
+                ViewBag.SelectedCity = location; // Pass the selected city to the view for display
+                return View(restaurants);
+            }
+
+            TempData["error"] = response?.Message ?? "No restaurants found.";
+            return View(new List<RestaurantDto>()); // Return empty list if no results found
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> UniqueCities()
+        {
+            var response = await _restaurantService.UniqueCities();
+            if (response != null && response.IsSuccess && response.Result != null)
+            {
+                var cities = JsonConvert.DeserializeObject<List<string>>(response.Result.ToString());
+                return Json(cities); 
+            }
+            return Json(new List<string>()); 
+        }
+
+        [HttpGet("Restaurant/Details/{id:int}")]
+        public async Task<IActionResult> Details(int id)
+        {
+            var response = await _restaurantService.GetRestaurantByIdAsync(id);
+            if (response != null && response.IsSuccess && response.Result != null)
+            {
+                var restaurant = JsonConvert.DeserializeObject<RestaurantDto>(response.Result.ToString());
+                return View(restaurant);
+            }
+
+            TempData["error"] = response?.Message ?? "Failed to load restaurant details.";
+            return RedirectToAction("Search");
+        }
+
+
     }
 }

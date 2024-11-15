@@ -1,6 +1,8 @@
 ﻿@model IEnumerable<MTOGO.Web.Models.Restaurant.RestaurantDto>
 
-<h2>Restaurants</h2>
+<link rel="stylesheet" href="~/css/restaurant.css" asp-append-version="true" />
+
+<h2>Restaurants close to me</h2>
 
 @if (!Model.Any())
 {
@@ -8,32 +10,18 @@
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Legal Name</th>
-                <th>Description</th>
-                <th>VAT Number</th>
-                <th>Contact</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var restaurant in Model)
-            {
-                <tr>
-                    <td>@restaurant.Id</td>
-                    <td>@restaurant.RestaurantName</td>
-                    <td>@restaurant.LegalName</td>
-                    <td>@restaurant.RestaurantDescription</td>
-                    <td>@restaurant.VATNumber</td>
-                    <td>
-                        <p>Email: @restaurant.ContactEmail</p>
-                        <p>Phone: @restaurant.ContactPhone</p>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="restaurant-grid">
+        @foreach (var restaurant in Model)
+        {
+            <div class="restaurant-card">
+                <div class="restaurant-image">
+                    <img src="~/images/restaurant.jpg" alt="@restaurant.RestaurantName" />
+                </div>
+                <div class="restaurant-info">
+                    <h3>@restaurant.RestaurantName</h3>
+                    <p class="description">@restaurant.RestaurantDescription</p>
+                </div>
+            </div>
+        }
+    </div>
 }

@@ -168,7 +168,7 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
         #endregion
 
         #region Get Methods
-        [HttpGet("getSpecificRestaurant")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetRestaurantById(int id)
         {
             try
@@ -193,6 +193,7 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
             }
         }
 
+
         [HttpGet("allRestaurants")]
         public async Task<IActionResult> GetAllRestaurants()
         {
@@ -210,6 +211,62 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
                 return StatusCode(500, _response);
             }
         }
+
+        [HttpGet("searchRestaurant")]
+        public async Task<IActionResult> SearchRestaurants([FromQuery] string location)
+        {
+            if (string.IsNullOrWhiteSpace(location))
+            {
+                _response.IsSuccess = false;
+                _response.Message = "Location parameter is required.";
+                return BadRequest(_response);
+            }
+
+            try
+            {
+                // Call the service method with the location parameter
+                var restaurants = await _restaurantService.FindRestaurantsByLocation(location);
+                _response.Result = restaurants;
+                _response.Message = "Restaurants retrieved successfully.";
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = "An error occurred while retrieving restaurants. " + ex.Message;
+                return StatusCode(500, _response);
+            }
+        }
+
+        [HttpGet("uniqueCities")]
+        public async Task<IActionResult> GetUniqueCities()
+        {
+            try
+            {
+                var cities = await _restaurantService.GetUniqueCitiesAsync();
+                if (cities != null && cities.Any())
+                {
+                    _response.Result = cities;
+                    _response.Message = "Cities retrieved successfully.";
+                    _response.IsSuccess = true;
+                }
+                else
+                {
+                    _response.Result = new List<string>();
+                    _response.Message = "No cities found.";
+                    _response.IsSuccess = true;
+                }
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = $"An error occurred: {ex.Message}";
+                return StatusCode(500, _response);
+            }
+        }
+
+
         #endregion
     }
 }

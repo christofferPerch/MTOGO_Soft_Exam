@@ -17,6 +17,14 @@
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MTOGO</a>
 
+                @if (ViewContext.RouteData.Values["Controller"].ToString() == "Restaurant" && ViewContext.RouteData.Values["Action"].ToString() == "Search")
+                {
+                    <form class="d-flex justify-content-center mx-auto" role="search" action="Search" method="get">
+                        <input class="form-control me-2" type="search" name="query" placeholder="Search for restaurants" aria-label="Search">
+                        <button class="btn btn-outline-primary" type="submit">Search</button>
+                    </form>
+                }
+
                 <div class="d-flex ms-auto align-items-center">
                     @if (User.Identity.IsAuthenticated)
                     {
@@ -54,31 +62,31 @@
 
                             <input type="hidden" id="userId" value="@User.FindFirst("UserId")?.Value" />
 
+                            <!-- Cart Icon -->
                             <a href="#" class="btn position-relative ms-3" id="cartIcon">
                                 <i class="bi bi-cart3" style="font-size: 1.5rem;"></i>
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark" id="cartItemCount">
-                                </span>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark" id="cartItemCount"></span>
                             </a>
 
-
-                            <div class="modal fade" id="shoppingCartModal" tabindex="-1" aria-labelledby="shoppingCartModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="shoppingCartModalLabel">Your Shopping Cart</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div id="cartItemsContainer">
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <a href="~/Checkout" class="btn btn-primary">Checkout</a>
-                                        </div>
+                            <!-- Shopping Cart Modal -->
+                            <div class="shopping-cart-modal" id="shoppingCartModal">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Your Order</h5>
+                                        <button type="button" class="btn-close" onclick="window.closeCartModal()" aria-label="Close">&times;</button>
+                                    </div>
+                                    <div class="modal-body" id="cartItemsContainer">
+                                        <!-- Cart items will be populated here by JavaScript -->
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a href="~/Checkout" class="btn btn-primary checkout-button">
+                                            <span>Checkout</span>
+                                            <span id="totalPrice">Total: $0.00</span>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     }
                     else

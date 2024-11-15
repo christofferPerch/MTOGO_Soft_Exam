@@ -21,5 +21,35 @@ namespace MTOGO.Web.Services
                 Url = $"{SD.RestaurantAPIBase}/api/restaurant/allRestaurants"
             });
         }
+
+        public async Task<ResponseDto?> SearchRestaurants(string location)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = SD.ApiType.GET,
+                Url = $"{SD.RestaurantAPIBase}/api/restaurant/searchRestaurant?location={location}"
+            });
+        }
+
+        public async Task<ResponseDto?> UniqueCities()
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = SD.ApiType.GET,
+                Url = $"{SD.RestaurantAPIBase}/api/restaurant/uniqueCities"
+            });
+        }
+
+        public async Task<ResponseDto?> GetRestaurantByIdAsync(int id)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = SD.ApiType.GET,
+                Url = $"{SD.RestaurantAPIBase}/api/restaurant/{id}" 
+            });
+        }
+
+
+
     }
 }

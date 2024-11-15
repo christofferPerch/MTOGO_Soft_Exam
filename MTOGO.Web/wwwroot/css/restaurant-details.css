@@ -1,0 +1,34 @@
+﻿.restaurant-details {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+    .restaurant-details h2 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+.restaurant-meta h5 {
+    font-size: 1.2rem;
+    margin-top: 15px;
+}
+
+.menu-section {
+    margin-top: 30px;
+}
+
+.menu-items {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-item {
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+
+    .menu-item strong {
+        font-size: 1.1rem;
+    }
