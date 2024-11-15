@@ -1,0 +1,51 @@
+﻿@model MTOGO.Web.Models.Restaurant.RestaurantDto
+
+<link rel="stylesheet" href="~/css/restaurant-details.css" asp-append-version="true" />
+
+<div class="container my-5">
+    <div class="restaurant-details">
+        <h2>@Model.RestaurantName</h2>
+        <p class="text-muted">@Model.RestaurantDescription</p>
+
+        <div class="restaurant-meta">
+            <h5>Contact</h5>
+            <p>Email: @Model.ContactEmail</p>
+            <p>Phone: @Model.ContactPhone</p>
+            <h5>Address</h5>
+            <p>
+                @Model.Address.AddressLine1<br />
+                @if (!string.IsNullOrEmpty(Model.Address.AddressLine2))
+                {
+                    @Model.Address.AddressLine2
+
+                    <br />
+                }
+                @Model.Address.City, @Model.Address.ZipCode<br />
+                @Model.Address.Country
+            </p>
+        </div>
+
+        @if (Model.MenuItems.Any())
+        {
+            <div class="menu-section">
+                <h3>Menu</h3>
+                <ul class="menu-items">
+                    @foreach (var menuItem in Model.MenuItems)
+                    {
+                        <li class="menu-item">
+                            <strong>@menuItem.Name</strong>
+                            <p>@menuItem.Description</p>
+                            <p><strong>Price:</strong> $@menuItem.Price.ToString("F2")</p>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">No menu items available.</p>
+        }
+    </div>
+</div>
+
+

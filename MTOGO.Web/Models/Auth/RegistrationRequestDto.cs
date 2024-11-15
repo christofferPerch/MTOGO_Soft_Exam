@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MTOGO.Web.Models
+namespace MTOGO.Web.Models.Auth
 {
     public class RegistrationRequestDto
     {

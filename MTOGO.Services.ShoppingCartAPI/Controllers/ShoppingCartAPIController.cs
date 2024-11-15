@@ -6,8 +6,8 @@ using MTOGO.Services.ShoppingCartAPI.Services.IServices;
 
 namespace MTOGO.Services.ShoppingCartAPI.Controllers
 {
-    [ApiController]
     [Route("api/shoppingcart")]
+    [ApiController]
     public class ShoppingCartAPIController : ControllerBase
     {
         private readonly IShoppingCartService _cartService;
@@ -24,14 +24,28 @@ namespace MTOGO.Services.ShoppingCartAPI.Controllers
         {
             try
             {
-                var cart = await _cartService.GetCart(userId);
-                if (cart == null)
+                if (string.IsNullOrEmpty(userId))
                 {
                     _response.IsSuccess = false;
-                    _response.Message = "Cart not found.";
-                    return NotFound(_response);
+                    _response.Message = "User ID is required.";
+                    return BadRequest(_response);
                 }
 
+                var cart = await _cartService.GetCart(userId);
+                if (cart == null || cart.Items.Count == 0)
+                {
+                    // Respond with an empty cart structure if no items exist
+                    _response.IsSuccess = true;
+                    _response.Result = new Cart
+                    {
+                        UserId = userId,
+                        Items = new List<CartItem>() // Empty items list
+                    };
+                    _response.Message = "Cart is empty.";
+                    return Ok(_response);
+                }
+
+                _response.IsSuccess = true;
                 _response.Result = cart;
                 _response.Message = "Cart retrieved successfully.";
                 return Ok(_response);
@@ -39,10 +53,11 @@ namespace MTOGO.Services.ShoppingCartAPI.Controllers
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
-                _response.Message = "An error occurred while retrieving the cart." + ex;
+                _response.Message = "An error occurred while retrieving the cart: " + ex.Message;
                 return StatusCode(500, _response);
             }
         }
+
 
         [HttpPost("create")]
         public async Task<IActionResult> CreateCart([FromBody] Cart cart)
@@ -85,6 +100,43 @@ namespace MTOGO.Services.ShoppingCartAPI.Controllers
                 return StatusCode(500, _response);
             }
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> RemoveMenuItem(string userId, int menuItemId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                _response.IsSuccess = false;
+                _response.Message = "User ID is required.";
+                return BadRequest(_response);
+            }
+
+            try
+            {
+                var result = await _cartService.RemoveMenuItem(userId, menuItemId);
+                if (!result)
+                {
+                    _response.IsSuccess = false;
+                    _response.Message = "Item not found in the cart.";
+                    return NotFound(_response);
+                }
+
+                var updatedCart = await _cartService.GetCart(userId);
+                _response.IsSuccess = true;
+                _response.Result = updatedCart;
+                _response.Message = "Item removed successfully.";
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = "An error occurred while removing the item. " + ex.Message;
+                return StatusCode(500, _response);
+            }
+        }
+
+
+
 
         [HttpDelete("{userId}")]
         public async Task<IActionResult> RemoveCart(string userId)

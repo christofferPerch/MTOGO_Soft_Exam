@@ -1,0 +1,32 @@
+﻿@model IEnumerable<MTOGO.Web.Models.Restaurant.RestaurantDto>
+
+<link rel="stylesheet" href="~/css/restaurant.css" asp-append-version="true" />
+
+<div class="container my-4">
+    <h2 class="text-center">@ViewBag.SelectedCity</h2>
+
+    @if (!Model.Any())
+    {
+        <p class="text-center text-muted">No restaurants found in @ViewBag.SelectedCity.</p>
+    }
+    else
+    {
+        <div class="restaurant-grid">
+            @foreach (var restaurant in Model)
+            {
+                <div class="restaurant-card">
+                    <a href="@Url.Action("Details", "Restaurant", new { id = restaurant.Id })" class="restaurant-link">
+                        <div class="restaurant-image">
+                            <img src="~/images/restaurant.jpg" alt="@restaurant.RestaurantName">
+                        </div>
+                        <div class="restaurant-info">
+                            <h3>@restaurant.RestaurantName</h3>
+                            <p class="description">@restaurant.RestaurantDescription</p>
+                        </div>
+                    </a>
+                </div>
+            }
+
+        </div>
+    }
+</div>

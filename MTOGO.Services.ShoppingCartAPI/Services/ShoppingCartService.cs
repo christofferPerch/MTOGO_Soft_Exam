@@ -167,5 +167,43 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
                 throw;
             }
         }
+
+        public async Task<bool> RemoveMenuItem(string userId, int menuItemId)
+        {
+            try
+            {
+                var cart = await GetCart(userId);
+                if (cart == null)
+                {
+                    _logger.LogWarning($"Cart not found for user {userId}.");
+                    return false;
+                }
+
+                var itemToRemove = cart.Items.FirstOrDefault(item => item.MenuItemId == menuItemId);
+                if (itemToRemove == null)
+                {
+                    _logger.LogWarning($"MenuItemId {menuItemId} not found in cart for user {userId}.");
+                    return false;
+                }
+
+                cart.Items.Remove(itemToRemove);
+
+                if (!cart.Items.Any())
+                {
+                    await _redisCache.RemoveAsync(userId);
+                    _logger.LogInformation($"Cart for user {userId} has been removed as it became empty.");
+                    return true;
+                }
+
+                await _redisCache.SetStringAsync(userId, JsonConvert.SerializeObject(cart));
+                _logger.LogInformation($"MenuItemId {menuItemId} removed from cart for user {userId}, and Redis updated.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error removing MenuItemId {menuItemId} from cart for user {userId}.");
+                throw;
+            }
+        }
     }
 }

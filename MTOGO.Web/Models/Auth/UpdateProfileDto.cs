@@ -1,4 +1,4 @@
-﻿namespace MTOGO.Web.Models
+﻿namespace MTOGO.Web.Models.Auth
 {
     public class UpdateProfileDto
     {

@@ -1,4 +1,4 @@
-﻿@{
+﻿﻿@{
     ViewData["Title"] = "Profile";
 }
 
@@ -19,15 +19,15 @@
         <h2>Personal Information</h2>
         <div class="setting-item">
             <label><strong>Email</strong></label>
-            <span class="personal-info-value">@User.FindFirst("Email")?.Value</span>
+            <span>@User.FindFirst("Email")?.Value</span>
         </div>
         <div class="setting-item">
             <label><strong>Mobile Number</strong></label>
-            <span class="personal-info-value">@User.FindFirst("PhoneNumber")?.Value</span>
+            <span>@User.FindFirst("PhoneNumber")?.Value</span>
         </div>
         <div class="setting-item">
             <label><strong>Full Name</strong></label>
-            <span class="personal-info-value">@($"{User.FindFirst("FirstName")?.Value} {User.FindFirst("LastName")?.Value}")</span>
+            <span>@($"{User.FindFirst("FirstName")?.Value} {User.FindFirst("LastName")?.Value}")</span>
         </div>
     </div>
 
@@ -51,6 +51,18 @@
         <div class="setting-item">
             <label><strong>Address</strong></label>
             <span class="setting-value clickable" data-field="Address" id="addressField">@User.FindFirst("Address")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>City</strong></label>
+            <span class="setting-value clickable" data-field="City" id="cityField">@User.FindFirst("City")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Zip Code</strong></label>
+            <span class="setting-value clickable" data-field="ZipCode" id="zipCodeField">@User.FindFirst("ZipCode")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Country</strong></label>
+            <span class="setting-value clickable" data-field="Country" id="countryField">@User.FindFirst("Country")?.Value</span>
         </div>
         <div class="setting-item">
             <label><strong>Delete Account</strong></label>

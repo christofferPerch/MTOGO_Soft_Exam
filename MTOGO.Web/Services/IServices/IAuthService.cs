@@ -1,4 +1,5 @@
 ﻿using MTOGO.Web.Models;
+using MTOGO.Web.Models.Auth;
 
 namespace MTOGO.Web.Services.IServices
 {

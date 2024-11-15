@@ -1,0 +1,95 @@
+﻿/* General page styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Restaurant grid styling */
+.restaurant-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Restaurant card styling */
+.restaurant-card {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+    .restaurant-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+/* Restaurant image */
+.restaurant-image img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+/* Restaurant info section */
+.restaurant-info {
+    padding: 1rem;
+    text-align: left;
+}
+
+    .restaurant-info h3 {
+        font-size: 1.25rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+
+    .restaurant-info .description {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 0.75rem;
+    }
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+    .restaurant-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+}
+
+/* Optional overlay on hover */
+.restaurant-card:hover .restaurant-image::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.1); /* Slight dark overlay on hover */
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    transition: background 0.3s ease;
+}
+
+/* Centered "No restaurants available" message */
+.no-restaurants {
+    font-size: 1.1rem;
+    color: #666;
+    text-align: center;
+    margin-top: 2rem;
+}

@@ -8,5 +8,7 @@ namespace MTOGO.Services.ShoppingCartAPI.Services.IServices
         Task<Cart?> GetCart(string userId);
         Task<Cart> UpdateCart(Cart cart);
         Task<bool> RemoveCart(string userId);
+        Task<bool> RemoveMenuItem(string userId, int menuItemId); 
+
     }
 }

@@ -254,5 +254,65 @@ namespace MTOGO.Services.RestaurantAPI.Services
                 throw;
             }
         }
+
+        public async Task<List<RestaurantDto>> FindRestaurantsByLocation(string location)
+        {
+            try
+            {
+                var sql = @"
+                        SELECT r.*, a.*
+                        FROM Restaurant r
+                        INNER JOIN Address a ON r.AddressId = a.Id
+                        WHERE a.ZipCode = @Location OR a.City = @Location";
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Location", location, DbType.String);
+
+                var restaurants = await _dataAccess.GetAll<RestaurantDto>(sql, parameters) ?? new List<RestaurantDto>();
+
+                foreach (var restaurant in restaurants)
+                {
+                    var addressSql = "SELECT * FROM Address WHERE Id = @AddressId";
+                    restaurant.Address = await _dataAccess.GetById<AddressDto>(addressSql, new { AddressId = restaurant.AddressId });
+
+                    var operatingHoursSql = "SELECT * FROM OperatingHours WHERE RestaurantId = @RestaurantId";
+                    restaurant.OperatingHours = await _dataAccess.GetAll<OperatingHoursDto>(operatingHoursSql, new { RestaurantId = restaurant.Id }) ?? new List<OperatingHoursDto>();
+
+                    var menuItemsSql = "SELECT * FROM MenuItem WHERE RestaurantId = @RestaurantId";
+                    restaurant.MenuItems = await _dataAccess.GetAll<MenuItemDto>(menuItemsSql, new { RestaurantId = restaurant.Id }) ?? new List<MenuItemDto>();
+
+                    var foodCategoriesSql = "SELECT * FROM FoodCategory WHERE RestaurantId = @RestaurantId";
+                    restaurant.FoodCategories = await _dataAccess.GetAll<FoodCategoryDto>(foodCategoriesSql, new { RestaurantId = restaurant.Id }) ?? new List<FoodCategoryDto>();
+                }
+
+                return restaurants;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error finding restaurants by location");
+                throw;
+            }
+        }
+
+        public async Task<List<string>> GetUniqueCitiesAsync()
+        {
+            try
+            {
+                var sql = @"
+            SELECT DISTINCT a.City
+            FROM Restaurant r
+            INNER JOIN Address a ON r.AddressId = a.Id";
+
+                var cities = await _dataAccess.GetAll<string>(sql);
+
+                return cities ?? new List<string>(); 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving unique cities");
+                throw;
+            }
+        }
+
     }
 }

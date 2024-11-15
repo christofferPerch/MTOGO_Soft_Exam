@@ -2,16 +2,20 @@
 .profile-container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 30px;
     font-family: Arial, sans-serif;
     color: #333;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
     /* Profile header */
     .profile-container h1 {
         font-size: 2.2rem;
         font-weight: bold;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
+        color: #4e73df;
     }
 
 /* Tab navigation styling */
@@ -20,20 +24,21 @@
     gap: 15px;
     margin-bottom: 25px;
     border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
+    padding-bottom: 8px;
 }
 
     .profile-tabs a {
-        color: #333;
+        color: #4e73df;
         text-decoration: none;
         font-weight: 500;
         padding: 10px;
+        transition: color 0.3s ease, border-bottom 0.3s ease;
     }
 
         .profile-tabs a.active {
             font-weight: bold;
-            color: #000;
-            border-bottom: 2px solid #000;
+            color: #3b5cb8;
+            border-bottom: 2px solid #3b5cb8;
         }
 
 /* Personal Info and Settings Section Styling */
@@ -47,34 +52,34 @@
 
     .setting-item label {
         font-weight: bold;
-        color: #666;
+        color: #555;
     }
 
-.setting-value {
-    color: #007bff;
+.personal-info-value, .setting-value {
+    color: #4e73df;
     font-weight: 500;
 }
 
 /* Non-clickable values in Personal Info section */
-.personal-info .setting-value {
+.personal-info-value {
     cursor: default;
-    color: #007bff;
-    text-decoration: none;
 }
 
 /* Clickable values in Settings section */
-.settings .setting-value.clickable {
+.setting-value.clickable {
     cursor: pointer;
+    transition: color 0.3s ease;
 }
 
-    .settings .setting-value.clickable:hover {
+    .setting-value.clickable:hover {
         text-decoration: underline;
+        color: deepskyblue;
     }
 
 /* Modal styling */
 .modal-content {
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -83,16 +88,11 @@
     font-size: 1.2rem;
 }
 
-.edit-image img {
-    max-width: 100px;
-    margin-bottom: 15px;
-}
-
 .modal-body {
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 15px;
+    align-items: center;
 }
 
 .form-group label {
@@ -111,18 +111,34 @@
     font-weight: bold;
 }
 
-/* Make Delete Account and Log Out red */
-.account-action {
+.modal-footer .btn-primary {
+    background-color: #4e73df;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+    .modal-footer .btn-primary:hover {
+        background-color: #3b5cb8;
+    }
+
+/* Action buttons (Delete Account, Log Out) */
+.account-action, .action-action {
     color: red;
     cursor: pointer;
 }
 
-.action-action {
-    color: red;
-    cursor: pointer;
-}
+    .account-action:hover, .action-action:hover {
+        color: darkred;
+        text-decoration: underline;
+    }
 
-/* Make the "Save" and "Cancel" buttons for the modal more distinct */
+/* Modal "Delete" button */
 .modal-footer .btn-danger {
     background-color: red;
+    border: none;
+    transition: background-color 0.3s ease;
 }
+
+    .modal-footer .btn-danger:hover {
+        background-color: darkred;
+    }

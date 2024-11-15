@@ -4,20 +4,50 @@
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
+function displayMessage(message, isSuccess) {
+    console.log("Displaying message:", message); 
+    const alertType = isSuccess ? 'alert-success' : 'alert-danger';
+    const messageHtml = `<div class="alert ${alertType}">${message}</div>`;
+    document.getElementById("messageContainer").innerHTML = messageHtml;
+    document.getElementById("messageContainer").style.display = 'block';
+
+    setTimeout(function () {
+        document.getElementById("messageContainer").style.display = 'none';
+    }, 3000);
+}
+
+
 document.addEventListener("DOMContentLoaded", function () {
-    const userId = document.getElementById("userId").value;
     const tabs = document.querySelectorAll(".tab-link");
     const contents = document.querySelectorAll(".tab-content");
+
+    contents.forEach(content => content.style.display = "none");
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeTab = urlParams.get("tab") || "personal-info"; 
+    const activeTabElement = document.querySelector(`.tab-link[data-tab="${activeTab}"]`);
+    const activeContentElement = document.getElementById(activeTab);
+
+    if (activeTabElement && activeContentElement) {
+        activeTabElement.classList.add("active");
+        activeContentElement.style.display = "block";
+    }
 
     tabs.forEach(tab => {
         tab.addEventListener("click", function (e) {
             e.preventDefault();
+
             tabs.forEach(t => t.classList.remove("active"));
             contents.forEach(c => c.style.display = "none");
+
             this.classList.add("active");
             document.getElementById(this.getAttribute("data-tab")).style.display = "block";
+
+            const newUrl = `${window.location.pathname}?tab=${this.getAttribute("data-tab")}`;
+            window.history.replaceState(null, "", newUrl);
         });
     });
+
 
     const clickableValues = document.querySelectorAll(".setting-value.clickable");
     clickableValues.forEach(value => {
@@ -32,11 +62,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     document.getElementById("saveChangesBtn").addEventListener("click", async function () {
-        const field = this.getAttribute("data-field"); 
+        const field = this.getAttribute("data-field");
         const newValue = document.getElementById("editInput").value.trim();
 
         const payload = {};
-        payload[field] = newValue; 
+        payload[field] = newValue;
 
         const token = getCookie('JWTToken');
         const headers = {
@@ -54,30 +84,37 @@ document.addEventListener("DOMContentLoaded", function () {
                 body: JSON.stringify(payload)
             });
 
-            const data = await response.json(); 
+            const data = await response.json();
 
             if (data.success) {
                 if (data.token) {
                     document.cookie = `JWTToken=${data.token}; path=/;`;
-                    console.log("Profile updated successfully with a new token.");
                 }
-                location.reload();
+
+                const fieldElement = document.querySelector(`.setting-value[data-field="${field}"]`);
+                if (fieldElement) {
+                    fieldElement.textContent = newValue;
+                }
+
+                displayMessage("Profile updated successfully!", true);
+                const editModal = document.getElementById("editModal");
+                const modalInstance = bootstrap.Modal.getInstance(editModal);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
             } else {
-                alert(`Error: ${data.message}`);
-                console.error("Update error:", data.message);
+                displayMessage(`Error: ${data.message}`, false);
             }
         } catch (error) {
             console.error("Error updating profile:", error);
-            alert("An error occurred while updating the profile.");
+            displayMessage("An error occurred while updating the profile.", false);
         }
     });
-    // Delete Account Action
+
     document.getElementById("deleteAccountBtn").addEventListener("click", function () {
-        // Show the confirmation modal for delete
         $('#deleteModal').modal('show');
     });
 
-    // Confirm Delete Account
     document.getElementById("confirmDeleteBtn").addEventListener("click", async function () {
         const userId = document.getElementById("userId").value;
 
@@ -88,44 +125,38 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             if (response.ok) {
-                // Redirect after successful deletion
+                displayMessage("Account deleted successfully.", true);
                 window.location.href = "/";
             } else {
-                // Handle error if account deletion fails
                 const errorData = await response.json();
-                alert("Error deleting account: " + errorData.message);
+                displayMessage("Error deleting account: " + errorData.message, false);
             }
         } catch (error) {
             console.error("Error deleting account:", error);
-            alert("An error occurred. Please try again.");
+            displayMessage("An error occurred. Please try again.", false);
         }
 
-        // Close modal after deletion
         $('#deleteModal').modal('hide');
     });
 
-    // Log Out Action
     document.getElementById("logoutBtn").addEventListener("click", function () {
-        // Log out confirmation
-
-            // Make a fetch request to the Logout action in your AuthController
-            fetch('/Auth/Logout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
+        fetch('/Auth/Logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    displayMessage("Logout successful.", true);
+                    location.href = '/Home/Index';
+                } else {
+                    displayMessage("Logout failed. Please try again.", false);
                 }
             })
-                .then(response => {
-                    if (response.ok) {
-                        // Redirect to home after logout
-                        location.href = '/Home/Index';
-                    } else {
-                        alert("Logout failed. Please try again.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error logging out:", error);
-                    alert("An error occurred. Please try again.");
-                });
-        });
+            .catch(error => {
+                console.error("Error logging out:", error);
+                displayMessage("An error occurred. Please try again.", false);
+            });
+    });
 });
