@@ -1,0 +1,39 @@
+﻿@model IEnumerable<MTOGO.Web.Models.Restaurant.RestaurantDto>
+
+<h2>Restaurants</h2>
+
+@if (!Model.Any())
+{
+    <p>No restaurants available at the moment.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Legal Name</th>
+                <th>Description</th>
+                <th>VAT Number</th>
+                <th>Contact</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var restaurant in Model)
+            {
+                <tr>
+                    <td>@restaurant.Id</td>
+                    <td>@restaurant.RestaurantName</td>
+                    <td>@restaurant.LegalName</td>
+                    <td>@restaurant.RestaurantDescription</td>
+                    <td>@restaurant.VATNumber</td>
+                    <td>
+                        <p>Email: @restaurant.ContactEmail</p>
+                        <p>Phone: @restaurant.ContactPhone</p>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

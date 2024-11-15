@@ -21,7 +21,7 @@ namespace MTOGO.Web.Services
         {
             try
             {
-                HttpClient client = _httpClientFactory.CreateClient("MangoAPI");
+                HttpClient client = _httpClientFactory.CreateClient("MTOGOAPI");
                 HttpRequestMessage message = new();
                 if (requestDto.ContentType == ContentType.MultipartFormData)
                 {

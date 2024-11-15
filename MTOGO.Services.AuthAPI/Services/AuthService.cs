@@ -164,6 +164,21 @@ namespace MTOGO.Services.AuthAPI.Services
                 user.Address = updateProfileDto.Address;
                 isUpdated = true;
             }
+            if (!string.IsNullOrEmpty(updateProfileDto.City) && updateProfileDto.City != user.City)
+            {
+                user.City = updateProfileDto.City;
+                isUpdated = true;
+            }
+            if (!string.IsNullOrEmpty(updateProfileDto.ZipCode) && updateProfileDto.ZipCode != user.ZipCode)
+            {
+                user.ZipCode = updateProfileDto.ZipCode;
+                isUpdated = true;
+            }
+            if (!string.IsNullOrEmpty(updateProfileDto.Country) && updateProfileDto.Country != user.Country)
+            {
+                user.Country = updateProfileDto.Country;
+                isUpdated = true;
+            }
 
             if (isUpdated)
             {

@@ -4,9 +4,8 @@
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
-// Function to display messages in the message container
 function displayMessage(message, isSuccess) {
-    console.log("Displaying message:", message); // Debugging line
+    console.log("Displaying message:", message); 
     const alertType = isSuccess ? 'alert-success' : 'alert-danger';
     const messageHtml = `<div class="alert ${alertType}">${message}</div>`;
     document.getElementById("messageContainer").innerHTML = messageHtml;
@@ -22,35 +21,28 @@ document.addEventListener("DOMContentLoaded", function () {
     const tabs = document.querySelectorAll(".tab-link");
     const contents = document.querySelectorAll(".tab-content");
 
-    // Hide all content tabs initially
     contents.forEach(content => content.style.display = "none");
 
-    // Check URL for active tab and set it
     const urlParams = new URLSearchParams(window.location.search);
-    const activeTab = urlParams.get("tab") || "personal-info"; // Default to "personal-info"
+    const activeTab = urlParams.get("tab") || "personal-info"; 
     const activeTabElement = document.querySelector(`.tab-link[data-tab="${activeTab}"]`);
     const activeContentElement = document.getElementById(activeTab);
 
-    // Activate the tab from the query parameter
     if (activeTabElement && activeContentElement) {
         activeTabElement.classList.add("active");
         activeContentElement.style.display = "block";
     }
 
-    // Add click listener to tabs
     tabs.forEach(tab => {
         tab.addEventListener("click", function (e) {
             e.preventDefault();
 
-            // Remove active classes and hide content
             tabs.forEach(t => t.classList.remove("active"));
             contents.forEach(c => c.style.display = "none");
 
-            // Set active tab and display the corresponding content
             this.classList.add("active");
             document.getElementById(this.getAttribute("data-tab")).style.display = "block";
 
-            // Update the URL with the active tab without reloading the page
             const newUrl = `${window.location.pathname}?tab=${this.getAttribute("data-tab")}`;
             window.history.replaceState(null, "", newUrl);
         });
@@ -99,13 +91,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     document.cookie = `JWTToken=${data.token}; path=/;`;
                 }
 
-                // Update the displayed value directly in the DOM
                 const fieldElement = document.querySelector(`.setting-value[data-field="${field}"]`);
                 if (fieldElement) {
                     fieldElement.textContent = newValue;
                 }
 
-                // Display the success message
                 displayMessage("Profile updated successfully!", true);
                 const editModal = document.getElementById("editModal");
                 const modalInstance = bootstrap.Modal.getInstance(editModal);

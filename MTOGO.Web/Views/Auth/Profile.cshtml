@@ -1,113 +1,119 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - MTOGO</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="~/css/messagecontainer.css" asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <!-- Brand name on the left -->
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MTOGO</a>
+﻿﻿@{
+    ViewData["Title"] = "Profile";
+}
 
-                <!-- Right side (Conditional rendering for Log In/Register or User Info and Cart) -->
-                <div class="d-flex ms-auto align-items-center">
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <div class="d-flex align-items-center">
-                            <!-- User initials and dropdown -->
-                            @{
-                                var firstName = User.FindFirst("FirstName")?.Value ?? "User";
-                                var lastName = User.FindFirst("LastName")?.Value ?? "Name";
-                                var initials = $"{firstName[0]}{lastName[0]}".ToUpper();
-                            }
+<link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
 
-                            <!-- Profile Button with Initials -->
-                            <div class="dropdown">
-                                <a href="#" class="user-profile-button" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="user-initials-circle">@initials</span>
-                                    <i class="bi bi-chevron-down dropdown-arrow"></i>
-                                </a>
+<input type="hidden" id="userId" value="@User.FindFirst("UserId")?.Value" />
+<div class="profile-container">
+    <!-- Profile header and tab navigation -->
+    <h1>Profile</h1>
+    <nav class="profile-tabs">
+        <a href="#" class="tab-link active" data-tab="personal-info">Personal Information</a>
+        <a href="#" class="tab-link" data-tab="order-history">Order History</a>
+        <a href="#" class="tab-link" data-tab="settings">Settings</a>
+    </nav>
 
-                                <!-- Dropdown Menu -->
-                                <ul class="dropdown-menu dropdown-menu-end profile-dropdown" aria-labelledby="userDropdown">
-                                    <li>
-                                        <a href="~/Auth/Profile" class="profile-link">
-                                            <div class="d-flex align-items-center p-3 profile-header">
-                                                <div class="user-initials-sm rounded-circle d-flex align-items-center justify-content-center me-2">
-                                                    @initials
-                                                </div>
-                                                <div>
-                                                    <div class="fw-bold">@firstName @lastName</div>
-                                                    <small class="text-muted">Profile</small>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item logout-item" asp-controller="Auth" asp-action="Logout">Log out</a></li>
-                                </ul>
-                            </div>
-                            <input type="hidden" id="userId" value="@User.FindFirst("UserId")?.Value" />
-                            <!-- Shopping cart icon with badge (always visible) -->
-                            <a href="#" id="cartButton" class="btn position-relative ms-3">
-                                <i class="bi bi-cart3" style="font-size: 1.5rem;"></i>
-                                <span id="cartItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
-                                    0 <!-- Default cart item count -->
-                                </span>
-                            </a>
-                        </div>
-                    }
-                    else
-                    {
-                        <a class="btn btn-outline-primary me-2" asp-area="" asp-controller="Auth" asp-action="Login">Log In</a>
-                        <a class="btn btn-primary" asp-area="" asp-controller="Auth" asp-action="Register">Register</a>
-                    }
+    <!-- Personal Information Section -->
+    <div class="tab-content" id="personal-info">
+        <h2>Personal Information</h2>
+        <div class="setting-item">
+            <label><strong>Email</strong></label>
+            <span>@User.FindFirst("Email")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Mobile Number</strong></label>
+            <span>@User.FindFirst("PhoneNumber")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Full Name</strong></label>
+            <span>@($"{User.FindFirst("FirstName")?.Value} {User.FindFirst("LastName")?.Value}")</span>
+        </div>
+    </div>
+
+    <!-- Order History Section -->
+    <div class="tab-content" id="order-history" style="display: none;">
+        <h2>Order History</h2>
+        <p>Order history content goes here.</p>
+    </div>
+
+    <!-- Settings Section -->
+    <div class="tab-content" id="settings" style="display: none;">
+        <h2>Settings</h2>
+        <div class="setting-item">
+            <label><strong>Email</strong></label>
+            <span class="setting-value clickable" data-field="Email">@User.FindFirst("Email")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Phone Number</strong></label>
+            <span class="setting-value clickable" data-field="PhoneNumber">@User.FindFirst("PhoneNumber")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Address</strong></label>
+            <span class="setting-value clickable" data-field="Address" id="addressField">@User.FindFirst("Address")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>City</strong></label>
+            <span class="setting-value clickable" data-field="City" id="cityField">@User.FindFirst("City")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Zip Code</strong></label>
+            <span class="setting-value clickable" data-field="ZipCode" id="zipCodeField">@User.FindFirst("ZipCode")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Country</strong></label>
+            <span class="setting-value clickable" data-field="Country" id="countryField">@User.FindFirst("Country")?.Value</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Delete Account</strong></label>
+            <span class="account-action clickable" id="deleteAccountBtn" style="color: red; cursor: pointer;">Delete</span>
+        </div>
+        <div class="setting-item">
+            <label><strong>Log Out of MTOGO</strong></label>
+            <span class="action-action clickable" id="logoutBtn" style="color: red; cursor: pointer;">Log out</span>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group mb-3">
+                    <label for="editInput">New Value</label>
+                    <input type="text" class="form-control" id="editInput" />
                 </div>
             </div>
-        </nav>
-    </header>
-
-    <!-- Shopping Cart Drawer -->
-    <div id="shoppingCartDrawer" class="shopping-cart-drawer">
-        <div class="shopping-cart-header">
-            <h5>Din bestilling</h5>
-            <button type="button" class="close-btn" onclick="toggleCart()">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <div id="shoppingCartItems" class="shopping-cart-items">
-            <!-- Default message if cart is empty -->
-            <p id="emptyCartMessage">Your cart is empty.</p>
-        </div>
-        <div class="shopping-cart-footer">
-            <button class="btn btn-primary w-100">Gå til kasse</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveChangesBtn">Save</button>
+            </div>
         </div>
     </div>
+</div>
 
-    <div id="messageContainer" class="message" style="display: none;"></div>
-
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; MTOGO
+<!-- Confirm Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
-</html>
+    </div>
+</div>
+
+<script src="~/js/profile.js"></script>

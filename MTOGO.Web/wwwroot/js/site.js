@@ -1,117 +1,114 @@
-﻿function toggleCart() {
-    const cartDrawer = document.getElementById("shoppingCartDrawer");
-    if (cartDrawer) {
-        cartDrawer.style.display = cartDrawer.style.display === "none" ? "block" : "none";
+﻿$(document).ready(function () {
+    const cartIcon = $("#cartIcon");
+    const cartItemsContainer = $("#cartItemsContainer");
+    const cartItemCount = $("#cartItemCount");
+    const userId = $("#userId").val();
 
-        // If the cart is being opened, load the cart items
-        if (cartDrawer.style.display === "block") {
-            loadCartItems();
+    // Fetch the cart item count when the page loads
+    fetchCartItemCount();
+
+    // Event: Clicking the cart icon opens the modal and fetches cart items
+    cartIcon.on("click", function () {
+        fetchCartItems();
+        $("#shoppingCartModal").modal("show");
+    });
+
+    // Fetch items for the cart
+    function fetchCartItems() {
+        if (!userId) {
+            console.error("User ID is missing.");
+            return;
         }
-    } else {
-        console.error("Shopping cart drawer not found in the DOM.");
-    }
-}
 
-document.addEventListener("DOMContentLoaded", function () {
-    const cartButton = document.getElementById("cartButton");
-
-    // Check if the cart button exists in the DOM
-    if (cartButton) {
-        console.log("Cart button found.");
-        cartButton.addEventListener("click", function (event) {
-            event.preventDefault();
-            toggleCart();
+        $.ajax({
+            url: `/ShoppingCart/GetCart?userId=${userId}`,
+            method: "GET",
+            success: function (response) {
+                console.log("API Response:", response);
+                if (response.items && response.items.length > 0) {
+                    populateCart(response.items);
+                } else {
+                    handleEmptyCart();
+                }
+            },
+            error: function (err) {
+                console.error("Error fetching cart items", err);
+                handleEmptyCart(); // Gracefully handle errors
+            }
         });
-    } else {
-        console.warn("Cart button not found in the DOM.");
     }
 
-    // Load the cart item count on page load
-    updateCartItemCount();
+    // Populate cart items in the modal
+    function populateCart(items) {
+        let html = `<ul class="list-group">`;
+        items.forEach(item => {
+            html += `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Menu Item ID: ${item.menuItemId} (Quantity: ${item.quantity}) 
+                    <span>$${item.price.toFixed(2)}</span>
+                    <button class="btn btn-danger btn-sm remove-item" data-id="${item.menuItemId}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </li>`;
+        });
+        html += `</ul>`;
+        cartItemsContainer.html(html);
+
+        // Attach event handlers to remove buttons
+        $(".remove-item").on("click", function () {
+            const itemId = $(this).data("id");
+            removeCartItem(itemId);
+        });
+    }
+
+    // Handle removing an item from the cart
+    function removeCartItem(itemId) {
+        if (!userId) {
+            console.error("User ID is missing.");
+            return;
+        }
+
+        $.ajax({
+            url: `/ShoppingCart/RemoveItemFromCart?userId=${userId}&menuItemId=${itemId}`,
+            method: "DELETE",
+            success: function () {
+                fetchCartItems(); // Refresh the cart items
+                fetchCartItemCount(); // Update badge count after removal
+            },
+            error: function (err) {
+                console.error("Error removing cart item", err);
+            }
+        });
+    }
+
+    // Fetch the cart item count
+    function fetchCartItemCount() {
+        if (!userId) {
+            console.error("User ID is missing.");
+            cartItemCount.text(0); // Default to 0 if no user ID
+            return;
+        }
+
+        $.ajax({
+            url: `/ShoppingCart/GetCart?userId=${userId}`,
+            method: "GET",
+            success: function (response) {
+                if (response.items && response.items.length > 0) {
+                    cartItemCount.text(response.items.length); // Update the badge count
+                } else {
+                    cartItemCount.text(0); // Set to 0 if cart is empty
+                }
+            },
+            error: function (err) {
+                console.error("Error fetching cart item count", err);
+                cartItemCount.text(0); // Default to 0 on error
+            }
+        });
+    }
+
+    // Handle when the cart is empty
+    function handleEmptyCart() {
+        cartItemsContainer.html('<p>Your cart is empty.</p>');
+        cartItemCount.text(0); // Reset badge count
+    }
 });
-
-async function loadCartItems() {
-    const userIdElement = document.getElementById("userId");
-    if (!userIdElement) {
-        console.error("User ID element not found.");
-        return;
-    }
-
-    const userId = userIdElement.value;
-    const cartItemsContainer = document.getElementById("shoppingCartItems");
-    const emptyCartMessage = document.getElementById("emptyCartMessage");
-
-    try {
-        const response = await fetch(`/ShoppingCart/${userId}`);
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch cart items: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-
-        // Clear existing items
-        cartItemsContainer.innerHTML = "";
-
-        if (data && data.isSuccess && data.result && data.result.items.length > 0) {
-            emptyCartMessage.style.display = "none";
-            data.result.items.forEach(item => {
-                const itemHtml = `
-                    <div class="cart-item">
-                        <img src="${item.imageUrl || 'https://via.placeholder.com/50'}" alt="${item.name}" class="item-image">
-                        <div class="item-details">
-                            <div class="item-name">${item.name}</div>
-                            <div class="item-price">${item.price.toFixed(2)} kr.</div>
-                        </div>
-                        <div class="item-quantity">
-                            <input type="number" value="${item.quantity}" min="1" class="quantity-input" data-menuitemid="${item.menuItemId}">
-                        </div>
-                    </div>
-                `;
-                cartItemsContainer.insertAdjacentHTML("beforeend", itemHtml);
-            });
-        } else {
-            emptyCartMessage.style.display = "block";
-            cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
-        }
-    } catch (error) {
-        console.error("Error loading cart items:", error);
-        cartItemsContainer.innerHTML = "<p>Failed to load cart items.</p>";
-    }
-}
-
-async function updateCartItemCount() {
-    const userIdElement = document.getElementById("userId");
-    if (!userIdElement) {
-        console.error("User ID element not found.");
-        return;
-    }
-
-    const userId = userIdElement.value;
-    const cartItemCountElement = document.getElementById("cartItemCount");
-
-    if (!cartItemCountElement) {
-        console.error("Cart item count element not found.");
-        return;
-    }
-
-    try {
-        const response = await fetch(`/ShoppingCart/${userId}`);
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch cart item count: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-
-        if (data && data.isSuccess && data.result) {
-            const itemCount = data.result.items.reduce((count, item) => count + item.quantity, 0);
-            cartItemCountElement.textContent = itemCount;
-        } else {
-            cartItemCountElement.textContent = "0";
-        }
-    } catch (error) {
-        console.error("Error updating cart item count:", error);
-        cartItemCountElement.textContent = "0";
-    }
-}
