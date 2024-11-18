@@ -137,18 +137,15 @@ namespace MTOGO.Services.OrderAPI.Services
         #endregion
 
         #region Order Methods
-        public async Task<int> CreateOrder(AddOrderDto order)
-        {
-            try
-            {
+        public async Task<int> CreateOrder(AddOrderDto order) {
+            try {
                 var orderItemsTable = new DataTable();
                 orderItemsTable.Columns.Add("RestaurantId", typeof(int));
                 orderItemsTable.Columns.Add("MenuItemId", typeof(int));
                 orderItemsTable.Columns.Add("Price", typeof(decimal));
                 orderItemsTable.Columns.Add("Quantity", typeof(int));
 
-                foreach (var item in order.Items)
-                {
+                foreach (var item in order.Items) {
                     orderItemsTable.Rows.Add(
                         item.RestaurantId,
                         item.MenuItemId,
@@ -169,12 +166,54 @@ namespace MTOGO.Services.OrderAPI.Services
                 await _dataAccess.ExecuteStoredProcedure<int>("AddOrder", parameters);
 
                 int orderId = parameters.Get<int>("@OrderId");
+
+                // Map to OrderCreatedMessageDto
+                var orderCreatedMessage = new OrderCreatedMessageDto {
+                    OrderId = orderId,
+                    UserId = order.UserId,
+                    CustomerEmail = order.CustomerEmail,
+                    TotalAmount = order.TotalAmount,
+                    Items = order.Items.Select(i => new OrderItemDto {
+                        RestaurantId = i.RestaurantId,
+                        MenuItemId = i.MenuItemId,
+                        Quantity = i.Quantity,
+                        Price = i.Price
+                    }).ToList()
+                };
+
+                await _messageBus.PublishMessage("OrderCreatedQueue", JsonConvert.SerializeObject(orderCreatedMessage));
+                _logger.LogInformation($"Order created event published for Order ID: {orderId}");
+
                 return orderId;
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 _logger.LogError(ex, "Error creating order.");
                 throw;
+            }
+        }
+
+
+
+        private async Task PublishOrderCreatedMessage(AddOrderDto order, int orderId) {
+            try {
+                var orderCreatedMessage = new OrderCreatedMessageDto {
+                    OrderId = orderId,
+                    UserId = order.UserId,
+                    TotalAmount = order.TotalAmount,
+                    VATAmount = order.VATAmount,
+                    Items = order.Items.Select(i => new OrderItemDto {
+                        RestaurantId = i.RestaurantId,
+                        MenuItemId = i.MenuItemId,
+                        Price = i.Price,
+                        Quantity = i.Quantity
+                    }).ToList()
+                };
+
+                string message = JsonConvert.SerializeObject(orderCreatedMessage);
+
+                await _messageBus.PublishMessage("OrderCreatedQueue", message);
+                _logger.LogInformation($"OrderCreated message published for Order ID: {orderId}");
+            } catch (Exception ex) {
+                _logger.LogError(ex, $"Failed to publish OrderCreated message for Order ID: {orderId}");
             }
         }
 
