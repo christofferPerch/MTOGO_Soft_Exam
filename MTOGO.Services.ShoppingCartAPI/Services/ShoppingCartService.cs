@@ -113,6 +113,7 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
             {
                 await _redisCache.SetStringAsync(cart.UserId, JsonConvert.SerializeObject(cart));
 
+
                 return await GetCart(cart.UserId);
             }
             catch (Exception ex)
