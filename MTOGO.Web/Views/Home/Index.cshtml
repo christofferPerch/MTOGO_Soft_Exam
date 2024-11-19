@@ -8,12 +8,17 @@
     <!-- Image element to display the background picture -->
     <img src="~/images/food.jpg" alt="Delicious food" class="home-banner-image">
 
-    <!-- Text content in front of the image -->
     <div class="home-banner-content">
         <h1>Craving food?</h1>
-        <form class="zipcode-form">
+        <form asp-action="Search" asp-controller="Restaurant" method="get" class="zipcode-form">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Enter zip code or city name" aria-label="Enter zipcode">
+                <input type="text"
+                       class="form-control"
+                       name="location"
+                       placeholder="Enter zip code or city name"
+                       aria-label="Enter zipcode"
+                       required>
+                <button type="submit">Search</button>
             </div>
         </form>
     </div>

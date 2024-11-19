@@ -1,34 +1,137 @@
-﻿.restaurant-details {
-    background-color: #fff;
+﻿/* General Styling */
+.container {
+    font-family: Arial, sans-serif;
+}
+.col-md-8 {
+    margin-top: -40px; /* Adjust this value as needed to align with the contact info */
+}
+
+
+/* Left Column: Restaurant Info */
+.restaurant-info {
+    background-color: #f9f9f9;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-    .restaurant-details h2 {
+    .restaurant-info h2 {
         font-size: 2rem;
-        margin-bottom: 10px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 1rem;
     }
 
-.restaurant-meta h5 {
-    font-size: 1.2rem;
-    margin-top: 15px;
-}
-
-.menu-section {
-    margin-top: 30px;
-}
-
-.menu-items {
-    list-style: none;
-    padding: 0;
-}
-
-.menu-item {
-    border-bottom: 1px solid #eee;
-    padding: 10px 0;
-}
-
-    .menu-item strong {
-        font-size: 1.1rem;
+    .restaurant-info h5 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-top: 1rem;
+        color: #333;
     }
+
+    .restaurant-info p {
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 1rem;
+    }
+
+/* Right Column: Menu Items */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+/* Menu Card Styling */
+.menu-card {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+    .menu-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+.menu-image img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+/* Menu Content */
+.menu-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Push the price and button to the bottom */
+    height: 100%; /* Ensure consistent height across cards */
+}
+
+    .menu-content .menu-details h4 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .menu-content .menu-details p {
+        font-size: 0.9rem;
+        color: #666;
+        flex-grow: 1; /* Allow details to take up space */
+    }
+
+.menu-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .menu-bottom .menu-price {
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 0.1rem; /* Adjust this value as needed to move it down */
+    }
+
+    .menu-bottom .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .restaurant-info {
+        margin-bottom: 20px;
+    }
+
+    .menu-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+#shoppingCartModal .modal-header {
+    background-color: #007bff;
+    color: #fff;
+}
+
+#shoppingCartModal .modal-footer .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+#shoppingCartModal .modal-footer .btn-secondary {
+    color: #6c757d;
+    border-color: #6c757d;
+}
+
+#shoppingCartModal .form-control {
+    text-align: center;
+    font-size: 1rem;
+}
+

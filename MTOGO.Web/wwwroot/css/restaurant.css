@@ -93,3 +93,13 @@ h2 {
     text-align: center;
     margin-top: 2rem;
 }
+
+.restaurant-card a {
+    text-decoration: none; /* Removes the blue underline */
+    color: inherit; /* Ensures it takes the color of the parent */
+}
+
+    .restaurant-card a:hover {
+        text-decoration: none; /* Ensures no underline on hover */
+        color: inherit; /* Keeps the hover color consistent */
+    }

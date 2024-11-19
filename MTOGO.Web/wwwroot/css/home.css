@@ -106,3 +106,26 @@
     font-family: 'Arial Rounded MT Bold', sans-serif; /* Use a rounded font or similar */
     margin-bottom: 1.5rem;
 }
+
+/* Styled Search Button */
+.zipcode-form .input-group button {
+    background-color: #5bc0de; /* Light blue background */
+    color: #fff; /* White text for contrast */
+    border: none; /* Remove default border */
+    border-radius: 20px; /* Rounded corners */
+    padding: 0.5rem 1rem; /* Adds padding for better appearance */
+    font-size: 1rem; /* Consistent font size */
+    cursor: pointer; /* Pointer cursor for interactivity */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+    margin-left: 10px; /* Adds spacing between the input field and the button */
+}
+
+    .zipcode-form .input-group button:hover {
+        background-color: #3399cc; /* Darker blue on hover */
+        box-shadow: 0 4px 8px rgba(51, 153, 204, 0.3); /* Adds a subtle shadow on hover */
+    }
+
+    .zipcode-form .input-group button:focus {
+        outline: none; /* Removes default focus outline */
+        box-shadow: 0 0 5px rgba(91, 192, 222, 0.5); /* Subtle glow on focus */
+    }
