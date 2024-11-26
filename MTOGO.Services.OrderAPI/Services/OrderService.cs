@@ -28,46 +28,44 @@ namespace MTOGO.Services.OrderAPI.Services
         }
 
         #region Subscribe Methods
-        private void SubscribeToPaymentSuccessQueue()
-        {
+        private void SubscribeToPaymentSuccessQueue() {
             _messageBus.SubscribeMessage<PaymentRequestDto>("PaymentSuccessQueue", async paymentRequest =>
             {
-                if (paymentRequest == null)
-                {
+                if (paymentRequest == null) {
                     _logger.LogError("Failed to deserialize PaymentRequestDto from PaymentSuccessQueue message.");
                     return;
                 }
 
-                var order = new AddOrderDto
-                {
+                var order = new AddOrderDto {
                     UserId = paymentRequest.UserId,
                     TotalAmount = paymentRequest.TotalAmount,
                     VATAmount = paymentRequest.TotalAmount * 0.25m,
-                    Items = paymentRequest.Items
+                    Items = paymentRequest.Items,
+                    CustomerEmail = paymentRequest.CustomerEmail // Include CustomerEmail
                 };
 
-                try
-                {
+                try {
                     int orderId = await CreateOrder(order);
                     _logger.LogInformation($"Order created successfully with Order ID: {orderId}");
+
+                    // Publish Cart Removal and handle OrderCreated event
                     await PublishCartRemovalMessage(paymentRequest.UserId);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     _logger.LogError(ex, "Error occurred while creating order from payment success.");
                 }
             });
         }
+
+
         #endregion
 
         #region Payment Methods
-        public async Task<PaymentResponseDto> ProcessPayment(PaymentRequestDto paymentRequest)
-        {
-            var cartDetails = await GetCartDetails(paymentRequest.UserId, paymentRequest.CorrelationId);
-            if (cartDetails == null)
-            {
-                return new PaymentResponseDto
-                {
+        public async Task<PaymentResponseDto> ProcessPayment(PaymentRequestDto paymentRequest) {
+            // Pass CustomerEmail when getting cart details
+            var cartDetails = await GetCartDetails(paymentRequest.UserId, paymentRequest.CorrelationId, paymentRequest.CustomerEmail);
+
+            if (cartDetails == null) {
+                return new PaymentResponseDto {
                     UserId = paymentRequest.UserId,
                     CorrelationId = paymentRequest.CorrelationId,
                     IsSuccessful = false,
@@ -80,27 +78,27 @@ namespace MTOGO.Services.OrderAPI.Services
 
             bool isPaymentValid = ValidatePaymentDetails(paymentRequest);
 
-            var paymentResponse = new PaymentResponseDto
-            {
+            var paymentResponse = new PaymentResponseDto {
                 UserId = paymentRequest.UserId,
                 CorrelationId = paymentRequest.CorrelationId,
                 IsSuccessful = isPaymentValid,
                 Message = isPaymentValid ? "Payment processed successfully." : "Payment failed."
             };
 
-            if (isPaymentValid)
-            {
+            if (isPaymentValid) {
                 await _messageBus.PublishMessage("PaymentSuccessQueue", JsonConvert.SerializeObject(paymentRequest));
+                _logger.LogInformation($"Payment success published for User ID: {paymentRequest.UserId}");
             }
 
             return paymentResponse;
         }
-        public async Task<CartResponseMessageDto?> GetCartDetails(string userId, Guid correlationId)
-        {
-            var cartRequest = new CartRequestMessageDto
-            {
+
+        public async Task<CartResponseMessageDto?> GetCartDetails(string userId, Guid correlationId, string customerEmail) {
+            
+            var cartRequest = new CartRequestMessageDto {
                 UserId = userId,
-                CorrelationId = correlationId
+                CorrelationId = correlationId,
+                CustomerEmail = customerEmail 
             };
 
             string cartRequestQueue = "CartRequestQueue";
@@ -110,23 +108,24 @@ namespace MTOGO.Services.OrderAPI.Services
 
             _messageBus.SubscribeMessage<CartResponseMessageDto>("CartResponseQueue", message =>
             {
-                if (message.CorrelationId == correlationId)
-                {
+                if (message.CorrelationId == correlationId) {
                     tcs.SetResult(message);
                 }
             });
 
             var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(TimeSpan.FromSeconds(30)));
-            if (completedTask == tcs.Task)
-            {
-                return tcs.Task.Result;
-            }
-            else
-            {
+            if (completedTask == tcs.Task) {
+                var result = tcs.Task.Result;
+
+                
+                result.CustomerEmail = customerEmail;
+                return result;
+            } else {
                 _logger.LogWarning("Timeout waiting for cart response.");
                 return null;
             }
         }
+
 
         private bool ValidatePaymentDetails(PaymentRequestDto paymentRequest)
         {
@@ -171,7 +170,7 @@ namespace MTOGO.Services.OrderAPI.Services
                 var orderCreatedMessage = new OrderCreatedMessageDto {
                     OrderId = orderId,
                     UserId = order.UserId,
-                    CustomerEmail = order.CustomerEmail,
+                    CustomerEmail = order.CustomerEmail, // Include CustomerEmail
                     TotalAmount = order.TotalAmount,
                     Items = order.Items.Select(i => new OrderItemDto {
                         RestaurantId = i.RestaurantId,
@@ -193,13 +192,14 @@ namespace MTOGO.Services.OrderAPI.Services
 
 
 
+
         private async Task PublishOrderCreatedMessage(AddOrderDto order, int orderId) {
             try {
                 var orderCreatedMessage = new OrderCreatedMessageDto {
                     OrderId = orderId,
                     UserId = order.UserId,
+                    CustomerEmail = order.CustomerEmail,
                     TotalAmount = order.TotalAmount,
-                    VATAmount = order.VATAmount,
                     Items = order.Items.Select(i => new OrderItemDto {
                         RestaurantId = i.RestaurantId,
                         MenuItemId = i.MenuItemId,
@@ -209,13 +209,13 @@ namespace MTOGO.Services.OrderAPI.Services
                 };
 
                 string message = JsonConvert.SerializeObject(orderCreatedMessage);
-
                 await _messageBus.PublishMessage("OrderCreatedQueue", message);
                 _logger.LogInformation($"OrderCreated message published for Order ID: {orderId}");
             } catch (Exception ex) {
                 _logger.LogError(ex, $"Failed to publish OrderCreated message for Order ID: {orderId}");
             }
         }
+
 
         private async Task PublishCartRemovalMessage(string userId)
         {

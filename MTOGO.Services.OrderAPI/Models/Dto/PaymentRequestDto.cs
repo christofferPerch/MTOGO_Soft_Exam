@@ -3,6 +3,7 @@
     public class PaymentRequestDto
     {
         public string UserId { get; set; }
+        public string CustomerEmail { get; set; }
         public Guid CorrelationId { get; set; }
         public List<CartItem> Items { get; set; }
         public decimal TotalAmount { get; set; }
