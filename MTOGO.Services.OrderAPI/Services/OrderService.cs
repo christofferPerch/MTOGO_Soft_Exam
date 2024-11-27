@@ -62,7 +62,7 @@ namespace MTOGO.Services.OrderAPI.Services
         #region Payment Methods
         public async Task<PaymentResponseDto> ProcessPayment(PaymentRequestDto paymentRequest) {
             // Pass CustomerEmail when getting cart details
-            var cartDetails = await GetCartDetails(paymentRequest.UserId, paymentRequest.CorrelationId, paymentRequest.CustomerEmail);
+            var cartDetails = await GetCartDetails(paymentRequest.UserId, paymentRequest.CorrelationId);
 
             if (cartDetails == null) {
                 return new PaymentResponseDto {
@@ -93,12 +93,11 @@ namespace MTOGO.Services.OrderAPI.Services
             return paymentResponse;
         }
 
-        public async Task<CartResponseMessageDto?> GetCartDetails(string userId, Guid correlationId, string customerEmail) {
+        public async Task<CartResponseMessageDto?> GetCartDetails(string userId, Guid correlationId) {
             
             var cartRequest = new CartRequestMessageDto {
                 UserId = userId,
                 CorrelationId = correlationId,
-                CustomerEmail = customerEmail 
             };
 
             string cartRequestQueue = "CartRequestQueue";
@@ -116,9 +115,7 @@ namespace MTOGO.Services.OrderAPI.Services
             var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(TimeSpan.FromSeconds(30)));
             if (completedTask == tcs.Task) {
                 var result = tcs.Task.Result;
-
-                
-                result.CustomerEmail = customerEmail;
+              
                 return result;
             } else {
                 _logger.LogWarning("Timeout waiting for cart response.");
