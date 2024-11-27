@@ -74,17 +74,17 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
 
         public async Task<Cart?> GetCart(string userId)
         {
-            try
+            var serializedCart = await _redisCache.GetStringAsync(userId);
+
+            if (string.IsNullOrEmpty(serializedCart))
             {
-                var cartData = await _redisCache.GetStringAsync(userId);
-                return string.IsNullOrEmpty(cartData) ? null : JsonConvert.DeserializeObject<Cart>(cartData);
+                return null;
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error retrieving cart for user {userId}.");
-                throw;
-            }
+
+            return JsonConvert.DeserializeObject<Cart>(serializedCart);
         }
+
+
 
         public async Task<Cart?> CreateCart(Cart cart)
         {
@@ -136,6 +136,55 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
                 throw;
             }
         }
+
+        public async Task<Cart?> SetCart(Cart cart)
+        {
+            try
+            {
+                if (cart == null || string.IsNullOrEmpty(cart.UserId))
+                {
+                    throw new ArgumentException("Invalid cart or user ID.");
+                }
+
+
+                // Retrieve the existing cart from Redis
+                var existingCartData = await _redisCache.GetStringAsync(cart.UserId);
+                Cart existingCart = existingCartData != null
+                    ? JsonConvert.DeserializeObject<Cart>(existingCartData)
+                    : new Cart { UserId = cart.UserId };
+
+                // Merge the items
+                foreach (var newItem in cart.Items)
+                {
+                    var existingItem = existingCart.Items.FirstOrDefault(i => i.MenuItemId == newItem.MenuItemId);
+                    if (existingItem != null)
+                    {
+                        // Update quantity if the item already exists
+                        existingItem.Quantity += newItem.Quantity;
+                    }
+                    else
+                    {
+                        // Add new item
+                        existingCart.Items.Add(newItem);
+                    }
+                }
+
+                // Save the updated cart to Redis
+                var serializedCart = JsonConvert.SerializeObject(existingCart);
+                await _redisCache.SetStringAsync(cart.UserId, serializedCart);
+
+                _logger.LogInformation($"Cart for user {cart.UserId} has been successfully updated.");
+                return existingCart;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error setting cart for user {cart.UserId}.");
+                throw;
+            }
+        }
+
+
+
 
         public async Task ProcessCartRequest(CartRequestMessageDto cartRequest)
         {

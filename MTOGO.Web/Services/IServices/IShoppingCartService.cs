@@ -10,5 +10,6 @@ namespace MTOGO.Web.Services.IServices
         Task<ResponseDto?> RemoveItemFromCartAsync(string userId, int menuItemId);
         Task<ResponseDto?> GetCartAsync(string userId);
         Task<ResponseDto?> ClearCartAsync(string userId);
+        Task<ResponseDto?> SetCart(Cart cart);
     }
 }

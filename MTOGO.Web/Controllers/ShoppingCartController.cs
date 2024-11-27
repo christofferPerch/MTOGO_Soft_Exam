@@ -64,6 +64,50 @@ namespace MTOGO.Web.Controllers
             });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SetCart([FromBody] Cart cart)
+        {
+            if (cart == null || string.IsNullOrEmpty(cart.UserId) || cart.Items == null || !cart.Items.Any())
+            {
+                return BadRequest(new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Invalid cart or missing user ID/items."
+                });
+            }
+
+            try
+            {
+                var updatedCart = await _shoppingCartService.SetCart(cart);
+
+                if (updatedCart == null)
+                {
+                    return Ok(new ResponseDto
+                    {
+                        IsSuccess = true,
+                        Message = "Cart was empty and has been removed."
+                    });
+                }
+
+                return Ok(new ResponseDto
+                {
+                    IsSuccess = true,
+                    Result = updatedCart,
+                    Message = "Cart updated successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = $"An error occurred while setting the cart. {ex.Message}"
+                });
+            }
+        }
+
+
+
 
 
         [HttpPost("add")]

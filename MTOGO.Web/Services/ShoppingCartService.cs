@@ -53,5 +53,15 @@ namespace MTOGO.Web.Services
                 Url = $"{SD.ShoppingCartAPIBase}/api/shoppingcart/clear?userId={userId}"
             });
         }
+
+        public async Task<ResponseDto?> SetCart(Cart cart)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = SD.ApiType.POST,
+                Url = $"{SD.ShoppingCartAPIBase}/api/shoppingcart/set",
+                Data = cart
+            });
+        }
     }
 }
