@@ -71,6 +71,20 @@ namespace MTOGO.Web.Controllers
             return RedirectToAction("Search");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetCartDetails(int restaurantId, int menuItemId)
+        {
+            var response = await _restaurantService.GetCartDetailsAsync(restaurantId, menuItemId);
+            if (response != null && response.IsSuccess && response.Result != null)
+            {
+                var cartDetails = JsonConvert.DeserializeObject<CartDetailsDto>(response.Result.ToString());
+                return Json(cartDetails); // Return as JSON, can be adjusted as needed for your use case
+            }
+
+            return Json(new { success = false, message = response?.Message ?? "Failed to load cart details." });
+        }
+
+
 
     }
 }

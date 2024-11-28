@@ -1,0 +1,67 @@
+﻿<div class="container mt-5">
+    <h2 class="text-center mb-4">Checkout</h2>
+
+    <!-- Cart Items Section -->
+    <div class="cart-items mb-4">
+        <h4 class="mb-3">Your Order</h4>
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="row g-0">
+                            <!-- Image Section -->
+                            <div class="col-md-4">
+                                <img src="/images/restaurant.jpg" class="img-fluid rounded-start" alt="@item.MenuItemId">
+                            </div>
+                            <!-- Details Section -->
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">@item.MenuItemId</h5>
+                                    <p class="card-text">Quantity: <strong>@item.Quantity</strong></p>
+                                    <p class="card-text">
+                                        <small class="text-muted">Price per item: $@item.Price</small>
+                                    </p>
+                                    <p class="card-text">
+                                        Total: <strong>$@(item.Price * item.Quantity)</strong>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+    </div>
+
+
+
+    <!-- Payment Section -->
+    <div class="payment-details">
+        <h4 class="mb-3">Payment Details</h4>
+        <form asp-action="ProcessPayment" method="post" class="needs-validation" novalidate>
+            <input type="hidden" name="userId" value="@User.FindFirst("UserId")?.Value" />
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="cardNumber" class="form-label">Card Number</label>
+                    <input type="text" class="form-control" id="cardNumber" name="cardNumber" required />
+                    <div class="invalid-feedback">Card number is required.</div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="expiryDate" class="form-label">Expiry Date</label>
+                    <input type="text" class="form-control" id="expiryDate" name="expiryDate" required />
+                    <div class="invalid-feedback">Expiry date is required.</div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="cvv" class="form-label">CVV</label>
+                    <input type="text" class="form-control" id="cvv" name="cvv" required />
+                    <div class="invalid-feedback">CVV is required.</div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-3">Submit Order</button>
+        </form>
+    </div>
+</div>

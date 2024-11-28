@@ -10,5 +10,7 @@ namespace MTOGO.Web.Services.IServices
 
         Task<ResponseDto?> UniqueCities();
         Task<ResponseDto?> GetRestaurantByIdAsync(int id);
+        Task<ResponseDto?> GetCartDetailsAsync(int restaurantId, int menuItemId);
+
     }
 }

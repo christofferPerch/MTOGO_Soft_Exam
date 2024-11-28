@@ -85,7 +85,8 @@
                 <!-- Menu Item Details -->
                 <div class="d-flex align-items-center mb-4">
                     <div>
-                        <h6 id="menuItemName" class="mb-1"></h6>
+                        <!-- Visible Field for Displaying the Name -->
+                        <h6 id="menuItemNameDisplay" class="mb-1"></h6>
                         <p id="menuItemDescription" class="text-muted small mb-0"></p>
                         <p id="menuItemPrice" class="fw-bold text-primary mt-2">$0.00</p>
                     </div>
@@ -93,9 +94,12 @@
 
                 <!-- Quantity Form -->
                 <form id="quantityForm">
+                    <!-- Hidden Input Fields -->
                     <input type="hidden" id="menuItemId" name="menuItemId">
                     <input type="hidden" id="restaurantId" name="restaurantId">
                     <input type="hidden" id="price" name="price">
+                    <input type="hidden" id="menuItemName" name="menuItemName">
+
                     <div class="mb-3">
                         <label for="quantity" class="form-label">Quantity</label>
                         <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1">
@@ -111,6 +115,7 @@
         </div>
     </div>
 </div>
+
 
 
 <script src="~/js/restaurant-page.js"></script>

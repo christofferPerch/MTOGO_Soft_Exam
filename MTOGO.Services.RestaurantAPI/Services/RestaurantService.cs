@@ -314,5 +314,39 @@ namespace MTOGO.Services.RestaurantAPI.Services
             }
         }
 
+        public async Task<CartDetailsDto?> GetCartDetails(int restaurantId, int menuItemId)
+        {
+            try
+            {
+                // SQL query to get the MenuItem details
+                var sql = @"
+                        SELECT Name, Image
+                        FROM MenuItem
+                        WHERE RestaurantId = @RestaurantId AND Id = @MenuItemId";
+
+                // Define parameters
+                var parameters = new
+                {
+                    RestaurantId = restaurantId,
+                    MenuItemId = menuItemId
+                };
+
+                // Use GetById method to fetch the result
+                var cartDetails = await _dataAccess.GetById<CartDetailsDto>(sql, parameters);
+
+                // If no results are found, log a warning and return null
+                if (cartDetails == null)
+                {
+                    _logger.LogWarning($"No menu item found for RestaurantId {restaurantId} and MenuItemId {menuItemId}");
+                }
+
+                return cartDetails;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching cart details");
+                throw;
+            }
+        }
     }
 }

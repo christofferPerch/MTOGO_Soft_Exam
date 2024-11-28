@@ -266,6 +266,39 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
             }
         }
 
+        [HttpGet("cartDetails")]
+        public async Task<IActionResult> GetCartDetails([FromQuery] int restaurantId, [FromQuery] int menuItemId)
+        {
+            try
+            {
+                if (restaurantId <= 0 || menuItemId <= 0)
+                {
+                    _response.IsSuccess = false;
+                    _response.Message = "Invalid RestaurantId or MenuItemId.";
+                    return BadRequest(_response);
+                }
+
+                var cartDetails = await _restaurantService.GetCartDetails(restaurantId, menuItemId);
+                if (cartDetails == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.Message = "Menu item not found for the provided RestaurantId and MenuItemId.";
+                    return NotFound(_response);
+                }
+
+                _response.Result = cartDetails;
+                _response.Message = "Cart details retrieved successfully.";
+                _response.IsSuccess = true;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = $"An error occurred while retrieving cart details: {ex.Message}";
+                return StatusCode(500, _response);
+            }
+        }
+
 
         #endregion
     }

@@ -23,13 +23,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const name = this.getAttribute('data-name');
             const description = this.getAttribute('data-description');
 
-            // Populate modal hidden fields
+            // Populate modal hidden fields correctly
             document.getElementById('menuItemId').value = menuItemId;
             document.getElementById('restaurantId').value = restaurantId;
             document.getElementById('price').value = price;
+            document.getElementById('menuItemName').value = name; // Set value, not textContent
 
             // Populate modal visible fields
-            document.getElementById('menuItemName').textContent = name;
+            document.getElementById('menuItemNameDisplay').textContent = name; // Use a separate display element
             document.getElementById('menuItemDescription').textContent = description;
             document.getElementById('menuItemPrice').textContent = `$${parseFloat(price).toFixed(2)}`;
 
@@ -38,13 +39,16 @@ document.addEventListener('DOMContentLoaded', function () {
             quantityModal.show();
         });
     });
-
+   
     // Handle Confirm Add to Cart button click
     document.getElementById('confirmAddToCart').addEventListener('click', function () {
         const menuItemId = document.getElementById('menuItemId').value;
         const restaurantId = document.getElementById('restaurantId').value;
         const price = document.getElementById('price').value;
         const quantity = document.getElementById('quantity').value;
+        const name = document.getElementById('menuItemName').value; // Use the correct hidden field value
+
+        console.log('Cart item name:', name); // Debugging log
 
         if (quantity < 1) {
             displayMessage('Please enter a valid quantity.', false);
@@ -60,9 +64,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     menuItemId: parseInt(menuItemId, 10),
                     quantity: parseInt(quantity, 10),
                     price: parseFloat(price),
+                    name: name, // Ensure this is correctly populated
                 },
             ],
         };
+
+        console.log('Cart object:', cart); // Debugging log
 
         // Send data to the server
         fetch('/ShoppingCart/SetCart', {
@@ -70,18 +77,17 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(cart),
+            body: JSON.stringify(cart), // Confirm the name field is in this object
         })
             .then((response) => {
                 if (response.ok) {
                     displayMessage('Item added to cart successfully!', true);
-                    fetchCartItemCount(); // Update cart item count in the navbar
+                    fetchCartItemCount();
                 } else {
                     response.json().then(data => {
                         displayMessage(data.message || 'Error adding item to cart.', false);
                     });
                 }
-                // Close the modal
                 bootstrap.Modal.getInstance(document.getElementById('quantityModal')).hide();
             })
             .catch((error) => {
@@ -89,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 displayMessage('An error occurred while adding the item to the cart.', false);
             });
     });
+
 
     // Fetch the cart item count and update the badge
     function fetchCartItemCount() {

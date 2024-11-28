@@ -41,10 +41,11 @@
         $.ajax({
             url: `/ShoppingCart/GetCart?userId=${userId}`,
             method: "GET",
-            success: function (response) {
+            success: async function (response) {
                 console.log("Fetched cart items:", response);
                 if (response.items && response.items.length > 0) {
-                    populateCart(response.items);
+                    const enrichedItems = await enrichCartItems(response.items);
+                    populateCart(enrichedItems);
                     updateTotalPrice(response.items);
                 } else {
                     handleEmptyCart();
@@ -57,29 +58,70 @@
         });
     }
 
+    // Enrich cart items with Name using GetCartDetails API
+    async function enrichCartItems(items) {
+        const promises = items.map(async (item) => {
+            try {
+                const result = await $.ajax({
+                    url: `/Restaurant/GetCartDetails`,
+                    method: "GET",
+                    data: {
+                        restaurantId: item.restaurantId,
+                        menuItemId: item.menuItemId,
+                    },
+                });
+                if (result && result.name) {
+                    item.name = result.name;
+                    item.image = result.image || null; // Use null if no image
+                } else {
+                    item.name = "Unknown Item";
+                }
+            } catch (error) {
+                console.error(`Error fetching details for MenuItemId: ${item.menuItemId}`, error);
+                item.name = "Unknown Item";
+            }
+            return item;
+        });
+
+        return Promise.all(promises);
+    }
+
     // Populate cart items in the modal
     function populateCart(items) {
         let html = `<div class="cart-item-list">`;
-        items.forEach(item => {
+        items.forEach((item) => {
             html += `
-                <div class="cart-item">
-                    <span class="cart-item-name">Menu Item ID: ${item.menuItemId}</span>
-                    <div class="quantity-control">
-                        <button onclick="decreaseQuantity('${userId}', ${item.menuItemId})">-</button>
-                        <span id="quantity-${item.menuItemId}">${item.quantity}</span>
-                        <button onclick="increaseQuantity('${userId}', ${item.menuItemId})">+</button>
-                        <button onclick="removeCartItem('${userId}', ${item.menuItemId})"><i class="bi bi-trash"></i></button>
+            <div class="cart-item d-flex align-items-center mb-3">
+                <!-- Image -->
+                <div class="cart-item-image me-3">
+                    <img src="/images/restaurant.jpg" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                </div>
+                <!-- Name and Quantity Controls -->
+                <div class="cart-item-details flex-grow-1">
+                    <span class="cart-item-name fw-bold">${item.name}</span>
+                    <div class="quantity-control mt-2">
+                        <button onclick="decreaseQuantity('${userId}', ${item.menuItemId})" class="btn btn-sm btn-secondary me-1">-</button>
+                        <span id="quantity-${item.menuItemId}" class="px-2">${item.quantity}</span>
+                        <button onclick="increaseQuantity('${userId}', ${item.menuItemId})" class="btn btn-sm btn-secondary ms-1">+</button>
+                        <button onclick="removeCartItem('${userId}', ${item.menuItemId})" class="btn btn-sm btn-danger ms-3">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </div>
-                    <span class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</span>
-                </div>`;
+                </div>
+                <!-- Price -->
+                <div class="cart-item-price text-end ms-3">
+                    <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+            </div>`;
         });
         html += `</div>`;
         cartItemsContainer.html(html);
     }
 
+
     // Update total price display
     function updateTotalPrice(items) {
-        const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
         totalPrice.text(`Total: $${total.toFixed(2)}`);
         cartItemCount.text(items.length); // Update cart item count badge
     }
@@ -88,7 +130,7 @@
     window.removeCartItem = function (userId, menuItemId) {
         const cart = {
             userId: userId,
-            items: [{ menuItemId: menuItemId, quantity: 0 }] // Set quantity to 0 to remove
+            items: [{ menuItemId: menuItemId, quantity: 0 }], // Set quantity to 0 to remove
         };
 
         $.ajax({
@@ -103,7 +145,7 @@
             },
             error: function (err) {
                 console.error("Error removing cart item:", err);
-            }
+            },
         });
     };
 
@@ -112,7 +154,7 @@
         const currentQuantity = parseInt($(`#quantity-${menuItemId}`).text(), 10);
         const cart = {
             userId: userId,
-            items: [{ menuItemId: menuItemId, quantity: currentQuantity + 1 }]
+            items: [{ menuItemId: menuItemId, quantity: currentQuantity + 1 }],
         };
 
         $.ajax({
@@ -126,7 +168,7 @@
             },
             error: function (err) {
                 console.error("Error increasing quantity:", err);
-            }
+            },
         });
     };
 
@@ -136,7 +178,7 @@
         if (currentQuantity > 1) {
             const cart = {
                 userId: userId,
-                items: [{ menuItemId: menuItemId, quantity: currentQuantity - 1 }]
+                items: [{ menuItemId: menuItemId, quantity: currentQuantity - 1 }],
             };
 
             $.ajax({
@@ -150,7 +192,7 @@
                 },
                 error: function (err) {
                     console.error("Error decreasing quantity:", err);
-                }
+                },
             });
         } else {
             // If quantity is 1, removing the item instead
@@ -179,13 +221,13 @@
             error: function (err) {
                 console.error("Error fetching cart item count:", err);
                 cartItemCount.text(0); // Default to 0 on error
-            }
+            },
         });
     }
 
     // Handle when the cart is empty
     function handleEmptyCart() {
-        cartItemsContainer.html('<p>Your cart is empty.</p>');
+        cartItemsContainer.html("<p>Your cart is empty.</p>");
         totalPrice.text("Total: $0.00");
         cartItemCount.text(0); // Reset badge count
     }
