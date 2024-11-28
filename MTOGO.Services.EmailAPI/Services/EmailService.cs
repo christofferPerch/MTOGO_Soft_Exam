@@ -20,9 +20,9 @@ namespace MTOGO.Services.EmailAPI.Services {
 
         public async Task<bool> SendOrderCreatedEmailAsync(OrderCreatedMessageDto order) {
             try {
-                var testKey = _configuration["Mailgun:TestKey"];
-                var domain = _configuration["Mailgun:Domain"];
-                var fromEmail = _configuration["Mailgun:FromEmail"];
+                var testKey = Environment.GetEnvironmentVariable("MAILGUN_API_KEY");
+                var domain = Environment.GetEnvironmentVariable("MAILGUN_DOMAIN");
+                var fromEmail = Environment.GetEnvironmentVariable("MAILGUN_FROM_EMAIL");
 
                 var client = new RestClient(new RestClientOptions {
                     BaseUrl = new Uri($"https://api.mailgun.net/v3/{domain}"),
