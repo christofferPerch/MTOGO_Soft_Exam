@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MTOGO.Global\MTOGO.Global.csproj" />
     <ProjectReference Include="..\MTOGO.MessageBus\MTOGO.MessageBus.csproj" />
     <ProjectReference Include="..\MTOGO.Services.DataAccess\MTOGO.Services.DataAccess.csproj" />
   </ItemGroup>
