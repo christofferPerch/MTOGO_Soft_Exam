@@ -26,7 +26,6 @@
 
     // Close modal when clicking outside the modal content
     $(document).on("mousedown", function (event) {
-        // Only close if modal is open and click is outside modal content
         if ($("#shoppingCartModal").hasClass("show") && !$(event.target).closest(".modal-content").length) {
             window.closeCartModal();
         }
@@ -43,7 +42,7 @@
             url: `/ShoppingCart/GetCart?userId=${userId}`,
             method: "GET",
             success: function (response) {
-                console.log("API Response:", response);
+                console.log("Fetched cart items:", response);
                 if (response.items && response.items.length > 0) {
                     populateCart(response.items);
                     updateTotalPrice(response.items);
@@ -52,7 +51,7 @@
                 }
             },
             error: function (err) {
-                console.error("Error fetching cart items", err);
+                console.error("Error fetching cart items:", err);
                 handleEmptyCart(); // Gracefully handle errors
             }
         });
@@ -66,10 +65,10 @@
                 <div class="cart-item">
                     <span class="cart-item-name">Menu Item ID: ${item.menuItemId}</span>
                     <div class="quantity-control">
-                        <button onclick="decreaseQuantity(${item.menuItemId})">-</button>
-                        <span>${item.quantity}</span>
-                        <button onclick="increaseQuantity(${item.menuItemId})">+</button>
-                        <button onclick="removeCartItem(${item.menuItemId})"><i class="bi bi-trash"></i></button>
+                        <button onclick="decreaseQuantity('${userId}', ${item.menuItemId})">-</button>
+                        <span id="quantity-${item.menuItemId}">${item.quantity}</span>
+                        <button onclick="increaseQuantity('${userId}', ${item.menuItemId})">+</button>
+                        <button onclick="removeCartItem('${userId}', ${item.menuItemId})"><i class="bi bi-trash"></i></button>
                     </div>
                     <span class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</span>
                 </div>`;
@@ -86,23 +85,77 @@
     }
 
     // Handle removing an item from the cart
-    window.removeCartItem = function (itemId) {
-        if (!userId) {
-            console.error("User ID is missing.");
-            return;
-        }
+    window.removeCartItem = function (userId, menuItemId) {
+        const cart = {
+            userId: userId,
+            items: [{ menuItemId: menuItemId, quantity: 0 }] // Set quantity to 0 to remove
+        };
 
         $.ajax({
-            url: `/ShoppingCart/RemoveItemFromCart?userId=${userId}&menuItemId=${itemId}`,
-            method: "DELETE",
+            url: "/ShoppingCart/SetCart",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(cart),
             success: function () {
+                console.log(`Item with MenuItemId ${menuItemId} removed successfully.`);
                 fetchCartItems(); // Refresh the cart items
                 fetchCartItemCount(); // Update badge count after removal
             },
             error: function (err) {
-                console.error("Error removing cart item", err);
+                console.error("Error removing cart item:", err);
             }
         });
+    };
+
+    // Increase quantity
+    window.increaseQuantity = function (userId, menuItemId) {
+        const currentQuantity = parseInt($(`#quantity-${menuItemId}`).text(), 10);
+        const cart = {
+            userId: userId,
+            items: [{ menuItemId: menuItemId, quantity: currentQuantity + 1 }]
+        };
+
+        $.ajax({
+            url: "/ShoppingCart/SetCart",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(cart),
+            success: function () {
+                console.log(`Quantity increased for MenuItemId: ${menuItemId}`);
+                fetchCartItems(); // Refresh the cart items
+            },
+            error: function (err) {
+                console.error("Error increasing quantity:", err);
+            }
+        });
+    };
+
+    // Decrease quantity
+    window.decreaseQuantity = function (userId, menuItemId) {
+        const currentQuantity = parseInt($(`#quantity-${menuItemId}`).text(), 10);
+        if (currentQuantity > 1) {
+            const cart = {
+                userId: userId,
+                items: [{ menuItemId: menuItemId, quantity: currentQuantity - 1 }]
+            };
+
+            $.ajax({
+                url: "/ShoppingCart/SetCart",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(cart),
+                success: function () {
+                    console.log(`Quantity decreased for MenuItemId: ${menuItemId}`);
+                    fetchCartItems(); // Refresh the cart items
+                },
+                error: function (err) {
+                    console.error("Error decreasing quantity:", err);
+                }
+            });
+        } else {
+            // If quantity is 1, removing the item instead
+            removeCartItem(userId, menuItemId);
+        }
     };
 
     // Fetch the cart item count
@@ -124,7 +177,7 @@
                 }
             },
             error: function (err) {
-                console.error("Error fetching cart item count", err);
+                console.error("Error fetching cart item count:", err);
                 cartItemCount.text(0); // Default to 0 on error
             }
         });

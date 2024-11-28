@@ -137,7 +137,7 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
             }
         }
 
-        public async Task<Cart?> SetCart(Cart cart)
+        /*public async Task<Cart?> SetCart(Cart cart)
         {
             try
             {
@@ -181,7 +181,67 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
                 _logger.LogError(ex, $"Error setting cart for user {cart.UserId}.");
                 throw;
             }
+        }*/
+
+        public async Task<Cart?> SetCart(Cart cart)
+        {
+            try
+            {
+                if (cart == null || string.IsNullOrEmpty(cart.UserId))
+                {
+                    throw new ArgumentException("Invalid cart or user ID.");
+                }
+
+                // Retrieve the existing cart from Redis
+                var existingCartData = await _redisCache.GetStringAsync(cart.UserId);
+                Cart existingCart = existingCartData != null
+                    ? JsonConvert.DeserializeObject<Cart>(existingCartData)
+                    : new Cart { UserId = cart.UserId };
+
+                // Update the quantity for the specific items
+                foreach (var newItem in cart.Items)
+                {
+                    var existingItem = existingCart.Items.FirstOrDefault(i => i.MenuItemId == newItem.MenuItemId);
+                    if (existingItem != null)
+                    {
+                        // Set the quantity to the new value
+                        existingItem.Quantity = newItem.Quantity;
+
+                        // Remove the item if quantity is zero or less
+                        if (existingItem.Quantity <= 0)
+                        {
+                            existingCart.Items.Remove(existingItem);
+                        }
+                    }
+                    else if (newItem.Quantity > 0)
+                    {
+                        // Add the new item if it doesn't already exist and the quantity is greater than 0
+                        existingCart.Items.Add(newItem);
+                    }
+                }
+
+                // Save the updated cart to Redis
+                if (!existingCart.Items.Any())
+                {
+                    // If the cart is empty, remove it
+                    await _redisCache.RemoveAsync(cart.UserId);
+                    _logger.LogInformation($"Cart for user {cart.UserId} has been removed as it is empty.");
+                    return null;
+                }
+
+                var serializedCart = JsonConvert.SerializeObject(existingCart);
+                await _redisCache.SetStringAsync(cart.UserId, serializedCart);
+
+                _logger.LogInformation($"Cart for user {cart.UserId} has been successfully updated.");
+                return existingCart;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error setting cart for user {cart.UserId}.");
+                throw;
+            }
         }
+
 
 
 

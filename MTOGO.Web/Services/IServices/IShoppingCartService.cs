@@ -11,5 +11,6 @@ namespace MTOGO.Web.Services.IServices
         Task<ResponseDto?> GetCartAsync(string userId);
         Task<ResponseDto?> ClearCartAsync(string userId);
         Task<ResponseDto?> SetCart(Cart cart);
+
     }
 }

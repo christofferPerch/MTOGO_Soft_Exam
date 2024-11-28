@@ -108,8 +108,6 @@ namespace MTOGO.Web.Controllers
 
 
 
-
-
         [HttpPost("add")]
         public async Task<IActionResult> AddItemToCart([FromBody] Cart cart)
         {
@@ -165,5 +163,6 @@ namespace MTOGO.Web.Controllers
             }
             return BadRequest(response);
         }
+
     }
 }
