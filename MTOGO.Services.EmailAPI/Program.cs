@@ -4,8 +4,11 @@ using MTOGO.MessageBus;
 using Microsoft.OpenApi.Models;
 using MTOGO.Services.EmailAPI.Services.IServices;
 using MTOGO.Services.EmailAPI.Services;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Env.Load();
 
 // Register services
 builder.Services.AddHostedService<EmailQueueListener>(); // Queue listener background service
