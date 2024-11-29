@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using MTOGO.Web.Models.Auth;
+using MTOGO.Web.Models.Order;
 
 namespace MTOGO.Web.Controllers
 {
@@ -13,11 +14,13 @@ namespace MTOGO.Web.Controllers
     {
         private readonly IAuthService _authService;
         private readonly ITokenProvider _tokenProvider;
+        private readonly IOrderService _orderService;
 
-        public AuthController(IAuthService authService, ITokenProvider tokenProvider)
+        public AuthController(IAuthService authService, ITokenProvider tokenProvider, IOrderService orderService)
         {
             _authService = authService;
             _tokenProvider = tokenProvider;
+            _orderService = orderService;
         }
 
         [HttpGet]
@@ -205,5 +208,46 @@ namespace MTOGO.Web.Controllers
             var principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetActiveOrders()
+        {
+            var userId = User.FindFirst("UserId")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Json(new { success = false, message = "User ID is required." });
+            }
+
+            var response = await _orderService.GetActiveOrders(userId);
+            if (response != null && response.IsSuccess && response.Result != null)
+            {
+                var activeOrders = JsonConvert.DeserializeObject<List<OrderDto>>(response.Result.ToString());
+                return Json(new { success = true, data = activeOrders });
+            }
+
+            return Json(new { success = false, message = response?.Message ?? "Failed to load active orders." });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrderHistory()
+        {
+            var userId = User.FindFirst("UserId")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Json(new { success = false, message = "User ID is required." });
+            }
+
+            var response = await _orderService.GetOrderHistory(userId);
+            if (response != null && response.IsSuccess && response.Result != null)
+            {
+                var orderHistory = JsonConvert.DeserializeObject<List<OrderDto>>(response.Result.ToString());
+                return Json(new { success = true, data = orderHistory });
+            }
+
+            return Json(new { success = false, message = response?.Message ?? "Failed to load order history." });
+        }
+
     }
 }

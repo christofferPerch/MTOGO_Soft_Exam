@@ -49,6 +49,14 @@ namespace MTOGO.Web.Services
             });
         }
 
+        public async Task<ResponseDto?> GetCartDetailsAsync(int restaurantId, int menuItemId)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = SD.ApiType.GET,
+                Url = $"{SD.RestaurantAPIBase}/api/restaurant/cartDetails?restaurantId={restaurantId}&menuItemId={menuItemId}"
+            });
+        }
 
 
     }

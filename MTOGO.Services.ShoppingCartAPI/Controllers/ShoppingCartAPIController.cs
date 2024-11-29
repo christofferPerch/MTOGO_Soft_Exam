@@ -58,6 +58,48 @@ namespace MTOGO.Services.ShoppingCartAPI.Controllers
             }
         }
 
+        [HttpPost("set")]
+        public async Task<IActionResult> SetCart([FromBody] Cart cart)
+        {
+            if (cart == null || string.IsNullOrEmpty(cart.UserId))
+            {
+                return BadRequest(new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Invalid cart or user ID."
+                });
+            }
+
+            try
+            {
+                var updatedCart = await _cartService.SetCart(cart);
+
+                if (updatedCart == null)
+                {
+                    return Ok(new ResponseDto
+                    {
+                        IsSuccess = true,
+                        Message = "Cart was empty and has been removed."
+                    });
+                }
+
+                return Ok(new ResponseDto
+                {
+                    IsSuccess = true,
+                    Result = updatedCart,
+                    Message = "Cart updated successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = $"An error occurred while setting the cart. {ex.Message}"
+                });
+            }
+        }
+
 
         [HttpPost("create")]
         public async Task<IActionResult> CreateCart([FromBody] Cart cart)
@@ -161,5 +203,6 @@ namespace MTOGO.Services.ShoppingCartAPI.Controllers
                 return StatusCode(500, _response);
             }
         }
+
     }
 }

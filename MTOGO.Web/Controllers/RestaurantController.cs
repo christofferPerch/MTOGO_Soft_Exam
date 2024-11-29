@@ -35,15 +35,16 @@ namespace MTOGO.Web.Controllers
             if (response != null && response.IsSuccess && response.Result != null)
             {
                 var restaurants = JsonConvert.DeserializeObject<List<RestaurantDto>>(response.Result.ToString());
-                ViewBag.SelectedCity = location; // Pass the selected city to the view for display
+
+                var cityName = restaurants.FirstOrDefault()?.Address?.City ?? location;
+                ViewBag.SelectedCity = cityName; 
                 return View(restaurants);
             }
 
             TempData["error"] = response?.Message ?? "No restaurants found.";
-            return View(new List<RestaurantDto>()); // Return empty list if no results found
+            ViewBag.SelectedCity = location; 
+            return View(new List<RestaurantDto>()); 
         }
-
-
 
         [HttpGet]
         public async Task<IActionResult> UniqueCities()
@@ -70,6 +71,20 @@ namespace MTOGO.Web.Controllers
             TempData["error"] = response?.Message ?? "Failed to load restaurant details.";
             return RedirectToAction("Search");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCartDetails(int restaurantId, int menuItemId)
+        {
+            var response = await _restaurantService.GetCartDetailsAsync(restaurantId, menuItemId);
+            if (response != null && response.IsSuccess && response.Result != null)
+            {
+                var cartDetails = JsonConvert.DeserializeObject<CartDetailsDto>(response.Result.ToString());
+                return Json(cartDetails); // Return as JSON, can be adjusted as needed for your use case
+            }
+
+            return Json(new { success = false, message = response?.Message ?? "Failed to load cart details." });
+        }
+
 
 
     }

@@ -14,31 +14,6 @@ namespace MTOGO.Services.ReviewAPI.Services {
             _logger = logger;
         }
 
-        public async Task<int> AddDeliveryReviewAsync(DeliveryReviewDto deliveryReviewDto) {
-            try {
-                
-                var sql = @"
-                    INSERT INTO DeliveryReview (OrderId, CustomerId, DeliveryAgentId, DeliveryExperienceRating, Comments, ReviewTimestamp)
-                    VALUES (@OrderId, @CustomerId, @DeliveryAgentId, @DeliveryExperienceRating, @Comments, @ReviewTimestamp);
-                    SELECT CAST(SCOPE_IDENTITY() as int);";
-
-                var parameters = new {
-                    deliveryReviewDto.OrderId,
-                    deliveryReviewDto.CustomerId,
-                    deliveryReviewDto.DeliveryAgentId,
-                    deliveryReviewDto.DeliveryExperienceRating,
-                    deliveryReviewDto.Comments,
-                    ReviewTimestamp = DateTime.Now
-                };
-
-                var id = await _dataAccess.InsertAndGetId<int>(sql, parameters);
-                return id;
-            } catch (Exception ex) {
-                _logger.LogError(ex, "Error adding delivery review.");
-                throw;
-            }
-        }
-
         public async Task<int> AddRestaurantReviewAsync(RestaurantReviewDto restaurantReviewDto) {
             try {
                 var sql = @"
@@ -61,17 +36,6 @@ namespace MTOGO.Services.ReviewAPI.Services {
             }
         }
 
-        public async Task<bool> DeleteDeliveryReviewAsync(int id) {
-            try {
-                var sql = "DELETE FROM DeliveryReview WHERE Id = @Id;";
-                var rowsAffected = await _dataAccess.Delete(sql, new { Id = id });
-                return rowsAffected > 0;
-            } catch (Exception ex) {
-                _logger.LogError(ex, $"Error deleting delivery review with ID {id}.");
-                throw;
-            }
-        }
-
         public async Task<bool> DeleteRestaurantReviewAsync(int id) {
             try {
                 var sql = "DELETE FROM RestaurantReview WHERE Id = @Id;";
@@ -81,11 +45,6 @@ namespace MTOGO.Services.ReviewAPI.Services {
                 _logger.LogError(ex, $"Error deleting restaurant review with ID {id}.");
                 throw;
             }
-        }
-
-        public async Task<DeliveryReview?> GetDeliveryReviewAsync(int id) {
-            var sql = "SELECT * FROM DeliveryReview WHERE Id = @Id;";
-            return await _dataAccess.GetById<DeliveryReview>(sql, new { Id = id });
         }
 
         public async Task<RestaurantReview?> GetRestaurantReviewAsync(int id) {

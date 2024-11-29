@@ -286,6 +286,37 @@ namespace MTOGO.Services.OrderAPI.Services
             }
         }
 
+        public async Task<List<OrderDto>> GetActiveOrders(string userId)
+        {
+            var sql = @"
+                    SELECT o.Id, o.UserId, o.DeliveryAgentId, o.TotalAmount, o.VATAmount, 
+                           o.OrderPlacedTimestamp, o.OrderStatusId, 
+                           oi.Id as ItemId, oi.OrderId, oi.RestaurantId, oi.MenuItemId, 
+                           oi.Quantity, oi.Price
+                    FROM [Order] o
+                    LEFT JOIN [OrderItem] oi ON o.Id = oi.OrderId
+                    WHERE o.UserId = @UserId AND o.OrderStatusId IN (0, 1, 2)";
+
+            var orders = await _dataAccess.GetAll<OrderDto>(sql, new { UserId = userId });
+
+            return orders;
+        }
+
+        public async Task<List<OrderDto>> GetOrderHistory(string userId)
+        {
+            var sql = @"
+                    SELECT o.Id, o.UserId, o.DeliveryAgentId, o.TotalAmount, o.VATAmount, 
+                           o.OrderPlacedTimestamp, o.OrderStatusId, 
+                           oi.Id as ItemId, oi.OrderId, oi.RestaurantId, oi.MenuItemId, 
+                           oi.Quantity, oi.Price
+                    FROM [Order] o
+                    LEFT JOIN [OrderItem] oi ON o.Id = oi.OrderId
+                    WHERE o.UserId = @UserId AND o.OrderStatusId = 3";
+
+            var orders = await _dataAccess.GetAll<OrderDto>(sql, new { UserId = userId });
+
+            return orders;
+        }
         #endregion
 
     }

@@ -6,15 +6,14 @@
 
 <input type="hidden" id="userId" value="@User.FindFirst("UserId")?.Value" />
 <div class="profile-container">
-    <!-- Profile header and tab navigation -->
     <h1>Profile</h1>
     <nav class="profile-tabs">
         <a href="#" class="tab-link active" data-tab="personal-info">Personal Information</a>
+        <a href="#" class="tab-link" data-tab="active-orders">Active Orders</a>
         <a href="#" class="tab-link" data-tab="order-history">Order History</a>
         <a href="#" class="tab-link" data-tab="settings">Settings</a>
     </nav>
 
-    <!-- Personal Information Section -->
     <div class="tab-content" id="personal-info">
         <h2>Personal Information</h2>
         <div class="setting-item">
@@ -31,13 +30,21 @@
         </div>
     </div>
 
-    <!-- Order History Section -->
-    <div class="tab-content" id="order-history" style="display: none;">
-        <h2>Order History</h2>
-        <p>Order history content goes here.</p>
+    <div class="tab-content" id="active-orders" style="display: none;">
+        <h2>Active Orders</h2>
+        <div id="activeOrdersContainer" class="order-container">
+            <p>Loading...</p>
+        </div>
     </div>
 
-    <!-- Settings Section -->
+    <div class="tab-content" id="order-history" style="display: none;">
+        <h2>Order History</h2>
+        <div id="orderHistoryContainer" class="order-container">
+            <p>Loading...</p>
+        </div>
+    </div>
+
+
     <div class="tab-content" id="settings" style="display: none;">
         <h2>Settings</h2>
         <div class="setting-item">
@@ -75,7 +82,6 @@
     </div>
 </div>
 
-<!-- Edit Modal -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -97,7 +103,6 @@
     </div>
 </div>
 
-<!-- Confirm Delete Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">

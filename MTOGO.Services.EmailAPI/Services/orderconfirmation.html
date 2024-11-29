@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #4CAF50;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+            .header h1 {
+                margin: 0;
+                font-size: 24px;
+            }
+
+        .content {
+            padding: 20px;
+        }
+
+            .content h2 {
+                font-size: 20px;
+                margin-bottom: 10px;
+            }
+
+        .order-details {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+            .order-details th, .order-details td {
+                border: 1px solid #dddddd;
+                padding: 8px 12px;
+                text-align: left;
+            }
+
+            .order-details th {
+                background-color: #f8f8f8;
+            }
+
+        .footer {
+            background-color: #f4f4f4;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #666666;
+        }
+
+            .footer a {
+                color: #4CAF50;
+                text-decoration: none;
+            }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>Thank You for Your Order, {{Name}}!</h1>
+        </div>
+        <div class="content">
+            <h2>Your Order Details</h2>
+            <table class="order-details">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{Name}}</td>
+                        <td>${{Price}}</td>
+                        <td>{{Quantity}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 20px;">
+                We appreciate your business and hope you enjoy your purchase! If you have any questions, feel free to <a href="mailto:support@company.com">contact us</a>.
+            </p>
+        </div>
+        <div class="footer">
+            &copy; 2024 Your Company Name. All rights reserved. <br>
+            <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -5,7 +5,7 @@
 }
 
 function displayMessage(message, isSuccess) {
-    console.log("Displaying message:", message); 
+    console.log("Displaying message:", message);
     const alertType = isSuccess ? 'alert-success' : 'alert-danger';
     const messageHtml = `<div class="alert ${alertType}">${message}</div>`;
     document.getElementById("messageContainer").innerHTML = messageHtml;
@@ -16,21 +16,59 @@ function displayMessage(message, isSuccess) {
     }, 3000);
 }
 
-
 document.addEventListener("DOMContentLoaded", function () {
+    const userId = document.getElementById("userId").value;
     const tabs = document.querySelectorAll(".tab-link");
     const contents = document.querySelectorAll(".tab-content");
 
     contents.forEach(content => content.style.display = "none");
 
     const urlParams = new URLSearchParams(window.location.search);
-    const activeTab = urlParams.get("tab") || "personal-info"; 
+    const activeTab = urlParams.get("tab") || "personal-info";
     const activeTabElement = document.querySelector(`.tab-link[data-tab="${activeTab}"]`);
     const activeContentElement = document.getElementById(activeTab);
 
     if (activeTabElement && activeContentElement) {
         activeTabElement.classList.add("active");
         activeContentElement.style.display = "block";
+    }
+
+    // Fetch orders dynamically when switching tabs
+    async function fetchOrders(endpoint, containerId) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "<p>Loading...</p>";
+
+        try {
+            const response = await fetch(endpoint);
+            const data = await response.json();
+
+            if (data.success && data.data.length > 0) {
+                container.innerHTML = data.data
+                    .map(order => `
+                        <div class="order-card">
+                            <h5>Order #${order.id}</h5>
+                            <p><strong>Total Amount:</strong> $${order.totalAmount.toFixed(2)}</p>
+                            <p><strong>Order Placed:</strong> ${new Date(order.orderPlacedTimestamp).toLocaleString()}</p>
+                            <h6>Items:</h6>
+                            <ul>
+                                ${order.items
+                            .map(
+                                item => `
+                                    <li>${item.quantity}x Item #${item.menuItemId} - $${item.price.toFixed(2)}</li>
+                                `
+                            )
+                            .join("")}
+                            </ul>
+                        </div>
+                    `)
+                    .join("");
+            } else {
+                container.innerHTML = `<p class="text-muted">${data.message || "No orders found."}</p>`;
+            }
+        } catch (error) {
+            console.error("Error fetching orders:", error);
+            container.innerHTML = `<p class="text-danger">Failed to load orders. Please try again later.</p>`;
+        }
     }
 
     tabs.forEach(tab => {
@@ -43,11 +81,25 @@ document.addEventListener("DOMContentLoaded", function () {
             this.classList.add("active");
             document.getElementById(this.getAttribute("data-tab")).style.display = "block";
 
+            // Fetch orders for Active Orders and Order History tabs
+            const tabId = this.getAttribute("data-tab");
+            if (tabId === "active-orders") {
+                fetchOrders(`/Auth/GetActiveOrders`, "active-orders");
+            } else if (tabId === "order-history") {
+                fetchOrders(`/Auth/GetOrderHistory`, "order-history");
+            }
+
             const newUrl = `${window.location.pathname}?tab=${this.getAttribute("data-tab")}`;
             window.history.replaceState(null, "", newUrl);
         });
     });
 
+    // Default tab content
+    if (activeTab === "active-orders") {
+        fetchOrders(`/Auth/GetActiveOrders`, "active-orders");
+    } else if (activeTab === "order-history") {
+        fetchOrders(`/Auth/GetOrderHistory`, "order-history");
+    }
 
     const clickableValues = document.querySelectorAll(".setting-value.clickable");
     clickableValues.forEach(value => {
