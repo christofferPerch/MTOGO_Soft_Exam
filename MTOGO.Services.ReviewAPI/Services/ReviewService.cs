@@ -17,12 +17,13 @@ namespace MTOGO.Services.ReviewAPI.Services {
         public async Task<int> AddRestaurantReviewAsync(RestaurantReviewDto restaurantReviewDto) {
             try {
                 var sql = @"
-                    INSERT INTO RestaurantReview (CustomerId, FoodRating, Comments, ReviewTimestamp)
-                    VALUES (@CustomerId, @FoodRating, @Comments, @ReviewTimestamp);
+                    INSERT INTO RestaurantReview (CustomerId, RestaurantId, FoodRating, Comments, ReviewTimestamp)
+                    VALUES (@CustomerId, @RestaurantId, @FoodRating, @Comments, @ReviewTimestamp);
                     SELECT CAST(SCOPE_IDENTITY() as int);";
 
                 var parameters = new {
                     restaurantReviewDto.CustomerId,
+                    restaurantReviewDto.RestaurantId,
                     restaurantReviewDto.FoodRating,
                     restaurantReviewDto.Comments,
                     ReviewTimestamp = DateTime.Now
@@ -36,6 +37,16 @@ namespace MTOGO.Services.ReviewAPI.Services {
             }
         }
 
+        public async Task<RestaurantReview?> GetRestaurantReviewAsync(int id) {
+            try {
+                var sql = "SELECT * FROM RestaurantReview WHERE Id = @Id;";
+                return await _dataAccess.GetById<RestaurantReview>(sql, new { Id = id });
+            } catch (Exception ex) {
+                _logger.LogError(ex, $"Error retrieving restaurant review with ID {id}.");
+                throw;
+            }
+        }
+
         public async Task<bool> DeleteRestaurantReviewAsync(int id) {
             try {
                 var sql = "DELETE FROM RestaurantReview WHERE Id = @Id;";
@@ -45,11 +56,6 @@ namespace MTOGO.Services.ReviewAPI.Services {
                 _logger.LogError(ex, $"Error deleting restaurant review with ID {id}.");
                 throw;
             }
-        }
-
-        public async Task<RestaurantReview?> GetRestaurantReviewAsync(int id) {
-            var sql = "SELECT * FROM RestaurantReview WHERE Id = @Id;";
-            return await _dataAccess.GetById<RestaurantReview>(sql, new { Id = id });
         }
     }
 }
