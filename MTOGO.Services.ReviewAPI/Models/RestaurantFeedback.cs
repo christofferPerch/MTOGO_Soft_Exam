@@ -5,5 +5,7 @@
         public int FoodRating { get; set; }
         public string? Comments { get; set; }
         public DateTime ReviewTimestamp { get; set; }
+
+        public int RestaurantId { get; set; }
     }
 }
