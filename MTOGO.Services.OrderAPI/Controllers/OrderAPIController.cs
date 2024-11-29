@@ -113,5 +113,36 @@ namespace MTOGO.Services.OrderAPI.Controllers
                 return StatusCode(500, _response);
             }
         }
+
+        [HttpGet("active-orders/{userId}")]
+        public async Task<IActionResult> GetActiveOrders(string userId)
+        {
+            try
+            {
+                var orders = await _orderService.GetActiveOrders(userId);
+                return Ok(new { Success = true, Data = orders });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching active orders for UserId: {UserId}", userId);
+                return StatusCode(500, new { Success = false, Message = "An error occurred while fetching active orders." });
+            }
+        }
+
+        [HttpGet("order-history/{userId}")]
+        public async Task<IActionResult> GetOrderHistory(string userId)
+        {
+            try
+            {
+                var orders = await _orderService.GetOrderHistory(userId);
+                return Ok(new { Success = true, Data = orders });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching order history for UserId: {UserId}", userId);
+                return StatusCode(500, new { Success = false, Message = "An error occurred while fetching order history." });
+            }
+        }
+
     }
 }

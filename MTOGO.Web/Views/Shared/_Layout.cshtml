@@ -17,13 +17,15 @@
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MTOGO</a>
 
-                @if (ViewContext.RouteData.Values["Controller"].ToString() == "Restaurant" && ViewContext.RouteData.Values["Action"].ToString() == "Search")
+                @if (ViewContext.RouteData.Values["Controller"]?.ToString() == "Restaurant" &&
+                ViewContext.RouteData.Values["Action"]?.ToString() == "Search")
                 {
-                    <form class="d-flex justify-content-center mx-auto" role="search" action="Search" method="get">
-                        <input class="form-control me-2" type="search" name="query" placeholder="Search for restaurants" aria-label="Search">
+                    <form class="d-flex justify-content-center mx-auto" role="search" asp-action="Search" asp-controller="Restaurant" method="get">
+                        <input class="form-control me-2" type="search" name="location" placeholder="Search for restaurants" aria-label="Search">
                         <button class="btn btn-outline-primary" type="submit">Search</button>
                     </form>
                 }
+
 
                 <div class="d-flex ms-auto align-items-center">
                     @if (User.Identity.IsAuthenticated)

@@ -24,5 +24,23 @@ namespace MTOGO.Web.Services
             });
         }
 
+        public async Task<ResponseDto?> GetActiveOrders(string userId)
+        {
+            return await _baseService.SendAsync(new RequestDto
+            {
+                ApiType = SD.ApiType.GET,
+                Url = $"{SD.OrderAPIBase}/api/order/active-orders/{userId}"
+            });
+        }
+
+        public async Task<ResponseDto?> GetOrderHistory(string userId)
+        {
+            return await _baseService.SendAsync(new RequestDto
+            {
+                ApiType = SD.ApiType.GET,
+                Url = $"{SD.OrderAPIBase}/api/order/order-history/{userId}"
+            });
+        }
+
     }
 }

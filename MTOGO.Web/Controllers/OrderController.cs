@@ -39,12 +39,44 @@ namespace MTOGO.Web.Controllers
                 var cartResponse = JsonConvert.DeserializeObject<CartResponseMessageDto>(response.Result.ToString());
                 var cartItems = cartResponse?.Items ?? new List<OrderItemDto>();
 
-                return View(cartItems); // Pass List<OrderItemDto> to the view
+                // Enrich each item with name and image
+                var enrichedCartItems = new List<CheckoutDto>();
+                foreach (var item in cartItems)
+                {
+                    var detailsResponse = await _restaurantService.GetCartDetailsAsync(item.RestaurantId, item.MenuItemId);
+                    if (detailsResponse != null && detailsResponse.IsSuccess && detailsResponse.Result != null)
+                    {
+                        var cartDetails = JsonConvert.DeserializeObject<CartDetailsDto>(detailsResponse.Result.ToString());
+                        enrichedCartItems.Add(new CheckoutDto
+                        {
+                            RestaurantId = item.RestaurantId,
+                            MenuItemId = item.MenuItemId,
+                            Quantity = item.Quantity,
+                            Price = item.Price,
+                            Name = cartDetails.Name, // Add name from response
+                        });
+                    }
+                    else
+                    {
+                        // Fallback in case the API call fails
+                        enrichedCartItems.Add(new CheckoutDto
+                        {
+                            RestaurantId = item.RestaurantId,
+                            MenuItemId = item.MenuItemId,
+                            Quantity = item.Quantity,
+                            Price = item.Price,
+                            Name = "Unknown Item", // Default name
+                        });
+                    }
+                }
+
+                return View(enrichedCartItems); // Pass the enriched list to the view
             }
 
             TempData["error"] = response?.Message ?? "Failed to load cart details.";
             return RedirectToAction("Index", "Home");
         }
+
 
 
 

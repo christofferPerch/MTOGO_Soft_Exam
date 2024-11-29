@@ -1,7 +1,9 @@
-﻿<div class="container mt-5">
+﻿@model List<MTOGO.Web.Models.Order.CheckoutDto>
+
+
+<div class="container mt-5">
     <h2 class="text-center mb-4">Checkout</h2>
 
-    <!-- Cart Items Section -->
     <div class="cart-items mb-4">
         <h4 class="mb-3">Your Order</h4>
         <div class="row">
@@ -10,14 +12,12 @@
                 <div class="col-md-6 mb-4">
                     <div class="card shadow-sm">
                         <div class="row g-0">
-                            <!-- Image Section -->
                             <div class="col-md-4">
                                 <img src="/images/restaurant.jpg" class="img-fluid rounded-start" alt="@item.MenuItemId">
                             </div>
-                            <!-- Details Section -->
                             <div class="col-md-8">
                                 <div class="card-body">
-                                    <h5 class="card-title">@item.MenuItemId</h5>
+                                    <h5 class="card-title">@item.Name</h5>
                                     <p class="card-text">Quantity: <strong>@item.Quantity</strong></p>
                                     <p class="card-text">
                                         <small class="text-muted">Price per item: $@item.Price</small>
@@ -32,12 +32,16 @@
                 </div>
             }
         </div>
-
     </div>
 
+    @{
+        var totalPrice = Model.Sum(i => i.Price * i.Quantity);
+    }
+    <div class="text-start mt-4">
+        <h5>Total Order Price:</h5>
+        <h5><strong>$@totalPrice</strong></h5>
+    </div>
 
-
-    <!-- Payment Section -->
     <div class="payment-details">
         <h4 class="mb-3">Payment Details</h4>
         <form asp-action="ProcessPayment" method="post" class="needs-validation" novalidate>

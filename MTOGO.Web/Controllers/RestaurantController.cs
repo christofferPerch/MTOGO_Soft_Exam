@@ -35,15 +35,16 @@ namespace MTOGO.Web.Controllers
             if (response != null && response.IsSuccess && response.Result != null)
             {
                 var restaurants = JsonConvert.DeserializeObject<List<RestaurantDto>>(response.Result.ToString());
-                ViewBag.SelectedCity = location; // Pass the selected city to the view for display
+
+                var cityName = restaurants.FirstOrDefault()?.Address?.City ?? location;
+                ViewBag.SelectedCity = cityName; 
                 return View(restaurants);
             }
 
             TempData["error"] = response?.Message ?? "No restaurants found.";
-            return View(new List<RestaurantDto>()); // Return empty list if no results found
+            ViewBag.SelectedCity = location; 
+            return View(new List<RestaurantDto>()); 
         }
-
-
 
         [HttpGet]
         public async Task<IActionResult> UniqueCities()
