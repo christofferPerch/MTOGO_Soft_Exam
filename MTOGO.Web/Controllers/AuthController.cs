@@ -222,12 +222,21 @@ namespace MTOGO.Web.Controllers
             var response = await _orderService.GetActiveOrders(userId);
             if (response != null && response.IsSuccess && response.Result != null)
             {
-                var activeOrders = JsonConvert.DeserializeObject<List<OrderDto>>(response.Result.ToString());
-                return Json(new { success = true, data = activeOrders });
+                try
+                {
+                    var activeOrders = JsonConvert.DeserializeObject<List<OrderManagementDto>>(response.Result.ToString());
+                    return Json(new { success = true, data = activeOrders });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Deserialization error: {ex.Message}");
+                    return Json(new { success = false, message = "Failed to parse order data." });
+                }
             }
 
             return Json(new { success = false, message = response?.Message ?? "Failed to load active orders." });
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetOrderHistory()
@@ -242,7 +251,7 @@ namespace MTOGO.Web.Controllers
             var response = await _orderService.GetOrderHistory(userId);
             if (response != null && response.IsSuccess && response.Result != null)
             {
-                var orderHistory = JsonConvert.DeserializeObject<List<OrderDto>>(response.Result.ToString());
+                var orderHistory = JsonConvert.DeserializeObject<List<OrderManagementDto>>(response.Result.ToString());
                 return Json(new { success = true, data = orderHistory });
             }
 

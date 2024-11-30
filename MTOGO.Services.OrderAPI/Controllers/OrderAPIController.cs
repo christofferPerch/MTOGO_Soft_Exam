@@ -120,12 +120,24 @@ namespace MTOGO.Services.OrderAPI.Controllers
             try
             {
                 var orders = await _orderService.GetActiveOrders(userId);
-                return Ok(new { Success = true, Data = orders });
+                if (orders != null && orders.Any())
+                {
+                    _response.Result = orders;
+                    _response.IsSuccess = true;
+                    _response.Message = "Active orders retrieved successfully.";
+                    return Ok(_response);
+                }
+
+                _response.IsSuccess = false;
+                _response.Message = "No active orders found.";
+                return NotFound(_response);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching active orders for UserId: {UserId}", userId);
-                return StatusCode(500, new { Success = false, Message = "An error occurred while fetching active orders." });
+                _response.IsSuccess = false;
+                _response.Message = "An error occurred while fetching active orders.";
+                return StatusCode(500, _response);
             }
         }
 
@@ -135,14 +147,27 @@ namespace MTOGO.Services.OrderAPI.Controllers
             try
             {
                 var orders = await _orderService.GetOrderHistory(userId);
-                return Ok(new { Success = true, Data = orders });
+                if (orders != null && orders.Any())
+                {
+                    _response.Result = orders;
+                    _response.IsSuccess = true;
+                    _response.Message = "Order history retrieved successfully.";
+                    return Ok(_response);
+                }
+
+                _response.IsSuccess = false;
+                _response.Message = "No order history found.";
+                return NotFound(_response);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching order history for UserId: {UserId}", userId);
-                return StatusCode(500, new { Success = false, Message = "An error occurred while fetching order history." });
+                _response.IsSuccess = false;
+                _response.Message = "An error occurred while fetching order history.";
+                return StatusCode(500, _response);
             }
         }
+
 
     }
 }

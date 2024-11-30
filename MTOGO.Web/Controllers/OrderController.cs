@@ -37,7 +37,7 @@ namespace MTOGO.Web.Controllers
             {
                 // Deserialize the response into CartResponseMessageDto
                 var cartResponse = JsonConvert.DeserializeObject<CartResponseMessageDto>(response.Result.ToString());
-                var cartItems = cartResponse?.Items ?? new List<OrderItemDto>();
+                var cartItems = cartResponse?.Items ?? new List<Models.ShoppingCart.OrderItemDto>();
 
                 // Enrich each item with name and image
                 var enrichedCartItems = new List<CheckoutDto>();
