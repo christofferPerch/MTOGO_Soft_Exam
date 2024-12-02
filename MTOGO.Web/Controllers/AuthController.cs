@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using MTOGO.Web.Models.Auth;
 using MTOGO.Web.Models.Order;
+using MTOGO.Web.Models.Restaurant;
 
 namespace MTOGO.Web.Controllers
 {
@@ -15,12 +16,13 @@ namespace MTOGO.Web.Controllers
         private readonly IAuthService _authService;
         private readonly ITokenProvider _tokenProvider;
         private readonly IOrderService _orderService;
-
-        public AuthController(IAuthService authService, ITokenProvider tokenProvider, IOrderService orderService)
+        private readonly IRestaurantService _restaurantService;
+        public AuthController(IAuthService authService, ITokenProvider tokenProvider, IOrderService orderService, IRestaurantService restaurantService)
         {
             _authService = authService;
             _tokenProvider = tokenProvider;
             _orderService = orderService;
+            _restaurantService = restaurantService;
         }
 
         [HttpGet]
@@ -225,17 +227,36 @@ namespace MTOGO.Web.Controllers
                 try
                 {
                     var activeOrders = JsonConvert.DeserializeObject<List<OrderManagementDto>>(response.Result.ToString());
+
+                    // Fetch menu item names
+                    foreach (var order in activeOrders)
+                    {
+                        foreach (var item in order.Items)
+                        {
+                            var cartDetailsResponse = await _restaurantService.GetCartDetailsAsync(item.RestaurantId, item.MenuItemId);
+                            if (cartDetailsResponse?.IsSuccess == true && cartDetailsResponse.Result != null)
+                            {
+                                var cartDetails = JsonConvert.DeserializeObject<CartDetailsDto>(cartDetailsResponse.Result.ToString());
+                                //item.MenuItemName = cartDetails?.Name ?? "Unknown Item";
+                            }
+                            else
+                            {
+                                //item.MenuItemName = "Unknown Item";
+                            }
+                        }
+                    }
+
                     return Json(new { success = true, data = activeOrders });
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Deserialization error: {ex.Message}");
-                    return Json(new { success = false, message = "Failed to parse order data." });
+                    return Json(new { success = false, message = "Failed to process active orders." });
                 }
             }
 
             return Json(new { success = false, message = response?.Message ?? "Failed to load active orders." });
         }
+
 
 
         [HttpGet]
@@ -251,12 +272,40 @@ namespace MTOGO.Web.Controllers
             var response = await _orderService.GetOrderHistory(userId);
             if (response != null && response.IsSuccess && response.Result != null)
             {
-                var orderHistory = JsonConvert.DeserializeObject<List<OrderManagementDto>>(response.Result.ToString());
-                return Json(new { success = true, data = orderHistory });
+                try
+                {
+                    var orderHistory = JsonConvert.DeserializeObject<List<OrderManagementDto>>(response.Result.ToString());
+
+                    // Fetch menu item names
+                    foreach (var order in orderHistory)
+                    {
+                        foreach (var item in order.Items)
+                        {
+                            var cartDetailsResponse = await _restaurantService.GetCartDetailsAsync(item.RestaurantId, item.MenuItemId);
+                            if (cartDetailsResponse?.IsSuccess == true && cartDetailsResponse.Result != null)
+                            {
+                                var cartDetails = JsonConvert.DeserializeObject<CartDetailsDto>(cartDetailsResponse.Result.ToString());
+                                //item.MenuItemName = cartDetails?.Name ?? "Unknown Item";
+                            }
+                            else
+                            {
+                                //item.MenuItemName = "Unknown Item";
+                            }
+                        }
+                    }
+
+                    return Json(new { success = true, data = orderHistory });
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception if needed
+                    return Json(new { success = false, message = "Failed to process order history." });
+                }
             }
 
             return Json(new { success = false, message = response?.Message ?? "Failed to load order history." });
         }
+
 
     }
 }

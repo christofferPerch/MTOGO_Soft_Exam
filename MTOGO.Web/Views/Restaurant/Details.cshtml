@@ -1,15 +1,27 @@
-﻿@model MTOGO.Web.Models.Restaurant.RestaurantDto
+﻿@using Newtonsoft.Json
+@model MTOGO.Web.Models.Restaurant.RestaurantDto
 
 <link rel="stylesheet" href="~/css/restaurant-details.css" asp-append-version="true" />
 
 <input type="hidden" id="userId" value="@User.FindFirst("UserId")?.Value" />
+<input type="hidden" id="restaurantId" value="@Model.Id">
 
 <div class="container my-5">
     <div class="row">
         <!-- Left Column: Restaurant Info -->
         <div class="col-md-4">
             <div class="restaurant-info">
-                <h2>@Model.RestaurantName</h2>
+                <h2>
+                    @Model.RestaurantName
+                    <span id="openStatusIndicator"></span>
+                </h2>
+                <h4>
+                    @if (ViewBag.AverageRating != null)
+                    {
+                        <span>Rating: (@ViewBag.AverageRating.ToString("0.0")/5)</span>
+                    }
+                </h4>
+
                 <p class="restaurant-description">@Model.RestaurantDescription</p>
                 <h5>Contact</h5>
                 <p><i class="bi bi-envelope"></i> Email: <a href="mailto:@Model.ContactEmail">@Model.ContactEmail</a></p>
@@ -25,16 +37,87 @@
                     @Model.Address.City, @Model.Address.ZipCode<br />
                     @Model.Address.Country
                 </p>
+                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#operatingHoursModal">View Opening Hours</button>
+            </div>
+
+            <div class="modal fade" id="operatingHoursModal" tabindex="-1" aria-labelledby="operatingHoursModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="operatingHoursModalLabel">Operating Hours</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            @if (Model.OperatingHours != null && Model.OperatingHours.Any())
+                            {
+                                <ul>
+                                    @foreach (var hours in Model.OperatingHours)
+                                    {
+                                        <li>
+                                            <strong>@hours.Day:</strong> @hours.OpeningHours - @hours.ClosingHours
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <p class="text-muted">No operating hours available.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
             </div>
             <br />
             <div class="restaurant-info">
                 <h4>Customer Reviews</h4>
-                <h2>TEST</h2>
-                
-                    <ul class="list-group">
-                        
-                    </ul>              
+                @if (ViewBag.Reviews != null && ((List<MTOGO.Web.Models.Review.RestaurantReview>)ViewBag.Reviews).Any())
+                {
+                    <div id="reviewsContainer">
+                        <!-- Reviews will be dynamically populated here -->
+                    </div>
+                    <div class="review-pagination">
+                        <button id="prevPageBtn" class="btn btn-secondary" disabled>Previous</button>
+                        <span id="pageInfo">Page 1</span>
+                        <button id="nextPageBtn" class="btn btn-secondary">Next</button>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No reviews available for this restaurant.</p>
+                }
+                <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addReviewModal">Add Review</button>
             </div>
+
+            <div class="modal fade" id="addReviewModal" tabindex="-1" aria-labelledby="addReviewModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addReviewModalLabel">Add Review</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addReviewForm">
+                                <input type="hidden" id="restaurantId" name="restaurantId" value="@Model.Id">
+                                <div class="mb-3">
+                                    <label for="foodRating" class="form-label">Rating (1-5)</label>
+                                    <input type="number" class="form-control" id="foodRating" name="foodRating" min="1" max="5" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="comments" class="form-label">Comments</label>
+                                    <textarea class="form-control" id="comments" name="comments" rows="3"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="submitReviewBtn">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+           
+
         </div>
 
         <!-- Right Column: Menu Items -->
@@ -127,4 +210,15 @@
 
 
 
+<script>
+    const reviews = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Reviews ?? new List<MTOGO.Web.Models.Review.RestaurantReview>()));
+    console.log(reviews);
+</script>
+<script>
+    const openingHours = @Html.Raw(JsonConvert.SerializeObject(Model.OperatingHours ?? new List<MTOGO.Web.Models.Restaurant.OperatingHoursDto>()));
+    console.log(openinghours);
+</script>
 <script src="~/js/restaurant-page.js"></script>
+<script src="~/js/opening-hours.js"></script>
+<script src="~/js/review.js"></script>
+

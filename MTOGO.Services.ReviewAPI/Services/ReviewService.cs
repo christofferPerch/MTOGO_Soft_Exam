@@ -14,14 +14,22 @@ namespace MTOGO.Services.ReviewAPI.Services {
             _logger = logger;
         }
 
-        public async Task<int> AddRestaurantReviewAsync(RestaurantReviewDto restaurantReviewDto) {
-            try {
-                var sql = @"
-                    INSERT INTO RestaurantReview (CustomerId, RestaurantId, FoodRating, Comments, ReviewTimestamp)
-                    VALUES (@CustomerId, @RestaurantId, @FoodRating, @Comments, @ReviewTimestamp);
-                    SELECT CAST(SCOPE_IDENTITY() as int);";
+        public async Task<int> AddRestaurantReviewAsync(RestaurantReviewDto restaurantReviewDto)
+        {
+            try
+            {
+                if (restaurantReviewDto == null || restaurantReviewDto.RestaurantId <= 0)
+                {
+                    throw new ArgumentException("Invalid review data. RestaurantId must be provided.");
+                }
 
-                var parameters = new {
+                var sql = @"
+                        INSERT INTO RestaurantReview (CustomerId, RestaurantId, FoodRating, Comments, ReviewTimestamp)
+                        VALUES (@CustomerId, @RestaurantId, @FoodRating, @Comments, @ReviewTimestamp);
+                        SELECT CAST(SCOPE_IDENTITY() as int);";
+
+                var parameters = new
+                {
                     restaurantReviewDto.CustomerId,
                     restaurantReviewDto.RestaurantId,
                     restaurantReviewDto.FoodRating,
@@ -31,21 +39,29 @@ namespace MTOGO.Services.ReviewAPI.Services {
 
                 var id = await _dataAccess.InsertAndGetId<int>(sql, parameters);
                 return id;
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError(ex, "Error adding restaurant review.");
                 throw;
             }
         }
 
-        public async Task<RestaurantReview?> GetRestaurantReviewAsync(int id) {
-            try {
-                var sql = "SELECT * FROM RestaurantReview WHERE Id = @Id;";
-                return await _dataAccess.GetById<RestaurantReview>(sql, new { Id = id });
-            } catch (Exception ex) {
-                _logger.LogError(ex, $"Error retrieving restaurant review with ID {id}.");
+
+        public async Task<List<RestaurantReview>?> GetRestaurantReviewAsync(int restaurantId)
+        {
+            try
+            {
+                var sql = "SELECT * FROM RestaurantReview WHERE RestaurantId = @RestaurantId;";
+                return await _dataAccess.GetAll<RestaurantReview>(sql, new { RestaurantId = restaurantId });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error retrieving reviews for RestaurantId {restaurantId}.");
                 throw;
             }
         }
+
 
         public async Task<bool> DeleteRestaurantReviewAsync(int id) {
             try {
