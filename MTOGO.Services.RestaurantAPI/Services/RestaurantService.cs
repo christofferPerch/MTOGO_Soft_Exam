@@ -255,18 +255,31 @@ namespace MTOGO.Services.RestaurantAPI.Services
             }
         }
 
-        public async Task<List<RestaurantDto>> FindRestaurantsByLocation(string location)
+        public async Task<List<RestaurantDto>> FindRestaurantsByLocation(string location, int? foodCategory = null)
         {
             try
             {
+                // Base SQL query
                 var sql = @"
-                        SELECT r.*, a.*
+                        SELECT DISTINCT r.*, a.*
                         FROM Restaurant r
                         INNER JOIN Address a ON r.AddressId = a.Id
-                        WHERE a.ZipCode = @Location OR a.City = @Location";
+                        LEFT JOIN FoodCategory fc ON r.Id = fc.RestaurantId
+                        WHERE (a.ZipCode = @Location OR a.City = @Location)";
+
+                // Add filter for FoodCategory if provided
+                if (foodCategory.HasValue)
+                {
+                    sql += " AND fc.Category = @FoodCategory";
+                }
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Location", location, DbType.String);
+
+                if (foodCategory.HasValue)
+                {
+                    parameters.Add("@FoodCategory", foodCategory.Value, DbType.Int32);
+                }
 
                 var restaurants = await _dataAccess.GetAll<RestaurantDto>(sql, parameters) ?? new List<RestaurantDto>();
 
@@ -293,6 +306,7 @@ namespace MTOGO.Services.RestaurantAPI.Services
                 throw;
             }
         }
+
 
         public async Task<List<string>> GetUniqueCitiesAsync()
         {

@@ -237,11 +237,11 @@ namespace MTOGO.Web.Controllers
                             if (cartDetailsResponse?.IsSuccess == true && cartDetailsResponse.Result != null)
                             {
                                 var cartDetails = JsonConvert.DeserializeObject<CartDetailsDto>(cartDetailsResponse.Result.ToString());
-                                //item.MenuItemName = cartDetails?.Name ?? "Unknown Item";
+                                item.MenuItemName = cartDetails?.Name ?? "Unknown Item";
                             }
                             else
                             {
-                                //item.MenuItemName = "Unknown Item";
+                                item.MenuItemName = "Unknown Item";
                             }
                         }
                     }
@@ -285,11 +285,11 @@ namespace MTOGO.Web.Controllers
                             if (cartDetailsResponse?.IsSuccess == true && cartDetailsResponse.Result != null)
                             {
                                 var cartDetails = JsonConvert.DeserializeObject<CartDetailsDto>(cartDetailsResponse.Result.ToString());
-                                //item.MenuItemName = cartDetails?.Name ?? "Unknown Item";
+                                item.MenuItemName = cartDetails?.Name ?? "Unknown Item";
                             }
                             else
                             {
-                                //item.MenuItemName = "Unknown Item";
+                                item.MenuItemName = "Unknown Item";
                             }
                         }
                     }

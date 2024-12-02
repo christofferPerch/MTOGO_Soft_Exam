@@ -90,18 +90,20 @@ namespace MTOGO.Web.Controllers
                 return RedirectToAction("Checkout");
             }
 
-            // Create the payment request payload
+            // Ensure CustomerEmail is added here
+            var userEmail = User.FindFirst("Email")?.Value;
+
             var paymentRequest = new PaymentRequestDto
             {
                 UserId = userId,
-                Items = new List<CartItem>(), // Leave empty; Order API will fetch the cart details
-                TotalAmount = 0,              // Let the Order API calculate this
+                CustomerEmail = userEmail, // Include email if required by backend
+                Items = new List<CartItem>(), // Let backend fetch the cart details
+                TotalAmount = 0,              // Let backend calculate the total
                 CardNumber = cardNumber,
                 ExpiryDate = expiryDate,
-                CVV = cvv
+                CVV = cvv,
             };
 
-            // Send the payment request to the Order API
             var response = await _orderService.ProcessPaymentAsync(paymentRequest);
 
             if (response != null && response.IsSuccess)
@@ -113,6 +115,7 @@ namespace MTOGO.Web.Controllers
             TempData["error"] = response?.Message ?? "Failed to process payment.";
             return RedirectToAction("Checkout");
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetCartDetails(int restaurantId, int menuItemId)
