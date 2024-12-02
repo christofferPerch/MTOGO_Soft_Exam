@@ -32,22 +32,25 @@ namespace MTOGO.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Search(string location)
+        public async Task<IActionResult> Search(string location, int? foodCategory = null)
         {
-            var response = await _restaurantService.SearchRestaurants(location);
+            var response = await _restaurantService.SearchRestaurants(location, foodCategory);
             if (response != null && response.IsSuccess && response.Result != null)
             {
                 var restaurants = JsonConvert.DeserializeObject<List<RestaurantDto>>(response.Result.ToString());
 
                 var cityName = restaurants.FirstOrDefault()?.Address?.City ?? location;
-                ViewBag.SelectedCity = cityName; 
+                ViewBag.SelectedCity = cityName;
+                ViewBag.FoodCategory = foodCategory;
                 return View(restaurants);
             }
 
             TempData["error"] = response?.Message ?? "No restaurants found.";
-            ViewBag.SelectedCity = location; 
-            return View(new List<RestaurantDto>()); 
+            ViewBag.SelectedCity = location;
+            ViewBag.FoodCategory = foodCategory;
+            return View(new List<RestaurantDto>());
         }
+
 
         [HttpGet]
         public async Task<IActionResult> UniqueCities()

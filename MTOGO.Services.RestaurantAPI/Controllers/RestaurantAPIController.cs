@@ -213,7 +213,7 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
         }
 
         [HttpGet("searchRestaurant")]
-        public async Task<IActionResult> SearchRestaurants([FromQuery] string location)
+        public async Task<IActionResult> SearchRestaurants([FromQuery] string location, [FromQuery] int? foodCategory = null)
         {
             if (string.IsNullOrWhiteSpace(location))
             {
@@ -224,8 +224,8 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
 
             try
             {
-                // Call the service method with the location parameter
-                var restaurants = await _restaurantService.FindRestaurantsByLocation(location);
+                // Call the service method with the location and foodCategory parameters
+                var restaurants = await _restaurantService.FindRestaurantsByLocation(location, foodCategory);
                 _response.Result = restaurants;
                 _response.Message = "Restaurants retrieved successfully.";
                 return Ok(_response);
@@ -237,6 +237,7 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
                 return StatusCode(500, _response);
             }
         }
+
 
         [HttpGet("uniqueCities")]
         public async Task<IActionResult> GetUniqueCities()
