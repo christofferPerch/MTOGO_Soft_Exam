@@ -51,15 +51,34 @@ namespace MTOGO.Services.EmailAPI.Services {
         }
 
         private string GenerateEmailBody(OrderCreatedMessageDto order) {
-            var itemsHtml = string.Join("", order.Items.Select(i =>
-                $"<li>{i.Quantity}x {i.Name} - ${i.Price * i.Quantity}</li>"));
+            // Resolve the path to the HTML template
+            var templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Services", "orderconfirmation.html");
 
-            return $@"
-                <h2>Thank you for your order!</h2>
-                <p>Order ID: {order.OrderId}</p>
-                <ul>{itemsHtml}</ul>
-                <p>Total: ${order.TotalAmount}</p>
-            ";
+            if (!File.Exists(templatePath)) {
+                _logger.LogError($"Email template file not found at {templatePath}");
+                throw new FileNotFoundException("Email template file not found.", templatePath);
+            }
+
+            // Read the template content
+            var template = File.ReadAllText(templatePath);
+
+            // Generate HTML for order items
+            var itemsHtml = string.Join("", order.Items.Select(item => $@"
+        <tr>
+            <td>{item.Name}</td>
+            <td>${item.Price:F2}</td>
+            <td>{item.Quantity}</td>
+        </tr>
+    "));
+
+            
+            return template
+                .Replace("{{Name}}", order.CustomerEmail.Split('@')[0]) // Using email prefix as Name
+                .Replace("{{OrderId}}", order.OrderId.ToString())
+                .Replace("{{Items}}", itemsHtml)
+                .Replace("{{TotalAmount}}", order.TotalAmount.ToString("F2"));
         }
+
+
     }
 }
