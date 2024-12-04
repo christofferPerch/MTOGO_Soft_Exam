@@ -169,11 +169,7 @@ ReviewServiceDB:
 
 ![Domain Diagram](Diagrams/ReviewEERDiagram.png)
 
----
 
-## 
-
-## 
 
 ## **Test Strategy and Design**
 
@@ -219,7 +215,8 @@ We use **XP Practices**:
 
 ## **Non-Functional Requirements (FURPS Model)**
 
-Usability
+**Usability**
+
 
 \- Comprehensive API documentation is available via Swagger for developers to easily interact with the system.
 
@@ -227,13 +224,15 @@ Usability
 
 \- Redis is used to store shopping cart data temporarily, enhancing user experience during browsing.
 
-Reliability
+**Reliability**
+
 
 \- Ensures the integrity of order data across services through RabbitMQ-based message queuing.
 
 \- Logging and monitoring in all services to track errors and critical events, with detailed logs to assist in debugging.
 
-Performance
+**Performance**
+
 
 \- Load testing planned for high concurrency scenarios to simulate realistic user load.
 
@@ -241,7 +240,8 @@ Performance
 
 \- Caching using Redis improves performance for frequently accessed data, such as shopping cart operations.
 
-Supportability
+
+**Supportability**
 
 \- Developer-friendly project structure with clear separation of concerns across services.
 
