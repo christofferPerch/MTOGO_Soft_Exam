@@ -145,27 +145,27 @@ This project contains our RabbitMQ logic which we use in our microservices to pu
 
 ## **Requirements and Diagrams**
 
-Domain Diagram:
+**Domain Diagram:**
 
 ![Domain Diagram](Diagrams/DomainDiagram.png)
 
-EER Diagrams:
+**EER Diagrams:**
 
-Auth Service:
+**Auth Service:**
 
 ![Domain Diagram](Diagrams/AuthServiceEERDiagram.png)
 
-OrderServiceDB:
+**OrderServiceDB:**
 
 ![Domain Diagram](Diagrams/OrderServiceEERDiagram.png)
 
-PaymentDB:  
+**PaymentDB:**
 ![Domain Diagram](Diagrams/PaymentEERDiagram.png)
 
-RestaurantServiceDB:  
+**RestaurantServiceDB:** 
 ![Domain Diagram](Diagrams/RestaurantEERDiagram.png)
 
-ReviewServiceDB:
+**ReviewServiceDB:**
 
 ![Domain Diagram](Diagrams/ReviewEERDiagram.png)
 
