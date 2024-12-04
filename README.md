@@ -121,7 +121,7 @@ This project contains our RabbitMQ logic which we use in our microservices to pu
 
 **`├── Properties`**
 
-	**`├── launchSettings.json`** `# Startup config`
+	├───────── launchSettings.json `# Startup config`
 
 **`├── Controllers/`**    `# API controllers`
 
@@ -131,7 +131,7 @@ This project contains our RabbitMQ logic which we use in our microservices to pu
 
 **`├── Services/`**       `# Business logic services and interfaces`
 
-	`├── IServices/`
+	├───────── IServices/
 
 **`├── Data/`**           `# Database context and migrations`
 
