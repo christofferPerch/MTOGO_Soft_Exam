@@ -77,25 +77,6 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
 * **Address:** The location associated with restaurants or users.  
 * **Food Category:** The type of cuisine or food offerings associated with a restaurant.
 
----
-
-## 
-
-## 
-
-## 
-
-## 
-
-## 
-
-## 
-
-## 
-
-## 
-
-## 
 
 ## **Architecture Documentation**
 
