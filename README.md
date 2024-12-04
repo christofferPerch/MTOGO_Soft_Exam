@@ -120,7 +120,8 @@ This project contains our RabbitMQ logic which we use in our microservices to pu
 ### **General Microservice Folder Structure:**
 
 **`├── Properties`**
-	**`├── launchSettings.json`** # Startup config
+
+	├───────── launchSettings.json # Startup config
 
 **`├── Controllers/`**    `# API controllers`
 
