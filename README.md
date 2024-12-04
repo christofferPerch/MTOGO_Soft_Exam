@@ -21,17 +21,6 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
      
 7. It should now open the API Gateway and Web Project when running the application.
 
-   ### 
-
-   ### 
-
-   ### 
-
-   ### 
-
-   ### 
-
-### 
 
    ### **Technology Stack**
 
@@ -187,7 +176,7 @@ This project contains our RabbitMQ logic which we use in our microservices to pu
 
 Domain Diagram:
 
-![][image1]
+![Domain Diagram](Diagrams/DomainDiagram.png)
 
 EER Diagrams:
 
