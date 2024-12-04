@@ -241,7 +241,7 @@ Performance
 
 \- Caching using Redis improves performance for frequently accessed data, such as shopping cart operations.
 
-  	Supportability
+Supportability
 
 \- Developer-friendly project structure with clear separation of concerns across services.
 
