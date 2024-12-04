@@ -22,45 +22,63 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
 7. It should now open the API Gateway and Web Project when running the application.
 
 
+
+
    ### **Technology Stack**
 
+
    #### **Version Control Platform:**
+
 
 * **Git:** Version control for collaborative development.  
 * **GitHub:** Repository hosting.
 
+
   #### **Development Environment:**
+
 
 * **Visual Studio:** For coding and debugging.  
 * **Swagger:** API documentation for testing and understanding endpoints.  
 * **Redis Commander:** For managing the Redis database.  
 * **SSMS:** For managing the SQL databases.
 
+
   #### **Development Stack**
+
 
   #### **Backend Development:**
 
+
 * **C\# and .NET Core:** For developing microservices.
 
+
   #### **Database Management:**
+
 
 * **Microsoft SQL Server:** Primary database for most services.  
 * **Redis:** Temporary storage for shopping cart data.
 
+
   #### **Message Queue:**
+
 
 * **RabbitMQ:** Facilitates communication between microservices.
 
+
   #### **Development Tools:**
+
 
 * **Docker:** Containerization for consistent environments. used for rabbitmq and redis.  
 * **Docker Compose:** For putting it all together.   
 * **Ocelot:** Used for the API gateway.  
 * **Dapper:** Used for data access and ORM purposes.
 
+
   #### **CI/CD Pipeline:**
 
+
 * **In Progress:** Will be used to make code analysis, run tests and docker. 
+
 
 ## **Ubiquitous Language** 
 
