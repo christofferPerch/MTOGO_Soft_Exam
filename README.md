@@ -24,18 +24,15 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
 
 
 
-   ### **Technology Stack**
+### **Technology Stack**
 
 
-   #### **Version Control Platform:**
-
+#### **Version Control Platform:**
 
 * **Git:** Version control for collaborative development.  
 * **GitHub:** Repository hosting.
 
-
-  #### **Development Environment:**
-
+#### **Development Environment:**
 
 * **Visual Studio:** For coding and debugging.  
 * **Swagger:** API documentation for testing and understanding endpoints.  
@@ -43,29 +40,29 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
 * **SSMS:** For managing the SQL databases.
 
 
-  #### **Development Stack**
+### **Development Stack**
 
 
-  #### **Backend Development:**
+#### **Backend Development:**
 
 
 * **C\# and .NET Core:** For developing microservices.
 
 
-  #### **Database Management:**
+#### **Database Management:**
 
 
 * **Microsoft SQL Server:** Primary database for most services.  
 * **Redis:** Temporary storage for shopping cart data.
 
 
-  #### **Message Queue:**
+#### **Message Queue:**
 
 
 * **RabbitMQ:** Facilitates communication between microservices.
 
 
-  #### **Development Tools:**
+#### **Development Tools:**
 
 
 * **Docker:** Containerization for consistent environments. used for rabbitmq and redis.  
@@ -74,7 +71,7 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
 * **Dapper:** Used for data access and ORM purposes.
 
 
-  #### **CI/CD Pipeline:**
+#### **CI/CD Pipeline:**
 
 
 * **In Progress:** Will be used to make code analysis, run tests and docker. 
