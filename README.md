@@ -182,21 +182,21 @@ EER Diagrams:
 
 Auth Service:
 
-![][image2]
+![Domain Diagram](Diagrams/AuthServiceEERDiagram.png)
 
 OrderServiceDB:
 
-![][image3]
+![Domain Diagram](Diagrams/OrderServiceEERDiagram.png)
 
 PaymentDB:  
-![][image4]
+![Domain Diagram](Diagrams/PaymentEERDiagram.png)
 
 RestaurantServiceDB:  
-![][image5]
+![Domain Diagram](Diagrams/RestaurantEERDiagram.png)
 
 ReviewServiceDB:
 
-![][image6]
+![Domain Diagram](Diagrams/ReviewEERDiagram.png)
 
 ---
 
