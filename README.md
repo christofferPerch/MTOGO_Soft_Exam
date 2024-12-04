@@ -9,7 +9,7 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
 
 1. Clone our repository “git clone [https://github.com/christofferPerch/MTOGO\_Soft\_Exam.git](https://github.com/christofferPerch/MTOGO_Soft_Exam.git)”  
      
-2. Import the BACPAC files located [HERE](./docs/) containing the MSSQL databases into your SQL server.   
+2. Import the BACPAC files located [HERE](./Docs/) containing the MSSQL databases into your SQL server.   
      
 3. Check appsettings.development.json files in each microservice project and ensure the connection string for the MSSQL database is using the correct server.   
      
