@@ -38,27 +38,27 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
 
   #### **Development Stack**
 
-  ##### **Backend Development:**
+  #### **Backend Development:**
 
 * **C\# and .NET Core:** For developing microservices.
 
-  ##### **Database Management:**
+  #### **Database Management:**
 
 * **Microsoft SQL Server:** Primary database for most services.  
 * **Redis:** Temporary storage for shopping cart data.
 
-  ##### **Message Queue:**
+  #### **Message Queue:**
 
 * **RabbitMQ:** Facilitates communication between microservices.
 
-  ##### **Development Tools:**
+  #### **Development Tools:**
 
 * **Docker:** Containerization for consistent environments. used for rabbitmq and redis.  
 * **Docker Compose:** For putting it all together.   
 * **Ocelot:** Used for the API gateway.  
 * **Dapper:** Used for data access and ORM purposes.
 
-  ##### **CI/CD Pipeline:**
+  #### **CI/CD Pipeline:**
 
 * **In Progress:** Will be used to make code analysis, run tests and docker. 
 
