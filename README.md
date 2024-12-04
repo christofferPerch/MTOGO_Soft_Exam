@@ -62,16 +62,6 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
 
 * **In Progress:** Will be used to make code analysis, run tests and docker. 
 
----
-
-## 
-
-## 
-
-## 
-
-## 
-
 ## **Ubiquitous Language** 
 
 ### **Entities:**
