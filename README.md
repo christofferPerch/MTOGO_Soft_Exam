@@ -9,7 +9,7 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
 
 1. Clone our repository “git clone [https://github.com/christofferPerch/MTOGO\_Soft\_Exam.git](https://github.com/christofferPerch/MTOGO_Soft_Exam.git)”  
      
-2. Import the BACPAC files located [HERE](./Docs/) containing the MSSQL databases into your SQL server.   
+2. Import the BACPAC files located [HERE](./Documentation/BacpacFiles/) containing the MSSQL databases into your SQL server.   
      
 3. Check appsettings.development.json files in each microservice project and ensure the connection string for the MSSQL database is using the correct server.   
      
@@ -147,29 +147,29 @@ This project contains our RabbitMQ logic which we use in our microservices to pu
 
 **Domain Diagram:**
 
-![Domain Diagram](Diagrams/DomainDiagram.png)
+![Domain Diagram](Documentation/Diagrams/DomainDiagram.png)
 
 **EER Diagrams:**
 
 **Auth Service:**
 
-![Domain Diagram](Diagrams/AuthServiceEERDiagram.png)
+![Domain Diagram](Documentation/Diagrams/AuthServiceEERDiagram.png)
 
 **OrderServiceDB:**
 
-![Domain Diagram](Diagrams/OrderServiceEERDiagram.png)
+![Domain Diagram](Documentation/Diagrams/OrderServiceEERDiagram.png)
 
 **PaymentDB:**
 
-![Domain Diagram](Diagrams/PaymentEERDiagram.png)
+![Domain Diagram](Documentation/Diagrams/PaymentEERDiagram.png)
 
 **RestaurantServiceDB:** 
 
-![Domain Diagram](Diagrams/RestaurantEERDiagram.png)
+![Domain Diagram](Documentation/Diagrams/RestaurantEERDiagram.png)
 
 **ReviewServiceDB:**
 
-![Domain Diagram](Diagrams/ReviewEERDiagram.png)
+![Domain Diagram](Documentation/Diagrams/ReviewEERDiagram.png)
 
 
 
