@@ -9,7 +9,7 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
 
 1. Clone our repository “git clone [https://github.com/christofferPerch/MTOGO\_Soft\_Exam.git](https://github.com/christofferPerch/MTOGO_Soft_Exam.git)”  
      
-2. Import the BACPAC files located HERE containing the MSSQL databases into your SQL server.   
+2. Import the BACPAC files located [HERE](./Docs/) containing the MSSQL databases into your SQL server.   
      
 3. Check appsettings.development.json files in each microservice project and ensure the connection string for the MSSQL database is using the correct server.   
      
@@ -21,17 +21,6 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
      
 7. It should now open the API Gateway and Web Project when running the application.
 
-   ### 
-
-   ### 
-
-   ### 
-
-   ### 
-
-   ### 
-
-### 
 
    ### **Technology Stack**
 
@@ -73,16 +62,6 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
 
 * **In Progress:** Will be used to make code analysis, run tests and docker. 
 
----
-
-## 
-
-## 
-
-## 
-
-## 
-
 ## **Ubiquitous Language** 
 
 ### **Entities:**
@@ -98,25 +77,6 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
 * **Address:** The location associated with restaurants or users.  
 * **Food Category:** The type of cuisine or food offerings associated with a restaurant.
 
----
-
-## 
-
-## 
-
-## 
-
-## 
-
-## 
-
-## 
-
-## 
-
-## 
-
-## 
 
 ## **Architecture Documentation**
 
@@ -161,7 +121,7 @@ This project contains our RabbitMQ logic which we use in our microservices to pu
 
 **`├── Properties`**
 
-	**`├── launchSettings.json`** `# Startup config`
+	├───────── launchSettings.json # Startup config
 
 **`├── Controllers/`**    `# API controllers`
 
@@ -171,7 +131,7 @@ This project contains our RabbitMQ logic which we use in our microservices to pu
 
 **`├── Services/`**       `# Business logic services and interfaces`
 
-	`├── IServices/`
+	├───────── IServices/
 
 **`├── Data/`**           `# Database context and migrations`
 
@@ -185,35 +145,33 @@ This project contains our RabbitMQ logic which we use in our microservices to pu
 
 ## **Requirements and Diagrams**
 
-Domain Diagram:
+**Domain Diagram:**
 
-![][image1]
+![Domain Diagram](Diagrams/DomainDiagram.png)
 
-EER Diagrams:
+**EER Diagrams:**
 
-Auth Service:
+**Auth Service:**
 
-![][image2]
+![Domain Diagram](Diagrams/AuthServiceEERDiagram.png)
 
-OrderServiceDB:
+**OrderServiceDB:**
 
-![][image3]
+![Domain Diagram](Diagrams/OrderServiceEERDiagram.png)
 
-PaymentDB:  
-![][image4]
+**PaymentDB:**
 
-RestaurantServiceDB:  
-![][image5]
+![Domain Diagram](Diagrams/PaymentEERDiagram.png)
 
-ReviewServiceDB:
+**RestaurantServiceDB:** 
 
-![][image6]
+![Domain Diagram](Diagrams/RestaurantEERDiagram.png)
 
----
+**ReviewServiceDB:**
 
-## 
+![Domain Diagram](Diagrams/ReviewEERDiagram.png)
 
-## 
+
 
 ## **Test Strategy and Design**
 
@@ -259,7 +217,8 @@ We use **XP Practices**:
 
 ## **Non-Functional Requirements (FURPS Model)**
 
-Usability
+**Usability**
+
 
 \- Comprehensive API documentation is available via Swagger for developers to easily interact with the system.
 
@@ -267,13 +226,15 @@ Usability
 
 \- Redis is used to store shopping cart data temporarily, enhancing user experience during browsing.
 
-Reliability
+**Reliability**
+
 
 \- Ensures the integrity of order data across services through RabbitMQ-based message queuing.
 
 \- Logging and monitoring in all services to track errors and critical events, with detailed logs to assist in debugging.
 
-Performance
+**Performance**
+
 
 \- Load testing planned for high concurrency scenarios to simulate realistic user load.
 
@@ -281,7 +242,8 @@ Performance
 
 \- Caching using Redis improves performance for frequently accessed data, such as shopping cart operations.
 
-  	Supportability
+
+**Supportability**
 
 \- Developer-friendly project structure with clear separation of concerns across services.
 
