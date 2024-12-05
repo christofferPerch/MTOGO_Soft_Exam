@@ -164,6 +164,10 @@ This project contains our RabbitMQ logic which we use in our microservices to pu
 
 ![Domain Diagram](Documentation/Diagrams/DomainDiagram.png)
 
+This diagram below illustrates the domain model for the MTOGO system, including a potential DeliveryAgent entity. Although not currently implemented, the DeliveryAgent entity represents a future enhancement where restaurants could outsource deliveries to dedicated agents.
+
+![Domain Diagram](Documentation/Diagrams/DomainDiagram2.png)
+
 **EER Diagrams:**
 
 **Auth Service:**
