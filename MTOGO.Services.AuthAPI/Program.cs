@@ -40,15 +40,28 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+// Middleware to redirect root requests to Swagger UI
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/")
+    {
+        context.Response.Redirect("/swagger/index.html", permanent: false);
+    }
+    else
+    {
+        await next();
+    }
+});
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ApplyMigration();
+//ApplyMigration();
 app.Run();
 
-void ApplyMigration()
+/*void ApplyMigration()
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -56,4 +69,4 @@ void ApplyMigration()
     {
         db.Database.Migrate();
     }
-}
+}*/

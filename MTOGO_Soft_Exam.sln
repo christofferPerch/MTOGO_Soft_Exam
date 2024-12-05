@@ -33,9 +33,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTOGO.Services.OrderAPI", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTOGO.Services.ReviewAPI", "MTOGO.Services.ReviewAPI\MTOGO.Services.ReviewAPI.csproj", "{F6867BEA-001B-46F4-B76E-C686397A8B32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTOGO.Services.SmsAPI", "MTOGO.Services.SmsAPI\MTOGO.Services.SmsAPI.csproj", "{883F361D-D416-41F1-B1E0-A5687987322F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTOGO.Services.SmsAPI", "MTOGO.Services.SmsAPI\MTOGO.Services.SmsAPI.csproj", "{883F361D-D416-41F1-B1E0-A5687987322F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTOGO.Services.EmailAPI", "MTOGO.Services.EmailAPI\MTOGO.Services.EmailAPI.csproj", "{B1FD74D4-BB30-401C-AB6F-C099BD89270B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTOGO.Services.EmailAPI", "MTOGO.Services.EmailAPI\MTOGO.Services.EmailAPI.csproj", "{B1FD74D4-BB30-401C-AB6F-C099BD89270B}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{3DE3A233-0275-46FB-99A1-49FC499D33A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +93,10 @@ Global
 		{B1FD74D4-BB30-401C-AB6F-C099BD89270B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1FD74D4-BB30-401C-AB6F-C099BD89270B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1FD74D4-BB30-401C-AB6F-C099BD89270B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DE3A233-0275-46FB-99A1-49FC499D33A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DE3A233-0275-46FB-99A1-49FC499D33A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DE3A233-0275-46FB-99A1-49FC499D33A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DE3A233-0275-46FB-99A1-49FC499D33A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

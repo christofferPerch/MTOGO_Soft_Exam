@@ -14,12 +14,9 @@ namespace MTOGO.GatewaySolution.Extensions
             var issuer = jwtOptionsSection.GetValue<string>("Issuer");
             var audience = jwtOptionsSection.GetValue<string>("Audience");
 
-            if (string.IsNullOrEmpty(secret) || string.IsNullOrEmpty(issuer) || string.IsNullOrEmpty(audience))
-            {
-                throw new ArgumentNullException("JWT configuration values are missing.");
-            }
 
             var key = Encoding.ASCII.GetBytes(secret);
+
 
             builder.Services.AddAuthentication(x =>
             {

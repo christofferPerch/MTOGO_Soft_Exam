@@ -41,14 +41,13 @@ namespace MTOGO.Services.OrderAPI.Services
                     TotalAmount = paymentRequest.TotalAmount,
                     VATAmount = paymentRequest.TotalAmount * 0.25m,
                     Items = paymentRequest.Items,
-                    CustomerEmail = paymentRequest.CustomerEmail // Include CustomerEmail
+                    CustomerEmail = paymentRequest.CustomerEmail 
                 };
 
                 try {
                     int orderId = await CreateOrder(order);
                     _logger.LogInformation($"Order created successfully with Order ID: {orderId}");
 
-                    // Publish Cart Removal and handle OrderCreated event
                     await PublishCartRemovalMessage(paymentRequest.UserId);
                 } catch (Exception ex) {
                     _logger.LogError(ex, "Error occurred while creating order from payment success.");
@@ -61,7 +60,7 @@ namespace MTOGO.Services.OrderAPI.Services
 
         #region Payment Methods
         public async Task<PaymentResponseDto> ProcessPayment(PaymentRequestDto paymentRequest) {
-            // Pass CustomerEmail when getting cart details
+
             var cartDetails = await GetCartDetails(paymentRequest.UserId, paymentRequest.CorrelationId);
 
             if (cartDetails == null) {

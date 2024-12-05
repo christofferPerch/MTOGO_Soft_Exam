@@ -15,10 +15,8 @@ if (string.IsNullOrEmpty(connectionString))
 }
 
 builder.Services.AddSingleton<IDataAccess, DataAccess>(sp => new DataAccess(connectionString));
-
 builder.Services.AddScoped<IOrderService, OrderService>();
-builder.Services.AddSingleton<IMessageBus, MessageBus>(); 
-
+builder.Services.AddSingleton<IMessageBus, MessageBus>();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -29,7 +27,6 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddMemoryCache();
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins", builder =>
@@ -57,6 +54,19 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Order API");
     });
 }
+
+// Redirect `/` to Swagger UI
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/")
+    {
+        context.Response.Redirect("/swagger/index.html", permanent: false);
+    }
+    else
+    {
+        await next();
+    }
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

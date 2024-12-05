@@ -13,6 +13,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["MTOGO.Services.AuthAPI/MTOGO.Services.AuthAPI.csproj", "MTOGO.Services.AuthAPI/"]
+COPY ["MTOGO.MessageBus/MTOGO.MessageBus.csproj", "MTOGO.MessageBus/"]
 RUN dotnet restore "./MTOGO.Services.AuthAPI/MTOGO.Services.AuthAPI.csproj"
 COPY . .
 WORKDIR "/src/MTOGO.Services.AuthAPI"
