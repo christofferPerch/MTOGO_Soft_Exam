@@ -9,7 +9,7 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
 
 1. Clone our repository “git clone [https://github.com/christofferPerch/MTOGO\_Soft\_Exam.git](https://github.com/christofferPerch/MTOGO_Soft_Exam.git)”  
      
-2. Import the BACPAC files located [HERE](./Docs/) containing the MSSQL databases into your SQL server.   
+2. Import the BACPAC files located [HERE](./Documentation/BacpacFiles/) containing the MSSQL databases into your SQL server.   
      
 3. Check appsettings.development.json files in each microservice project and ensure the connection string for the MSSQL database is using the correct server.   
      
@@ -22,45 +22,60 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
 7. It should now open the API Gateway and Web Project when running the application.
 
 
-   ### **Technology Stack**
 
-   #### **Version Control Platform:**
+
+### **Technology Stack**
+
+
+#### **Version Control Platform:**
 
 * **Git:** Version control for collaborative development.  
 * **GitHub:** Repository hosting.
 
-  #### **Development Environment:**
+#### **Development Environment:**
 
 * **Visual Studio:** For coding and debugging.  
 * **Swagger:** API documentation for testing and understanding endpoints.  
 * **Redis Commander:** For managing the Redis database.  
 * **SSMS:** For managing the SQL databases.
 
-  #### **Development Stack**
 
-  ##### **Backend Development:**
+### **Development Stack**
+
+
+#### **Backend Development:**
+
 
 * **C\# and .NET Core:** For developing microservices.
 
-  ##### **Database Management:**
+
+#### **Database Management:**
+
 
 * **Microsoft SQL Server:** Primary database for most services.  
 * **Redis:** Temporary storage for shopping cart data.
 
-  ##### **Message Queue:**
+
+#### **Message Queue:**
+
 
 * **RabbitMQ:** Facilitates communication between microservices.
 
-  ##### **Development Tools:**
+
+#### **Development Tools:**
+
 
 * **Docker:** Containerization for consistent environments. used for rabbitmq and redis.  
 * **Docker Compose:** For putting it all together.   
 * **Ocelot:** Used for the API gateway.  
 * **Dapper:** Used for data access and ORM purposes.
 
-  ##### **CI/CD Pipeline:**
+
+#### **CI/CD Pipeline:**
+
 
 * **In Progress:** Will be used to make code analysis, run tests and docker. 
+
 
 ## **Ubiquitous Language** 
 
@@ -147,29 +162,29 @@ This project contains our RabbitMQ logic which we use in our microservices to pu
 
 **Domain Diagram:**
 
-![Domain Diagram](Diagrams/DomainDiagram.png)
+![Domain Diagram](Documentation/Diagrams/DomainDiagram.png)
 
 **EER Diagrams:**
 
 **Auth Service:**
 
-![Domain Diagram](Diagrams/AuthServiceEERDiagram.png)
+![Domain Diagram](Documentation/Diagrams/AuthServiceEERDiagram.png)
 
 **OrderServiceDB:**
 
-![Domain Diagram](Diagrams/OrderServiceEERDiagram.png)
+![Domain Diagram](Documentation/Diagrams/OrderServiceEERDiagram.png)
 
 **PaymentDB:**
 
-![Domain Diagram](Diagrams/PaymentEERDiagram.png)
+![Domain Diagram](Documentation/Diagrams/PaymentEERDiagram.png)
 
 **RestaurantServiceDB:** 
 
-![Domain Diagram](Diagrams/RestaurantEERDiagram.png)
+![Domain Diagram](Documentation/Diagrams/RestaurantEERDiagram.png)
 
 **ReviewServiceDB:**
 
-![Domain Diagram](Diagrams/ReviewEERDiagram.png)
+![Domain Diagram](Documentation/Diagrams/ReviewEERDiagram.png)
 
 
 
