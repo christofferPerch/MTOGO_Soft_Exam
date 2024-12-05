@@ -218,7 +218,7 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
             if (string.IsNullOrWhiteSpace(location))
             {
                 _response.IsSuccess = false;
-                _response.Message = "Location parameter is required.";
+                _response.Message = "At least one search parameter (location or food category) is required.";
                 return BadRequest(_response);
             }
 
@@ -229,9 +229,7 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
                 _response.Result = restaurants;
                 _response.Message = "Restaurants retrieved successfully.";
                 return Ok(_response);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 _response.IsSuccess = false;
                 _response.Message = "An error occurred while retrieving restaurants. " + ex.Message;
                 return StatusCode(500, _response);
