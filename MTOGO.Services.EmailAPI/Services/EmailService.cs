@@ -31,7 +31,7 @@ namespace MTOGO.Services.EmailAPI.Services {
 
                 var request = new RestRequest("messages", Method.Post);
                 request.AddParameter("from", fromEmail);
-                request.AddParameter("to", order.CustomerEmail);
+                request.AddParameter("to", "christoffer.perch@gmail.com");//order.CustomerEmail);
                 request.AddParameter("subject", $"Order Confirmation - Order #{order.OrderId}");
                 request.AddParameter("html", GenerateEmailBody(order));
 
