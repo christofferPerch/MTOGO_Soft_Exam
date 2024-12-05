@@ -27,28 +27,28 @@ jobs:
       with:
         context: ./Databases/Auth
         push: true
-        tags: chris2750/mtogo-authdb:latest
+        tags: chris2750/mtogo:authdb
 
     - name: Build and Push OrderDB
       uses: docker/build-push-action@v4
       with:
         context: ./Databases/Order
         push: true
-        tags: chris2750/mtogo-orderdb:latest
+        tags: chris2750/mtogo:orderdb
 
     - name: Build and Push RestaurantDB
       uses: docker/build-push-action@v4
       with:
         context: ./Databases/Restaurant
         push: true
-        tags: chris2750/mtogo-restaurantdb:latest
+        tags: chris2750/mtogo:restaurantdb
 
     - name: Build and Push ReviewDB
       uses: docker/build-push-action@v4
       with:
         context: ./Databases/Review
         push: true
-        tags: chris2750/mtogo-reviewdb:latest
+        tags: chris2750/mtogo:reviewdb
 
     - name: Build and Push ShoppingCartAPI
       uses: docker/build-push-action@v4
@@ -56,7 +56,7 @@ jobs:
         context: .
         file: ./MTOGO.Services.ShoppingCartAPI/Dockerfile
         push: true
-        tags: chris2750/mtogo-shoppingcartapi:latest
+        tags: chris2750/mtogo:shoppingcartapi
 
     - name: Build and Push OrderAPI
       uses: docker/build-push-action@v4
@@ -64,7 +64,7 @@ jobs:
         context: .
         file: ./MTOGO.Services.OrderAPI/Dockerfile
         push: true
-        tags: chris2750/mtogo-orderapi:latest
+        tags: chris2750/mtogo:orderapi
 
     - name: Build and Push Gateway
       uses: docker/build-push-action@v4
@@ -72,7 +72,7 @@ jobs:
         context: .
         file: ./MTOGO.GatewaySolution/Dockerfile
         push: true
-        tags: chris2750/mtogo-gateway:latest
+        tags: chris2750/mtogo:gateway
 
     - name: Build and Push AuthAPI
       uses: docker/build-push-action@v4
@@ -80,7 +80,7 @@ jobs:
         context: .
         file: ./MTOGO.Services.AuthAPI/Dockerfile
         push: true
-        tags: chris2750/mtogo-authapi:latest
+        tags: chris2750/mtogo:authapi
 
     - name: Build and Push RestaurantAPI
       uses: docker/build-push-action@v4
@@ -88,7 +88,7 @@ jobs:
         context: .
         file: ./MTOGO.Services.RestaurantAPI/Dockerfile
         push: true
-        tags: chris2750/mtogo-restaurantapi:latest
+        tags: chris2750/mtogo:restaurantapi
 
     - name: Build and Push ReviewAPI
       uses: docker/build-push-action@v4
@@ -96,4 +96,4 @@ jobs:
         context: .
         file: ./MTOGO.Services.ReviewAPI/Dockerfile
         push: true
-        tags: chris2750/mtogo-reviewapi:latest
+        tags: chris2750/mtogo:reviewapi
