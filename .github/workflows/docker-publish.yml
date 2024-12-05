@@ -54,7 +54,7 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: .
-        dockerfile: ./MTOGO.Services.ShoppingCartAPI/Dockerfile
+        file: ./MTOGO.Services.ShoppingCartAPI/Dockerfile
         push: true
         tags: chris2750/mtogo-shoppingcartapi:latest
 
@@ -62,7 +62,7 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: .
-        dockerfile: ./MTOGO.Services.OrderAPI/Dockerfile
+        file: ./MTOGO.Services.OrderAPI/Dockerfile
         push: true
         tags: chris2750/mtogo-orderapi:latest
 
