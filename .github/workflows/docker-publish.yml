@@ -70,7 +70,7 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: .
-        dockerfile: ./MTOGO.GatewaySolution/Dockerfile
+        file: ./MTOGO.GatewaySolution/Dockerfile
         push: true
         tags: chris2750/mtogo-gateway:latest
 
@@ -78,7 +78,7 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: .
-        dockerfile: ./MTOGO.Services.AuthAPI/Dockerfile
+        file: ./MTOGO.Services.AuthAPI/Dockerfile
         push: true
         tags: chris2750/mtogo-authapi:latest
 
@@ -86,7 +86,7 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: .
-        dockerfile: ./MTOGO.Services.RestaurantAPI/Dockerfile
+        file: ./MTOGO.Services.RestaurantAPI/Dockerfile
         push: true
         tags: chris2750/mtogo-restaurantapi:latest
 
@@ -94,6 +94,6 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: .
-        dockerfile: ./MTOGO.Services.ReviewAPI/Dockerfile
+        file: ./MTOGO.Services.ReviewAPI/Dockerfile
         push: true
         tags: chris2750/mtogo-reviewapi:latest
