@@ -190,7 +190,9 @@ This diagram below illustrates the domain model for the MTOGO system, including 
 
 ![Domain Diagram](Documentation/Diagrams/ReviewEERDiagram.png)
 
+**System Architecture Diagram:**
 
+![Domain Diagram](Documentation/Diagrams/diagram3.png)
 
 ## **Test Strategy and Design**
 
