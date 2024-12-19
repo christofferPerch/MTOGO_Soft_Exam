@@ -25,7 +25,6 @@ builder.AddAppAuthetication();
 
 var app = builder.Build();
 
-// Use middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -34,6 +33,18 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Shopping Cart API");
     });
 }
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/")
+    {
+        context.Response.Redirect("/swagger/index.html", permanent: false);
+    }
+    else
+    {
+        await next();
+    }
+});
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

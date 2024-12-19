@@ -19,7 +19,7 @@ namespace MTOGO.Services.ShoppingCartAPI.Controllers
             _response = new ResponseDto();
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("GetCartBy/{userId}")]
         public async Task<IActionResult> GetCart(string userId)
         {
             try
@@ -34,12 +34,11 @@ namespace MTOGO.Services.ShoppingCartAPI.Controllers
                 var cart = await _cartService.GetCart(userId);
                 if (cart == null || cart.Items.Count == 0)
                 {
-                    // Respond with an empty cart structure if no items exist
                     _response.IsSuccess = true;
                     _response.Result = new Cart
                     {
                         UserId = userId,
-                        Items = new List<CartItem>() // Empty items list
+                        Items = new List<CartItem>() 
                     };
                     _response.Message = "Cart is empty.";
                     return Ok(_response);
@@ -58,7 +57,7 @@ namespace MTOGO.Services.ShoppingCartAPI.Controllers
             }
         }
 
-        [HttpPost("set")]
+        [HttpPost("SetCart")]
         public async Task<IActionResult> SetCart([FromBody] Cart cart)
         {
             if (cart == null || string.IsNullOrEmpty(cart.UserId))
@@ -100,8 +99,7 @@ namespace MTOGO.Services.ShoppingCartAPI.Controllers
             }
         }
 
-
-        [HttpPost("create")]
+        [HttpPost("CreateCart")]
         public async Task<IActionResult> CreateCart([FromBody] Cart cart)
         {
             try
@@ -125,25 +123,7 @@ namespace MTOGO.Services.ShoppingCartAPI.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateCart([FromBody] Cart cart)
-        {
-            try
-            {
-                var updatedCart = await _cartService.UpdateCart(cart);
-                _response.Result = updatedCart;
-                _response.Message = "Cart updated successfully.";
-                return Ok(_response);
-            }
-            catch (Exception ex)
-            {
-                _response.IsSuccess = false;
-                _response.Message = "An error occurred while updating the cart." + ex;
-                return StatusCode(500, _response);
-            }
-        }
-
-        [HttpDelete]
+        [HttpDelete("RemoveFromCart")]
         public async Task<IActionResult> RemoveMenuItem(string userId, int menuItemId)
         {
             if (string.IsNullOrEmpty(userId))
@@ -177,10 +157,7 @@ namespace MTOGO.Services.ShoppingCartAPI.Controllers
             }
         }
 
-
-
-
-        [HttpDelete("{userId}")]
+        [HttpDelete("DeleteCartBy/{userId}")]
         public async Task<IActionResult> RemoveCart(string userId)
         {
             try
@@ -203,6 +180,5 @@ namespace MTOGO.Services.ShoppingCartAPI.Controllers
                 return StatusCode(500, _response);
             }
         }
-
     }
 }

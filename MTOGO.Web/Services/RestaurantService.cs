@@ -22,14 +22,22 @@ namespace MTOGO.Web.Services
             });
         }
 
-        public async Task<ResponseDto?> SearchRestaurants(string location)
+        public async Task<ResponseDto?> SearchRestaurants(string location, int? foodCategory = null)
         {
+            var url = $"{SD.RestaurantAPIBase}/api/restaurant/searchRestaurant?location={location}";
+
+            if (foodCategory.HasValue)
+            {
+                url += $"&foodCategory={foodCategory.Value}";
+            }
+
             return await _baseService.SendAsync(new RequestDto()
             {
                 ApiType = SD.ApiType.GET,
-                Url = $"{SD.RestaurantAPIBase}/api/restaurant/searchRestaurant?location={location}"
+                Url = url
             });
         }
+
 
         public async Task<ResponseDto?> UniqueCities()
         {
@@ -45,7 +53,7 @@ namespace MTOGO.Web.Services
             return await _baseService.SendAsync(new RequestDto()
             {
                 ApiType = SD.ApiType.GET,
-                Url = $"{SD.RestaurantAPIBase}/api/restaurant/{id}" 
+                Url = $"{SD.RestaurantAPIBase}/api/restaurant/{id}"
             });
         }
 

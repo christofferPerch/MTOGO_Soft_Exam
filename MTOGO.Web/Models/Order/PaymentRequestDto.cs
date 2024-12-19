@@ -6,6 +6,7 @@ namespace MTOGO.Web.Models.Order
     {
         public string UserId { get; set; }
         //public Guid CorrelationId { get; set; }
+        public string CustomerEmail { get; set; }
         public List<CartItem> Items { get; set; }
         public decimal TotalAmount { get; set; }
         public string CardNumber { get; set; }

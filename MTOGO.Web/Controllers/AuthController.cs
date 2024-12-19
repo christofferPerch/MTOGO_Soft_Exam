@@ -1,12 +1,13 @@
-﻿using MTOGO.Web.Services.IServices;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using MTOGO.Web.Models.Auth;
+using MTOGO.Web.Models.Order;
+using MTOGO.Web.Models.Restaurant;
+using MTOGO.Web.Services.IServices;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using MTOGO.Web.Models.Auth;
-using MTOGO.Web.Models.Order;
 
 namespace MTOGO.Web.Controllers
 {
@@ -15,12 +16,13 @@ namespace MTOGO.Web.Controllers
         private readonly IAuthService _authService;
         private readonly ITokenProvider _tokenProvider;
         private readonly IOrderService _orderService;
-
-        public AuthController(IAuthService authService, ITokenProvider tokenProvider, IOrderService orderService)
+        private readonly IRestaurantService _restaurantService;
+        public AuthController(IAuthService authService, ITokenProvider tokenProvider, IOrderService orderService, IRestaurantService restaurantService)
         {
             _authService = authService;
             _tokenProvider = tokenProvider;
             _orderService = orderService;
+            _restaurantService = restaurantService;
         }
 
         [HttpGet]
@@ -83,7 +85,7 @@ namespace MTOGO.Web.Controllers
         {
             var loginResponse = await _authService.LoginAsync(new LoginRequestDto
             {
-                UserName = userDto.Email 
+                UserName = userDto.Email
             });
 
             var loginResponseDto = JsonConvert.DeserializeObject<LoginResponseDto>(Convert.ToString(loginResponse?.Result));
@@ -133,8 +135,8 @@ namespace MTOGO.Web.Controllers
                 var loginResponse = JsonConvert.DeserializeObject<LoginResponseDto>(Convert.ToString(responseDto.Result));
                 if (loginResponse != null)
                 {
-                    await SignInUser(loginResponse); 
-                    _tokenProvider.SetToken(loginResponse.Token); 
+                    await SignInUser(loginResponse);
+                    _tokenProvider.SetToken(loginResponse.Token);
                     return RedirectToAction("Index", "Home");
                 }
             }
@@ -159,7 +161,7 @@ namespace MTOGO.Web.Controllers
             {
                 if (string.IsNullOrEmpty(registrationRequest.Role))
                 {
-                    registrationRequest.Role = "Customer"; 
+                    registrationRequest.Role = "Customer";
                 }
 
                 var assignRoleResponse = await _authService.AssignRoleAsync(registrationRequest);
@@ -177,7 +179,7 @@ namespace MTOGO.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            _tokenProvider.ClearToken(); 
+            _tokenProvider.ClearToken();
             return RedirectToAction("Index", "Home");
         }
 
@@ -222,12 +224,40 @@ namespace MTOGO.Web.Controllers
             var response = await _orderService.GetActiveOrders(userId);
             if (response != null && response.IsSuccess && response.Result != null)
             {
-                var activeOrders = JsonConvert.DeserializeObject<List<OrderDto>>(response.Result.ToString());
-                return Json(new { success = true, data = activeOrders });
+                try
+                {
+                    var activeOrders = JsonConvert.DeserializeObject<List<OrderManagementDto>>(response.Result.ToString());
+
+                    // Fetch menu item names
+                    foreach (var order in activeOrders)
+                    {
+                        foreach (var item in order.Items)
+                        {
+                            var cartDetailsResponse = await _restaurantService.GetCartDetailsAsync(item.RestaurantId, item.MenuItemId);
+                            if (cartDetailsResponse?.IsSuccess == true && cartDetailsResponse.Result != null)
+                            {
+                                var cartDetails = JsonConvert.DeserializeObject<CartDetailsDto>(cartDetailsResponse.Result.ToString());
+                                item.MenuItemName = cartDetails?.Name ?? "Unknown Item";
+                            }
+                            else
+                            {
+                                item.MenuItemName = "Unknown Item";
+                            }
+                        }
+                    }
+
+                    return Json(new { success = true, data = activeOrders });
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = "Failed to process active orders." });
+                }
             }
 
             return Json(new { success = false, message = response?.Message ?? "Failed to load active orders." });
         }
+
+
 
         [HttpGet]
         public async Task<IActionResult> GetOrderHistory()
@@ -242,12 +272,40 @@ namespace MTOGO.Web.Controllers
             var response = await _orderService.GetOrderHistory(userId);
             if (response != null && response.IsSuccess && response.Result != null)
             {
-                var orderHistory = JsonConvert.DeserializeObject<List<OrderDto>>(response.Result.ToString());
-                return Json(new { success = true, data = orderHistory });
+                try
+                {
+                    var orderHistory = JsonConvert.DeserializeObject<List<OrderManagementDto>>(response.Result.ToString());
+
+                    // Fetch menu item names
+                    foreach (var order in orderHistory)
+                    {
+                        foreach (var item in order.Items)
+                        {
+                            var cartDetailsResponse = await _restaurantService.GetCartDetailsAsync(item.RestaurantId, item.MenuItemId);
+                            if (cartDetailsResponse?.IsSuccess == true && cartDetailsResponse.Result != null)
+                            {
+                                var cartDetails = JsonConvert.DeserializeObject<CartDetailsDto>(cartDetailsResponse.Result.ToString());
+                                item.MenuItemName = cartDetails?.Name ?? "Unknown Item";
+                            }
+                            else
+                            {
+                                item.MenuItemName = "Unknown Item";
+                            }
+                        }
+                    }
+
+                    return Json(new { success = true, data = orderHistory });
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception if needed
+                    return Json(new { success = false, message = "Failed to process order history." });
+                }
             }
 
             return Json(new { success = false, message = response?.Message ?? "Failed to load order history." });
         }
+
 
     }
 }

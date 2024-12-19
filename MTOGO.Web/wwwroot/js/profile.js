@@ -32,11 +32,16 @@ document.addEventListener("DOMContentLoaded", function () {
         activeTabElement.classList.add("active");
         activeContentElement.style.display = "block";
     }
-
-    // Fetch orders dynamically when switching tabs
     async function fetchOrders(endpoint, containerId) {
         const container = document.getElementById(containerId);
         container.innerHTML = "<p>Loading...</p>";
+
+        const orderStatusMapping = {
+            0: "Undefined",
+            1: "Delivery In Progress",
+            2: "Delivery In Progress",
+            3: "Delivered"
+        };
 
         try {
             const response = await fetch(endpoint);
@@ -45,22 +50,23 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.success && data.data.length > 0) {
                 container.innerHTML = data.data
                     .map(order => `
-                        <div class="order-card">
-                            <h5>Order #${order.id}</h5>
-                            <p><strong>Total Amount:</strong> $${order.totalAmount.toFixed(2)}</p>
-                            <p><strong>Order Placed:</strong> ${new Date(order.orderPlacedTimestamp).toLocaleString()}</p>
-                            <h6>Items:</h6>
-                            <ul>
-                                ${order.items
+                    <div class="order-card">
+                        <h5>Order #${order.id}</h5>
+                        <h5>Order Status: ${orderStatusMapping[order.orderStatusId] || "Unknown Status"}</h5>
+                        <p><strong>Total Amount:</strong> $${order.totalAmount.toFixed(2)}</p>
+                        <p><strong>Order Placed:</strong> ${new Date(order.orderPlacedTimestamp).toLocaleString()}</p>
+                        <h6>Items:</h6>
+                        <ul>
+                            ${order.items
                             .map(
                                 item => `
-                                    <li>${item.quantity}x Item #${item.menuItemId} - $${item.price.toFixed(2)}</li>
-                                `
+                              <li>${item.quantity}x ${item.menuItemName} - $${item.price.toFixed(2)}</li>
+                            `
                             )
                             .join("")}
-                            </ul>
-                        </div>
-                    `)
+                        </ul>
+                    </div>
+                `)
                     .join("");
             } else {
                 container.innerHTML = `<p class="text-muted">${data.message || "No orders found."}</p>`;
@@ -70,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
             container.innerHTML = `<p class="text-danger">Failed to load orders. Please try again later.</p>`;
         }
     }
+
 
     tabs.forEach(tab => {
         tab.addEventListener("click", function (e) {
@@ -81,7 +88,6 @@ document.addEventListener("DOMContentLoaded", function () {
             this.classList.add("active");
             document.getElementById(this.getAttribute("data-tab")).style.display = "block";
 
-            // Fetch orders for Active Orders and Order History tabs
             const tabId = this.getAttribute("data-tab");
             if (tabId === "active-orders") {
                 fetchOrders(`/Auth/GetActiveOrders`, "active-orders");
@@ -94,7 +100,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Default tab content
     if (activeTab === "active-orders") {
         fetchOrders(`/Auth/GetActiveOrders`, "active-orders");
     } else if (activeTab === "order-history") {

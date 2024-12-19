@@ -7,7 +7,6 @@ using MTOGO.Services.ShoppingCartAPI.Models;
 using MTOGO.Services.ShoppingCartAPI.Models.Dto;
 using MTOGO.Services.ShoppingCartAPI.Services;
 using Newtonsoft.Json;
-using Xunit;
 
 namespace MTOGO.UnitTests.ShoppingCart
 {
@@ -43,7 +42,7 @@ namespace MTOGO.UnitTests.ShoppingCart
 
         public void Dispose()
         {
-            _redisCache.Remove(_testUserId); 
+            _redisCache.Remove(_testUserId);
         }
 
         [Fact]
@@ -80,7 +79,7 @@ namespace MTOGO.UnitTests.ShoppingCart
             var cart = new Cart { UserId = _testUserId, Items = new List<CartItem> { new CartItem { MenuItemId = 101, Quantity = 1, Price = 9.99m } } };
             await _redisCache.SetStringAsync(_testUserId, JsonConvert.SerializeObject(cart));
 
-            cart.Items[0].Quantity = 3; 
+            cart.Items[0].Quantity = 3;
 
             var result = await _shoppingCartService.UpdateCart(cart);
 

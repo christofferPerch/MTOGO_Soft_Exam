@@ -4,18 +4,23 @@ using MTOGO.Services.RestaurantAPI.Models.Dto;
 using MTOGO.Services.RestaurantAPI.Services.IServices;
 using System.Data;
 
-namespace MTOGO.Services.RestaurantAPI.Services {
-    public class RestaurantService : IRestaurantService {
+namespace MTOGO.Services.RestaurantAPI.Services
+{
+    public class RestaurantService : IRestaurantService
+    {
         private readonly IDataAccess _dataAccess;
         private readonly ILogger<RestaurantService> _logger;
 
-        public RestaurantService(IDataAccess dataAccess, ILogger<RestaurantService> logger) {
+        public RestaurantService(IDataAccess dataAccess, ILogger<RestaurantService> logger)
+        {
             _dataAccess = dataAccess;
             _logger = logger;
         }
 
-        public async Task<int> AddRestaurant(AddRestaurantDto restaurantDto) {
-            try {
+        public async Task<int> AddRestaurant(AddRestaurantDto restaurantDto)
+        {
+            try
+            {
                 #region parameters
                 var parameters = new DynamicParameters();
                 parameters.Add("@RestaurantName", restaurantDto.RestaurantName);
@@ -35,14 +40,16 @@ namespace MTOGO.Services.RestaurantAPI.Services {
                 operatingHoursTable.Columns.Add("Day", typeof(int));
                 operatingHoursTable.Columns.Add("OpeningHours", typeof(TimeSpan));
                 operatingHoursTable.Columns.Add("ClosingHours", typeof(TimeSpan));
-                foreach (var hours in restaurantDto.OperatingHours) {
+                foreach (var hours in restaurantDto.OperatingHours)
+                {
                     operatingHoursTable.Rows.Add((int)hours.Day, hours.OpeningHours, hours.ClosingHours);
                 }
                 parameters.Add("@OperatingHours", operatingHoursTable.AsTableValuedParameter("TVP_OperatingHours"));
 
                 var foodCategoriesTable = new DataTable();
                 foodCategoriesTable.Columns.Add("Category", typeof(int));
-                foreach (var category in restaurantDto.FoodCategories) {
+                foreach (var category in restaurantDto.FoodCategories)
+                {
                     foodCategoriesTable.Rows.Add((int)category.Category);
                 }
                 parameters.Add("@FoodCategories", foodCategoriesTable.AsTableValuedParameter("TVP_FoodCategory"));
@@ -52,20 +59,25 @@ namespace MTOGO.Services.RestaurantAPI.Services {
 
                 await _dataAccess.ExecuteStoredProcedure<int>("AddRestaurant", parameters);
                 return parameters.Get<int>("@RestaurantId");
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError(ex, "Error adding new restaurant");
                 throw;
             }
         }
 
-        public async Task<int> AddMenuItem(AddMenuItemDto menuItemDto) {
-            try {
+        public async Task<int> AddMenuItem(AddMenuItemDto menuItemDto)
+        {
+            try
+            {
                 var sql = @"
                     INSERT INTO MenuItem (RestaurantId, Name, Description, Price, Image)
                     VALUES (@RestaurantId, @Name, @Description, @Price, @Image);
                     SELECT CAST(SCOPE_IDENTITY() as int);";
 
-                var parameters = new {
+                var parameters = new
+                {
                     RestaurantId = menuItemDto.RestaurantId,
                     Name = menuItemDto.Name,
                     Description = menuItemDto.Description,
@@ -75,14 +87,18 @@ namespace MTOGO.Services.RestaurantAPI.Services {
 
                 int newMenuItemId = (await _dataAccess.InsertAndGetId<int?>(sql, parameters)) ?? 0;
                 return newMenuItemId;
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError(ex, "Error adding new menu item");
                 throw;
             }
         }
 
-        public async Task<int> UpdateRestaurant(UpdateRestaurantDto updateRestaurantDto) {
-            try {
+        public async Task<int> UpdateRestaurant(UpdateRestaurantDto updateRestaurantDto)
+        {
+            try
+            {
                 #region parameters
                 var parameters = new DynamicParameters();
                 parameters.Add("@RestaurantId", updateRestaurantDto.Id);
@@ -93,7 +109,8 @@ namespace MTOGO.Services.RestaurantAPI.Services {
                 parameters.Add("@ContactEmail", updateRestaurantDto.ContactEmail);
                 parameters.Add("@ContactPhone", updateRestaurantDto.ContactPhone);
 
-                if (updateRestaurantDto.Address != null) {
+                if (updateRestaurantDto.Address != null)
+                {
                     parameters.Add("@AddressLine1", updateRestaurantDto.Address.AddressLine1);
                     parameters.Add("@AddressLine2", updateRestaurantDto.Address.AddressLine2);
                     parameters.Add("@City", updateRestaurantDto.Address.City);
@@ -101,21 +118,25 @@ namespace MTOGO.Services.RestaurantAPI.Services {
                     parameters.Add("@Country", updateRestaurantDto.Address.Country);
                 }
 
-                if (updateRestaurantDto.OperatingHours != null) {
+                if (updateRestaurantDto.OperatingHours != null)
+                {
                     var operatingHoursTable = new DataTable();
                     operatingHoursTable.Columns.Add("Day", typeof(int));
                     operatingHoursTable.Columns.Add("OpeningHours", typeof(TimeSpan));
                     operatingHoursTable.Columns.Add("ClosingHours", typeof(TimeSpan));
-                    foreach (var hours in updateRestaurantDto.OperatingHours) {
+                    foreach (var hours in updateRestaurantDto.OperatingHours)
+                    {
                         operatingHoursTable.Rows.Add((int)hours.Day, hours.OpeningHours, hours.ClosingHours);
                     }
                     parameters.Add("@OperatingHours", operatingHoursTable.AsTableValuedParameter("TVP_OperatingHours"));
                 }
 
-                if (updateRestaurantDto.FoodCategories != null) {
+                if (updateRestaurantDto.FoodCategories != null)
+                {
                     var foodCategoriesTable = new DataTable();
                     foodCategoriesTable.Columns.Add("Category", typeof(int));
-                    foreach (var category in updateRestaurantDto.FoodCategories) {
+                    foreach (var category in updateRestaurantDto.FoodCategories)
+                    {
                         foodCategoriesTable.Rows.Add((int)category.Category);
                     }
                     parameters.Add("@FoodCategories", foodCategoriesTable.AsTableValuedParameter("TVP_FoodCategory"));
@@ -123,14 +144,18 @@ namespace MTOGO.Services.RestaurantAPI.Services {
                 #endregion
 
                 return await _dataAccess.ExecuteStoredProcedure<int>("UpdateRestaurant", parameters);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError(ex, $"Error updating restaurant with ID {updateRestaurantDto.Id}");
                 throw;
             }
         }
 
-        public async Task<int> DeleteRestaurant(int id) {
-            try {
+        public async Task<int> DeleteRestaurant(int id)
+        {
+            try
+            {
                 var sql = @"
                         DELETE FROM MenuItem WHERE RestaurantId = @Id;
 
@@ -147,25 +172,32 @@ namespace MTOGO.Services.RestaurantAPI.Services {
                         );";
 
                 return await _dataAccess.Delete(sql, new { Id = id });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError(ex, $"Error deleting restaurant with ID {id}");
                 throw;
             }
         }
 
-
-        public async Task<int> RemoveMenuItem(int restaurantId, int menuItemId) {
-            try {
+        public async Task<int> RemoveMenuItem(int restaurantId, int menuItemId)
+        {
+            try
+            {
                 var sql = "DELETE FROM MenuItem WHERE Id = @Id AND RestaurantId = @RestaurantId";
                 return await _dataAccess.Delete(sql, new { Id = menuItemId, RestaurantId = restaurantId });
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError(ex, $"Error deleting menu item with ID {menuItemId} for restaurant ID {restaurantId}");
                 throw;
             }
         }
 
-        public async Task<RestaurantDto?> GetRestaurantById(int id) {
-            try {
+        public async Task<RestaurantDto?> GetRestaurantById(int id)
+        {
+            try
+            {
                 var sql = "SELECT * FROM Restaurant WHERE Id = @Id";
                 var restaurant = await _dataAccess.GetById<RestaurantDto>(sql, new { Id = id });
                 if (restaurant == null) return null;
@@ -183,18 +215,23 @@ namespace MTOGO.Services.RestaurantAPI.Services {
                 restaurant.FoodCategories = await _dataAccess.GetAll<FoodCategoryDto>(foodCategoriesSql, new { RestaurantId = id }) ?? new List<FoodCategoryDto>();
 
                 return restaurant;
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError(ex, $"Error retrieving restaurant with ID {id}");
                 throw;
             }
         }
 
-        public async Task<List<RestaurantDto>> GetAllRestaurants() {
-            try {
+        public async Task<List<RestaurantDto>> GetAllRestaurants()
+        {
+            try
+            {
                 var sql = "SELECT * FROM Restaurant";
                 var restaurants = await _dataAccess.GetAll<RestaurantDto>(sql) ?? new List<RestaurantDto>();
 
-                foreach (var restaurant in restaurants) {
+                foreach (var restaurant in restaurants)
+                {
                     var addressSql = "SELECT * FROM Address WHERE Id = @AddressId";
                     restaurant.Address = await _dataAccess.GetById<AddressDto>(addressSql, new { AddressId = restaurant.AddressId });
 
@@ -209,31 +246,43 @@ namespace MTOGO.Services.RestaurantAPI.Services {
                 }
 
                 return restaurants;
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError(ex, "Error retrieving all restaurants");
                 throw;
             }
         }
 
-        public async Task<List<RestaurantDto>> FindRestaurants(string? location, string? foodCategory) {
-            try {
+        public async Task<List<RestaurantDto>> FindRestaurantsByLocation(string location, int? foodCategory = null)
+        {
+            try
+            {
                 var sql = @"
-            SELECT DISTINCT r.*, a.*
-            FROM Restaurant r
-            INNER JOIN Address a ON r.AddressId = a.Id
-            LEFT JOIN FoodCategory fc ON r.Id = fc.RestaurantId
-            WHERE 
-                (@Location IS NULL OR LOWER(a.City) LIKE LOWER('%' + @Location + '%') OR LOWER(a.ZipCode) LIKE LOWER('%' + @Location + '%'))
-                AND 
-                (@FoodCategory IS NULL OR CAST(fc.Category AS NVARCHAR) LIKE '%' + @FoodCategory + '%')";
+                        SELECT DISTINCT r.*, a.*
+                        FROM Restaurant r
+                        INNER JOIN Address a ON r.AddressId = a.Id
+                        LEFT JOIN FoodCategory fc ON r.Id = fc.RestaurantId
+                        WHERE (a.ZipCode = @Location OR a.City = @Location)";
+
+                if (foodCategory.HasValue)
+                {
+                    sql += " AND fc.Category = @FoodCategory";
+                }
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Location", location, DbType.String);
                 parameters.Add("@FoodCategory", foodCategory, DbType.String);
 
+                if (foodCategory.HasValue)
+                {
+                    parameters.Add("@FoodCategory", foodCategory.Value, DbType.Int32);
+                }
+
                 var restaurants = await _dataAccess.GetAll<RestaurantDto>(sql, parameters) ?? new List<RestaurantDto>();
 
-                foreach (var restaurant in restaurants) {
+                foreach (var restaurant in restaurants)
+                {
                     var addressSql = "SELECT * FROM Address WHERE Id = @AddressId";
                     restaurant.Address = await _dataAccess.GetById<AddressDto>(addressSql, new { AddressId = restaurant.AddressId });
 
@@ -248,54 +297,30 @@ namespace MTOGO.Services.RestaurantAPI.Services {
                 }
 
                 return restaurants;
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError(ex, "Error finding restaurants");
                 throw;
             }
         }
 
-
-        public async Task<List<string>> GetUniqueCitiesAsync() {
-            try {
+        public async Task<List<string>> GetUniqueCitiesAsync()
+        {
+            try
+            {
                 var sql = @"
-            SELECT DISTINCT a.City
-            FROM Restaurant r
-            INNER JOIN Address a ON r.AddressId = a.Id";
+                        SELECT DISTINCT a.City
+                        FROM Restaurant r
+                        INNER JOIN Address a ON r.AddressId = a.Id";
 
                 var cities = await _dataAccess.GetAll<string>(sql);
 
                 return cities ?? new List<string>();
-            } catch (Exception ex) {
-                _logger.LogError(ex, "Error retrieving unique cities");
-                throw;
             }
-        }
-
-        public async Task<CartDetailsDto?> GetCartDetails(int restaurantId, int menuItemId) {
-            try {
-                // SQL query to get the MenuItem details
-                var sql = @"
-                        SELECT Name, Image
-                        FROM MenuItem
-                        WHERE RestaurantId = @RestaurantId AND Id = @MenuItemId";
-
-                // Define parameters
-                var parameters = new {
-                    RestaurantId = restaurantId,
-                    MenuItemId = menuItemId
-                };
-
-                // Use GetById method to fetch the result
-                var cartDetails = await _dataAccess.GetById<CartDetailsDto>(sql, parameters);
-
-                // If no results are found, log a warning and return null
-                if (cartDetails == null) {
-                    _logger.LogWarning($"No menu item found for RestaurantId {restaurantId} and MenuItemId {menuItemId}");
-                }
-
-                return cartDetails;
-            } catch (Exception ex) {
-                _logger.LogError(ex, "Error fetching cart details");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving unique cities");
                 throw;
             }
         }

@@ -1,5 +1,7 @@
-﻿namespace MTOGO.Services.ReviewAPI.Models {
-    public class RestaurantReview {
+﻿namespace MTOGO.Services.ReviewAPI.Models
+{
+    public class RestaurantReview
+    {
         public int Id { get; set; }
         public string CustomerId { get; set; } = string.Empty!;
         public int FoodRating { get; set; }

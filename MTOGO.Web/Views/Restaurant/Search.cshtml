@@ -1,13 +1,72 @@
 ﻿@model IEnumerable<MTOGO.Web.Models.Restaurant.RestaurantDto>
 
 <link rel="stylesheet" href="~/css/restaurant.css" asp-append-version="true" />
+<script src="~/js/categoryDropdown.js" asp-append-version="true"></script>
 
 <div class="container my-4">
     <h2 class="text-center">@ViewBag.SelectedCity</h2>
 
+    @* Hardcoded list of food categories *@
+    @{
+        var categories = new List<KeyValuePair<int, string>>
+    {
+    new KeyValuePair<int, string>(0, "Undefined"),
+    new KeyValuePair<int, string>(1, "Chinese"),
+    new KeyValuePair<int, string>(2, "Pizza"),
+    new KeyValuePair<int, string>(3, "Burger"),
+    new KeyValuePair<int, string>(4, "Italian"),
+    new KeyValuePair<int, string>(5, "Indian"),
+    new KeyValuePair<int, string>(6, "Mexican"),
+    new KeyValuePair<int, string>(7, "Sushi"),
+    new KeyValuePair<int, string>(8, "Thai"),
+    new KeyValuePair<int, string>(9, "American"),
+    new KeyValuePair<int, string>(10, "Mediterranean"),
+    new KeyValuePair<int, string>(11, "Vegetarian"),
+    new KeyValuePair<int, string>(12, "Vegan"),
+    new KeyValuePair<int, string>(13, "Seafood"),
+    new KeyValuePair<int, string>(14, "French"),
+    new KeyValuePair<int, string>(15, "Dessert"),
+    new KeyValuePair<int, string>(16, "BBQ"),
+    new KeyValuePair<int, string>(17, "Steakhouse"),
+    new KeyValuePair<int, string>(18, "Middle Eastern"),
+    new KeyValuePair<int, string>(19, "Fast Food"),
+    new KeyValuePair<int, string>(20, "Healthy"),
+    new KeyValuePair<int, string>(21, "Bakery"),
+    new KeyValuePair<int, string>(22, "Breakfast"),
+    new KeyValuePair<int, string>(23, "Coffee")
+    };
+        var selectedCategoryName = categories.FirstOrDefault(c => c.Key == (int?)ViewBag.FoodCategory).Value ?? "All Categories";
+    }
+
+    <form asp-controller="Restaurant" asp-action="Search" method="get" class="mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text"
+                       name="location"
+                       class="form-control"
+                       placeholder="Enter location"
+                       value="@ViewBag.SelectedCity" />
+            </div>
+            <div class="col-md-4">
+                <select id="foodCategory" name="foodCategory" class="form-control" data-selected-category="@ViewBag.FoodCategory">
+                    <option value="">All Categories</option>
+                    @foreach (var category in categories)
+                    {
+                        <option value="@category.Key">@category.Value</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Search</button>
+            </div>
+        </div>
+    </form>
+
     @if (!Model.Any())
     {
-        <p class="text-center text-muted">No restaurants found in @ViewBag.SelectedCity.</p>
+        <p class="text-center text-muted">
+            No restaurants found in "@ViewBag.SelectedCity" with the food category "@selectedCategoryName".
+        </p>
     }
     else
     {
@@ -26,7 +85,6 @@
                     </a>
                 </div>
             }
-
         </div>
     }
 </div>

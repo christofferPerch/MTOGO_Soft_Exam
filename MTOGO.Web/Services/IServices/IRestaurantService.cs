@@ -5,8 +5,7 @@ namespace MTOGO.Web.Services.IServices
     public interface IRestaurantService
     {
         Task<ResponseDto?> GetAllRestaurantsAsync();
-
-        Task<ResponseDto?> SearchRestaurants(string location);
+        Task<ResponseDto?> SearchRestaurants(string location, int? foodCategory = null);
 
         Task<ResponseDto?> UniqueCities();
         Task<ResponseDto?> GetRestaurantByIdAsync(int id);

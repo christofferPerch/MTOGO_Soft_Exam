@@ -40,15 +40,31 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/")
+    {
+        context.Response.Redirect("/swagger/index.html", permanent: false);
+    }
+    else
+    {
+        await next();
+    }
+});
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-ApplyMigration();
 app.Run();
 
-void ApplyMigration()
+//This is for https but not necessary when using docker 
+
+//ApplyMigration();
+
+
+/*void ApplyMigration()
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -56,4 +72,4 @@ void ApplyMigration()
     {
         db.Database.Migrate();
     }
-}
+}*/

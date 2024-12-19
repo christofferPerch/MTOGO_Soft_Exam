@@ -128,8 +128,8 @@ namespace MTOGO.UnitTests.Auth
             var result = await _authService.Login(loginRequest);
 
             Assert.NotNull(result);
-            Assert.NotNull(result.User);  
-            Assert.False(string.IsNullOrEmpty(result.Token));  
+            Assert.NotNull(result.User);
+            Assert.False(string.IsNullOrEmpty(result.Token));
         }
 
 
@@ -197,7 +197,7 @@ namespace MTOGO.UnitTests.Auth
 
             var result = await _authService.Register(registrationRequest);
 
-            Assert.Equal(string.Empty, result); 
+            Assert.Equal(string.Empty, result);
         }
 
         [Fact]

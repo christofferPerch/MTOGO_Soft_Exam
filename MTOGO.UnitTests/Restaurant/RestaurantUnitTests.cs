@@ -1,44 +1,39 @@
-﻿using MTOGO.Services.DataAccess;
-using MTOGO.Services.RestaurantAPI.Models.Dto;
-using MTOGO.Services.RestaurantAPI.Models;
-using MTOGO.Services.RestaurantAPI.Services;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
-using System.Threading.Tasks;
-using Xunit;
-using MTOGO.Services.RestaurantAPI.Services.IServices;
+﻿using Dapper;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using Dapper;
+using Moq;
+using MTOGO.Services.DataAccess;
+using MTOGO.Services.RestaurantAPI.Models.Dto;
+using MTOGO.Services.RestaurantAPI.Services;
+using System.Data;
 
 namespace MTOGO.UnitTests.Restaurant
 {
-    public class RestaurantServiceTests {
+    public class RestaurantServiceTests
+    {
         private readonly Mock<IDataAccess> _dataAccessMock;
         private readonly ILogger<RestaurantService> _logger;
         private readonly RestaurantService _restaurantService;
 
-        public RestaurantServiceTests() {
+        public RestaurantServiceTests()
+        {
             _dataAccessMock = new Mock<IDataAccess>();
             _logger = new LoggerFactory().CreateLogger<RestaurantService>();
             _restaurantService = new RestaurantService(_dataAccessMock.Object, _logger);
         }
 
         [Fact]
-        public async Task AddRestaurant_ShouldReturn_NewRestaurantId() {
-            var addRestaurantDto = new AddRestaurantDto {
+        public async Task AddRestaurant_ShouldReturn_NewRestaurantId()
+        {
+            var addRestaurantDto = new AddRestaurantDto
+            {
                 RestaurantName = "Test Restaurant",
                 LegalName = "Test Legal Name",
                 VATNumber = "123456",
                 RestaurantDescription = "A nice place",
                 ContactEmail = "contact@test.com",
                 ContactPhone = "123456789",
-                Address = new AddressDto {
+                Address = new AddressDto
+                {
                     AddressLine1 = "Street 1",
                     AddressLine2 = "Suite 100",
                     City = "Test City",
@@ -56,8 +51,10 @@ namespace MTOGO.UnitTests.Restaurant
             };
 
             _dataAccessMock.Setup(d => d.ExecuteStoredProcedure<int>("AddRestaurant", It.IsAny<object>()))
-                           .Callback<string, object>((procName, dynamicParams) => {
-                               if (dynamicParams is DynamicParameters parameters) {
+                           .Callback<string, object>((procName, dynamicParams) =>
+                           {
+                               if (dynamicParams is DynamicParameters parameters)
+                               {
                                    parameters.Add("@RestaurantId", 1, DbType.Int32, ParameterDirection.Output);
                                }
                            })
@@ -73,8 +70,10 @@ namespace MTOGO.UnitTests.Restaurant
 
 
         [Fact]
-        public async Task AddMenuItem_ShouldReturn_NewMenuItemId() {
-            var addMenuItemDto = new AddMenuItemDto {
+        public async Task AddMenuItem_ShouldReturn_NewMenuItemId()
+        {
+            var addMenuItemDto = new AddMenuItemDto
+            {
                 RestaurantId = 1,
                 Name = "Test Dish",
                 Description = "A tasty dish",
@@ -92,12 +91,15 @@ namespace MTOGO.UnitTests.Restaurant
         }
 
         [Fact]
-        public async Task GetRestaurantById_ShouldReturn_RestaurantDto() {
+        public async Task GetRestaurantById_ShouldReturn_RestaurantDto()
+        {
             var restaurantId = 1;
-            var expectedRestaurant = new RestaurantDto {
+            var expectedRestaurant = new RestaurantDto
+            {
                 Id = restaurantId,
                 RestaurantName = "Test Restaurant",
-                Address = new AddressDto {
+                Address = new AddressDto
+                {
                     AddressLine1 = "Street 1",
                     City = "Test City",
                     ZipCode = "12345",
@@ -127,8 +129,10 @@ namespace MTOGO.UnitTests.Restaurant
         }
 
         [Fact]
-        public async Task UpdateRestaurant_ShouldReturn_AffectedRows() {
-            var updateRestaurantDto = new UpdateRestaurantDto {
+        public async Task UpdateRestaurant_ShouldReturn_AffectedRows()
+        {
+            var updateRestaurantDto = new UpdateRestaurantDto
+            {
                 Id = 1,
                 RestaurantName = "Updated Restaurant",
                 LegalName = "Updated Legal Name",
@@ -148,7 +152,8 @@ namespace MTOGO.UnitTests.Restaurant
         }
 
         [Fact]
-        public async Task DeleteRestaurant_ShouldReturn_AffectedRows() {
+        public async Task DeleteRestaurant_ShouldReturn_AffectedRows()
+        {
             int restaurantId = 1;
 
             _dataAccessMock.Setup(d => d.Delete(It.IsAny<string>(), It.IsAny<object>()))
@@ -161,7 +166,8 @@ namespace MTOGO.UnitTests.Restaurant
         }
 
         [Fact]
-        public async Task RemoveMenuItem_ShouldReturn_AffectedRows() {
+        public async Task RemoveMenuItem_ShouldReturn_AffectedRows()
+        {
 
             int restaurantId = 1;
             int menuItemId = 1;
@@ -176,7 +182,8 @@ namespace MTOGO.UnitTests.Restaurant
         }
 
         [Fact]
-        public async Task GetAllRestaurants_ShouldReturn_ListOfRestaurants() {
+        public async Task GetAllRestaurants_ShouldReturn_ListOfRestaurants()
+        {
             var restaurants = new List<RestaurantDto>
             {
         new RestaurantDto { Id = 1, RestaurantName = "Restaurant 1" },

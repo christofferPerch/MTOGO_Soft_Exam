@@ -8,10 +8,10 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
     [Route("api/restaurant")]
     public class RestaurantAPIController : ControllerBase
     {
+        #region Constructor & Properties
         private readonly IRestaurantService _restaurantService;
         protected ResponseDto _response;
 
-        #region Constructor
         public RestaurantAPIController(IRestaurantService restaurantService)
         {
             _restaurantService = restaurantService;
@@ -20,7 +20,7 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
         #endregion
 
         #region Post Methods
-        [HttpPost("add")]
+        [HttpPost("AddRestaurant")]
         public async Task<IActionResult> AddRestaurant([FromBody] AddRestaurantDto restaurant)
         {
 
@@ -47,7 +47,7 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
             }
         }
 
-        [HttpPost("addMenuItem")]
+        [HttpPost("AddMenuItem")]
         public async Task<IActionResult> AddMenuItem([FromBody] AddMenuItemDto menuItemDto)
         {
             try
@@ -82,7 +82,7 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
         #endregion
 
         #region Put Methods
-        [HttpPut("updateRestaurant")]
+        [HttpPut("UpdateRestaurant")]
         public async Task<IActionResult> UpdateRestaurant([FromBody] UpdateRestaurantDto updateRestaurantDto)
         {
             try
@@ -116,7 +116,7 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
         #endregion
 
         #region Delete Methods
-        [HttpDelete("deleteSpecificMenuItem")]
+        [HttpDelete("RemoveMenuItem")]
         public async Task<IActionResult> RemoveMenuItem(int restaurantId, int menuItemId)
         {
             try
@@ -141,7 +141,7 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
             }
         }
 
-        [HttpDelete("deleteSpecificRestaurant")]
+        [HttpDelete("RemoveRestaurant")]
         public async Task<IActionResult> DeleteRestaurant(int id)
         {
             try
@@ -168,7 +168,7 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
         #endregion
 
         #region Get Methods
-        [HttpGet("{id}")]
+        [HttpGet("GetRestaurantBy/{id}")]
         public async Task<IActionResult> GetRestaurantById(int id)
         {
             try
@@ -194,7 +194,7 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
         }
 
 
-        [HttpGet("allRestaurants")]
+        [HttpGet("AllRestaurants")]
         public async Task<IActionResult> GetAllRestaurants()
         {
             try
@@ -212,20 +212,25 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
             }
         }
 
-        [HttpGet("searchRestaurant")]
-        public async Task<IActionResult> SearchRestaurants([FromQuery] string? location, [FromQuery] string? foodCategory) {
-            if (string.IsNullOrWhiteSpace(location) && string.IsNullOrWhiteSpace(foodCategory)) {
+        [HttpGet("SearchRestaurants")]
+        public async Task<IActionResult> SearchRestaurants([FromQuery] string location, [FromQuery] int? foodCategory = null)
+        {
+            if (string.IsNullOrWhiteSpace(location))
+            {
                 _response.IsSuccess = false;
                 _response.Message = "At least one search parameter (location or food category) is required.";
                 return BadRequest(_response);
             }
 
-            try {
-                var restaurants = await _restaurantService.FindRestaurants(location, foodCategory);
+            try
+            {
+                var restaurants = await _restaurantService.FindRestaurantsByLocation(location, foodCategory);
                 _response.Result = restaurants;
                 _response.Message = "Restaurants retrieved successfully.";
                 return Ok(_response);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _response.IsSuccess = false;
                 _response.Message = "An error occurred while retrieving restaurants. " + ex.Message;
                 return StatusCode(500, _response);
@@ -233,7 +238,7 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
         }
 
 
-        [HttpGet("uniqueCities")]
+        [HttpGet("UniqueCities")]
         public async Task<IActionResult> GetUniqueCities()
         {
             try
@@ -260,41 +265,6 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
                 return StatusCode(500, _response);
             }
         }
-
-        [HttpGet("cartDetails")]
-        public async Task<IActionResult> GetCartDetails([FromQuery] int restaurantId, [FromQuery] int menuItemId)
-        {
-            try
-            {
-                if (restaurantId <= 0 || menuItemId <= 0)
-                {
-                    _response.IsSuccess = false;
-                    _response.Message = "Invalid RestaurantId or MenuItemId.";
-                    return BadRequest(_response);
-                }
-
-                var cartDetails = await _restaurantService.GetCartDetails(restaurantId, menuItemId);
-                if (cartDetails == null)
-                {
-                    _response.IsSuccess = false;
-                    _response.Message = "Menu item not found for the provided RestaurantId and MenuItemId.";
-                    return NotFound(_response);
-                }
-
-                _response.Result = cartDetails;
-                _response.Message = "Cart details retrieved successfully.";
-                _response.IsSuccess = true;
-                return Ok(_response);
-            }
-            catch (Exception ex)
-            {
-                _response.IsSuccess = false;
-                _response.Message = $"An error occurred while retrieving cart details: {ex.Message}";
-                return StatusCode(500, _response);
-            }
-        }
-
-
         #endregion
     }
 }

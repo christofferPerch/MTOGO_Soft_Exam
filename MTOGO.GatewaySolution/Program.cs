@@ -1,16 +1,35 @@
+using Microsoft.OpenApi.Models;
 using MTOGO.GatewaySolution.Extensions;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.AddAppAuthetication();
 
-string ocelotConfigFile = builder.Environment.IsProduction() ? "ocelot.Production.json" : "ocelot.json";
+string ocelotConfigFile = Path.Combine(Directory.GetCurrentDirectory(), "ocelot.json");
+if (!File.Exists(ocelotConfigFile))
+{
+    throw new FileNotFoundException($"Ocelot configuration file not found: {ocelotConfigFile}");
+}
+
 builder.Configuration.AddJsonFile(ocelotConfigFile, optional: false, reloadOnChange: true);
 
-
+builder.Services.AddMvcCore();
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOcelot(builder.Configuration);
+
 builder.Services.AddSwaggerForOcelot(builder.Configuration);
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "API Gateway",
+        Version = "v1"
+    });
+    c.OrderActionsBy((apiDesc) => $"{apiDesc.ActionDescriptor.RouteValues["controller"]}_{apiDesc.HttpMethod}");
+});
 
 var app = builder.Build();
 

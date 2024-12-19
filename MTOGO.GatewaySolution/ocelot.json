@@ -2,11 +2,11 @@
   "Routes": [
     {
       "DownstreamPathTemplate": "/api/auth/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7001
+          "Host": "authapi",
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/auth/{everything}",
@@ -15,11 +15,11 @@
     },
     {
       "DownstreamPathTemplate": "/api/restaurant/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7002
+          "Host": "restaurantapi",
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/restaurant/{everything}",
@@ -28,11 +28,11 @@
     },
     {
       "DownstreamPathTemplate": "/api/shoppingcart/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7003
+          "Host": "shoppingcartapi",
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/shoppingcart/{everything}",
@@ -41,11 +41,11 @@
     },
     {
       "DownstreamPathTemplate": "/api/order/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7004
+          "Host": "orderapi",
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/order/{everything}",
@@ -54,11 +54,11 @@
     },
     {
       "DownstreamPathTemplate": "/api/review/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7005
+          "Host": "reviewapi",
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/review/{everything}",
@@ -73,7 +73,7 @@
         {
           "Name": "Auth API",
           "Version": "v1",
-          "Url": "https://localhost:7001/swagger/v1/swagger.json"
+          "Url": "http://authapi:8080/swagger/v1/swagger.json"
         }
       ]
     },
@@ -83,7 +83,7 @@
         {
           "Name": "Restaurant API",
           "Version": "v1",
-          "Url": "https://localhost:7002/swagger/v1/swagger.json"
+          "Url": "http://restaurantapi:8080/swagger/v1/swagger.json"
         }
       ]
     },
@@ -93,7 +93,7 @@
         {
           "Name": "Shopping Cart API",
           "Version": "v1",
-          "Url": "https://localhost:7003/swagger/v1/swagger.json"
+          "Url": "http://shoppingcartapi:8080/swagger/v1/swagger.json"
         }
       ]
     },
@@ -103,7 +103,7 @@
         {
           "Name": "Order API",
           "Version": "v1",
-          "Url": "https://localhost:7004/swagger/v1/swagger.json"
+          "Url": "http://orderapi:8080/swagger/v1/swagger.json"
         }
       ]
     },
@@ -113,12 +113,12 @@
         {
           "Name": "Review API",
           "Version": "v1",
-          "Url": "https://localhost:7005/swagger/v1/swagger.json"
+          "Url": "http://reviewapi:8080/swagger/v1/swagger.json"
         }
       ]
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7777"
+    "BaseUrl": "http://localhost:7777"
   }
 }

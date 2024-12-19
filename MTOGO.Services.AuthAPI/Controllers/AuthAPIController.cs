@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MTOGO.Services.AuthAPI.Models.Dto;
 using MTOGO.Services.AuthAPI.Services.IServices;
-using System.Security.Claims;
 
 namespace MTOGO.Services.AuthAPI.Controllers
 {
@@ -18,7 +17,7 @@ namespace MTOGO.Services.AuthAPI.Controllers
         }
 
 
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDto model)
         {
 
@@ -32,9 +31,21 @@ namespace MTOGO.Services.AuthAPI.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto model)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                _response.IsSuccess = false;
+                _response.Message = string.Join("; ", errors);
+                return BadRequest(_response);
+            }
+
             var loginResponse = await _authService.Login(model);
             if (loginResponse.User == null)
             {
@@ -42,10 +53,11 @@ namespace MTOGO.Services.AuthAPI.Controllers
                 _response.Message = "Username or password is incorrect";
                 return BadRequest(_response);
             }
+
             _response.Result = loginResponse;
             return Ok(_response);
-
         }
+
 
         [HttpPost("AssignRole")]
         public async Task<IActionResult> AssignRole([FromBody] AssignRoleDto model)

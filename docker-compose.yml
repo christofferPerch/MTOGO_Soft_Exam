@@ -1,0 +1,177 @@
+services:
+  authdb:
+    build:
+      context: ./Databases/Auth
+      dockerfile: Dockerfile
+    ports:
+      - "1437:1433"
+    environment:
+      SA_PASSWORD: "YourStrong@Password1"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - authdb-data:/var/opt/mssql
+    networks:
+    - app-network
+
+  orderdb:
+    build:
+      context: ./Databases/Order
+      dockerfile: Dockerfile
+    ports:
+      - "1438:1433"
+    environment:
+      SA_PASSWORD: "YourStrong@Password1"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - orderdb-data:/var/opt/mssql
+    networks:
+    - app-network
+
+  restaurantdb:
+    build:
+      context: ./Databases/Restaurant
+      dockerfile: Dockerfile
+    ports:
+      - "1439:1433"
+    environment:
+      SA_PASSWORD: "YourStrong@Password1"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - restaurantdb-data:/var/opt/mssql
+    networks:
+    - app-network
+
+  reviewdb:
+    build:
+      context: ./Databases/Review
+      dockerfile: Dockerfile
+    ports:
+      - "1440:1433"
+    environment:
+      SA_PASSWORD: "YourStrong@Password1"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - reviewdb-data:/var/opt/mssql
+    networks:
+    - app-network
+
+  shoppingcartapi:
+    build:
+      context: .
+      dockerfile: ./MTOGO.Services.ShoppingCartAPI/Dockerfile
+    ports:
+      - "5001:8080" 
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development" 
+    depends_on:
+      - authdb
+      - redis
+      - rabbitmq
+    networks:
+      - app-network
+
+  orderapi:
+    build:
+      context: .
+      dockerfile: ./MTOGO.Services.OrderAPI/Dockerfile
+    ports:
+      - "5002:8080"
+    environment:
+       ASPNETCORE_ENVIRONMENT: "Development"
+    depends_on:
+      - orderdb
+      - rabbitmq
+    networks:
+      - app-network
+
+
+  gateway:
+   build:
+    context: .
+    dockerfile: ./MTOGO.GatewaySolution/Dockerfile
+   ports:
+    - "7777:8080"
+   environment:
+    ASPNETCORE_ENVIRONMENT: "Development"
+    DOTNET_Logging__LogLevel__Default: "Debug"
+    DOTNET_Logging__LogLevel__Microsoft: "Warning"
+    DOTNET_Logging__LogLevel__Ocelot: "Debug"
+   volumes:
+    - ./MTOGO.GatewaySolution/ocelot.json:/app/ocelot.json
+   depends_on:
+    - authapi
+    - restaurantapi
+    - shoppingcartapi
+    - orderapi
+    - reviewapi
+   networks:
+    - app-network
+
+
+
+  authapi:
+    build:
+      context: .
+      dockerfile: ./MTOGO.Services.AuthAPI/Dockerfile
+    ports:
+      - "5003:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    depends_on:
+      - authdb
+    networks:
+      - app-network
+
+  restaurantapi:
+    build:
+      context: .
+      dockerfile: ./MTOGO.Services.RestaurantAPI/Dockerfile
+    ports:
+      - "5004:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    depends_on:
+      - restaurantdb
+    networks:
+      - app-network
+
+  reviewapi:
+    build:
+      context: .
+      dockerfile: ./MTOGO.Services.ReviewAPI/Dockerfile
+    ports:
+      - "5005:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    depends_on:
+      - reviewdb
+    networks:
+      - app-network
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+    - app-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+    - app-network
+
+volumes:
+  authdb-data:
+  orderdb-data:
+  restaurantdb-data:
+  reviewdb-data:
+
+networks:
+  app-network:
+    driver: bridge

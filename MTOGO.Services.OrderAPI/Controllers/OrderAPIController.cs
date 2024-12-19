@@ -11,14 +11,12 @@ namespace MTOGO.Services.OrderAPI.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly IMessageBus _messageBus;
-        private readonly ILogger<OrderAPIController> _logger;
         protected ResponseDto _response;
 
-        public OrderAPIController(IOrderService orderService, IMessageBus messageBus, ILogger<OrderAPIController> logger)
+        public OrderAPIController(IOrderService orderService, IMessageBus messageBus)
         {
             _orderService = orderService;
             _messageBus = messageBus;
-            _logger = logger;
             _response = new();
         }
 
@@ -35,9 +33,12 @@ namespace MTOGO.Services.OrderAPI.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateOrder([FromBody] AddOrderDto orderDto) {
-            try {
-                if (orderDto == null || orderDto.Items == null || !orderDto.Items.Any()) {
+        public async Task<IActionResult> CreateOrder([FromBody] AddOrderDto orderDto)
+        {
+            try
+            {
+                if (orderDto == null || orderDto.Items == null || !orderDto.Items.Any())
+                {
                     _response.IsSuccess = false;
                     _response.Message = "Invalid order data.";
                     return BadRequest(_response);
@@ -45,7 +46,8 @@ namespace MTOGO.Services.OrderAPI.Controllers
 
                 var orderId = await _orderService.CreateOrder(orderDto);
 
-                if (orderId > 0) {
+                if (orderId > 0)
+                {
                     _response.Result = orderId;
                     _response.IsSuccess = true;
                     _response.Message = $"Order created successfully with ID: {orderId}";
@@ -55,8 +57,9 @@ namespace MTOGO.Services.OrderAPI.Controllers
                 _response.IsSuccess = false;
                 _response.Message = "Failed to create order.";
                 return BadRequest(_response);
-            } catch (Exception ex) {
-                _logger.LogError(ex, "Error creating order.");
+            }
+            catch (Exception)
+            {
                 _response.IsSuccess = false;
                 _response.Message = "An error occurred while creating the order.";
                 return StatusCode(500, _response);
@@ -80,9 +83,8 @@ namespace MTOGO.Services.OrderAPI.Controllers
                 _response.Message = "Order retrieved successfully.";
                 return Ok(_response);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Error retrieving order.");
                 _response.IsSuccess = false;
                 _response.Message = "An error occurred while retrieving the order.";
                 return StatusCode(500, _response);
@@ -105,9 +107,8 @@ namespace MTOGO.Services.OrderAPI.Controllers
                 _response.Message = "Order status updated successfully.";
                 return Ok(_response);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Error updating order status.");
                 _response.IsSuccess = false;
                 _response.Message = "An error occurred while updating order status.";
                 return StatusCode(500, _response);
@@ -120,12 +121,23 @@ namespace MTOGO.Services.OrderAPI.Controllers
             try
             {
                 var orders = await _orderService.GetActiveOrders(userId);
-                return Ok(new { Success = true, Data = orders });
+                if (orders != null && orders.Any())
+                {
+                    _response.Result = orders;
+                    _response.IsSuccess = true;
+                    _response.Message = "Active orders retrieved successfully.";
+                    return Ok(_response);
+                }
+
+                _response.IsSuccess = false;
+                _response.Message = "No active orders found.";
+                return NotFound(_response);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Error fetching active orders for UserId: {UserId}", userId);
-                return StatusCode(500, new { Success = false, Message = "An error occurred while fetching active orders." });
+                _response.IsSuccess = false;
+                _response.Message = "An error occurred while fetching active orders.";
+                return StatusCode(500, _response);
             }
         }
 
@@ -135,14 +147,24 @@ namespace MTOGO.Services.OrderAPI.Controllers
             try
             {
                 var orders = await _orderService.GetOrderHistory(userId);
-                return Ok(new { Success = true, Data = orders });
+                if (orders != null && orders.Any())
+                {
+                    _response.Result = orders;
+                    _response.IsSuccess = true;
+                    _response.Message = "Order history retrieved successfully.";
+                    return Ok(_response);
+                }
+
+                _response.IsSuccess = false;
+                _response.Message = "No order history found.";
+                return NotFound(_response);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Error fetching order history for UserId: {UserId}", userId);
-                return StatusCode(500, new { Success = false, Message = "An error occurred while fetching order history." });
+                _response.IsSuccess = false;
+                _response.Message = "An error occurred while fetching order history.";
+                return StatusCode(500, _response);
             }
         }
-
     }
 }

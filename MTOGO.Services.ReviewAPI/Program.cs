@@ -1,9 +1,9 @@
+using Microsoft.OpenApi.Models;
 using MTOGO.MessageBus;
+using MTOGO.Services.DataAccess;
+using MTOGO.Services.ReviewAPI.Extensions;
 using MTOGO.Services.ReviewAPI.Services;
 using MTOGO.Services.ReviewAPI.Services.IServices;
-using MTOGO.Services.DataAccess;
-using Microsoft.OpenApi.Models;
-using MTOGO.Services.ReviewAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,14 +14,16 @@ builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddSingleton<IMessageBus, MessageBus>();
 
 // Configure Redis caching
-builder.Services.AddStackExchangeRedisCache(options => {
+builder.Services.AddStackExchangeRedisCache(options =>
+{
     options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
 });
 
 // Add controllers and Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c => {
+builder.Services.AddSwaggerGen(c =>
+{
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Review API", Version = "v1" });
 });
 
@@ -30,12 +32,26 @@ builder.AddAppAuthetication();
 var app = builder.Build();
 
 // Use middleware
-if (app.Environment.IsDevelopment()) {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
-    app.UseSwaggerUI(c => {
+    app.UseSwaggerUI(c =>
+    {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Review API");
     });
 }
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/")
+    {
+        context.Response.Redirect("/swagger/index.html", permanent: false);
+    }
+    else
+    {
+        await next();
+    }
+});
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

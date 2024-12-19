@@ -1,5 +1,8 @@
-﻿namespace MTOGO.Services.EmailAPI.Models.Dto {
-    public class OrderItemDto {
+﻿namespace MTOGO.Services.EmailAPI.Models.Dto
+{
+
+    public class OrderItemDto
+    {
         public string Name { get; set; } = string.Empty;
         public int RestaurantId { get; set; }
         public string MenuItemId { get; set; }
