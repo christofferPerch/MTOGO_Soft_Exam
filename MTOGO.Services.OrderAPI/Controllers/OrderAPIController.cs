@@ -11,14 +11,12 @@ namespace MTOGO.Services.OrderAPI.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly IMessageBus _messageBus;
-        private readonly ILogger<OrderAPIController> _logger;
         protected ResponseDto _response;
 
-        public OrderAPIController(IOrderService orderService, IMessageBus messageBus, ILogger<OrderAPIController> logger)
+        public OrderAPIController(IOrderService orderService, IMessageBus messageBus)
         {
             _orderService = orderService;
             _messageBus = messageBus;
-            _logger = logger;
             _response = new();
         }
 
@@ -55,8 +53,7 @@ namespace MTOGO.Services.OrderAPI.Controllers
                 _response.IsSuccess = false;
                 _response.Message = "Failed to create order.";
                 return BadRequest(_response);
-            } catch (Exception ex) {
-                _logger.LogError(ex, "Error creating order.");
+            } catch (Exception) {
                 _response.IsSuccess = false;
                 _response.Message = "An error occurred while creating the order.";
                 return StatusCode(500, _response);
@@ -80,9 +77,8 @@ namespace MTOGO.Services.OrderAPI.Controllers
                 _response.Message = "Order retrieved successfully.";
                 return Ok(_response);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Error retrieving order.");
                 _response.IsSuccess = false;
                 _response.Message = "An error occurred while retrieving the order.";
                 return StatusCode(500, _response);
@@ -105,9 +101,8 @@ namespace MTOGO.Services.OrderAPI.Controllers
                 _response.Message = "Order status updated successfully.";
                 return Ok(_response);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Error updating order status.");
                 _response.IsSuccess = false;
                 _response.Message = "An error occurred while updating order status.";
                 return StatusCode(500, _response);
@@ -132,9 +127,8 @@ namespace MTOGO.Services.OrderAPI.Controllers
                 _response.Message = "No active orders found.";
                 return NotFound(_response);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Error fetching active orders for UserId: {UserId}", userId);
                 _response.IsSuccess = false;
                 _response.Message = "An error occurred while fetching active orders.";
                 return StatusCode(500, _response);
@@ -159,15 +153,12 @@ namespace MTOGO.Services.OrderAPI.Controllers
                 _response.Message = "No order history found.";
                 return NotFound(_response);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Error fetching order history for UserId: {UserId}", userId);
                 _response.IsSuccess = false;
                 _response.Message = "An error occurred while fetching order history.";
                 return StatusCode(500, _response);
             }
         }
-
-
     }
 }

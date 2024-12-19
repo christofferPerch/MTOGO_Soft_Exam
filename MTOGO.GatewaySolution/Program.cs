@@ -28,6 +28,7 @@ builder.Services.AddSwaggerGen(c =>
         Title = "API Gateway",
         Version = "v1"
     });
+    c.OrderActionsBy((apiDesc) => $"{apiDesc.ActionDescriptor.RouteValues["controller"]}_{apiDesc.HttpMethod}");
 });
 
 var app = builder.Build();

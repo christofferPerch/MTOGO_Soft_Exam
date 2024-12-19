@@ -2,29 +2,28 @@
 using MTOGO.Services.EmailAPI.Services.IServices;
 using RestSharp;
 using RestSharp.Authenticators;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace MTOGO.Services.EmailAPI.Services {
-    public class EmailService : IEmailService {
-        private readonly ILogger<EmailService> _logger;
+namespace MTOGO.Services.EmailAPI.Services
+{
+    public class EmailService : IEmailService
+    {
         private readonly IConfiguration _configuration;
 
-        public EmailService(ILogger<EmailService> logger, IConfiguration configuration) {
-            _logger = logger;
+        public EmailService(IConfiguration configuration)
+        {
             _configuration = configuration;
         }
 
-        public async Task<bool> SendOrderCreatedEmailAsync(OrderCreatedMessageDto order) {
-            try {
+        public async Task<bool> SendOrderCreatedEmailAsync(OrderCreatedMessageDto order)
+        {
+            try
+            {
                 var testKey = Environment.GetEnvironmentVariable("MAILGUN_API_KEY");
                 var domain = Environment.GetEnvironmentVariable("MAILGUN_DOMAIN");
                 var fromEmail = Environment.GetEnvironmentVariable("MAILGUN_FROM_EMAIL");
 
-                var client = new RestClient(new RestClientOptions {
+                var client = new RestClient(new RestClientOptions
+                {
                     BaseUrl = new Uri($"https://api.mailgun.net/v3/{domain}"),
                     Authenticator = new HttpBasicAuthenticator("api", testKey)
                 });
@@ -37,20 +36,24 @@ namespace MTOGO.Services.EmailAPI.Services {
 
                 var response = await client.ExecuteAsync(request);
 
-                if (response.IsSuccessful) {
-                    _logger.LogInformation($"Email sent successfully to {order.CustomerEmail}");
+                if (response.IsSuccessful)
+                {
                     return true;
-                } else {
-                    _logger.LogError($"Failed to send email. Status: {response.StatusCode}, Message: {response.Content}");
+                }
+                else
+                {
                     return false;
                 }
-            } catch (Exception ex) {
-                _logger.LogError(ex, "Error occurred while sending email.");
+            }
+            catch (Exception)
+            {            
                 return false;
+                throw;
             }
         }
 
-        private string GenerateEmailBody(OrderCreatedMessageDto order) {
+        private string GenerateEmailBody(OrderCreatedMessageDto order)
+        {
             var itemsHtml = string.Join("", order.Items.Select(i =>
                 $"<li>{i.Quantity}x {i.Name} - ${i.Price * i.Quantity}</li>"));
 

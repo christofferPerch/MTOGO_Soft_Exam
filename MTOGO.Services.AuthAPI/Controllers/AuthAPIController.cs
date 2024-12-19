@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MTOGO.Services.AuthAPI.Models.Dto;
 using MTOGO.Services.AuthAPI.Services.IServices;
-using System.Security.Claims;
 
 namespace MTOGO.Services.AuthAPI.Controllers
 {
@@ -18,7 +17,7 @@ namespace MTOGO.Services.AuthAPI.Controllers
         }
 
 
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegistrationRequestDto model)
         {
 
@@ -32,7 +31,7 @@ namespace MTOGO.Services.AuthAPI.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto model)
         {
             if (!ModelState.IsValid)
@@ -43,7 +42,7 @@ namespace MTOGO.Services.AuthAPI.Controllers
                     .ToList();
 
                 _response.IsSuccess = false;
-                _response.Message = string.Join("; ", errors); 
+                _response.Message = string.Join("; ", errors);
                 return BadRequest(_response);
             }
 

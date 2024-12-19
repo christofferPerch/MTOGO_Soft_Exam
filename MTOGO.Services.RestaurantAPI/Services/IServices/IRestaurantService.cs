@@ -11,6 +11,5 @@ namespace MTOGO.Services.RestaurantAPI.Services.IServices {
         Task<List<RestaurantDto>> GetAllRestaurants();
         Task<List<RestaurantDto>> FindRestaurantsByLocation(string location, int? foodCategory = null);
         Task<List<string>> GetUniqueCitiesAsync();
-        Task<CartDetailsDto?> GetCartDetails(int restaurantId, int menuItemId);
     }
 }

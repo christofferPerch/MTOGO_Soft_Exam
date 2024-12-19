@@ -153,7 +153,6 @@ namespace MTOGO.Services.RestaurantAPI.Services {
             }
         }
 
-
         public async Task<int> RemoveMenuItem(int restaurantId, int menuItemId) {
             try {
                 var sql = "DELETE FROM MenuItem WHERE Id = @Id AND RestaurantId = @RestaurantId";
@@ -219,7 +218,6 @@ namespace MTOGO.Services.RestaurantAPI.Services {
         {
             try
             {
-                // Base SQL query
                 var sql = @"
                         SELECT DISTINCT r.*, a.*
                         FROM Restaurant r
@@ -227,7 +225,6 @@ namespace MTOGO.Services.RestaurantAPI.Services {
                         LEFT JOIN FoodCategory fc ON r.Id = fc.RestaurantId
                         WHERE (a.ZipCode = @Location OR a.City = @Location)";
 
-                // Add filter for FoodCategory if provided
                 if (foodCategory.HasValue)
                 {
                     sql += " AND fc.Category = @FoodCategory";
@@ -265,50 +262,20 @@ namespace MTOGO.Services.RestaurantAPI.Services {
             }
         }
 
-
         public async Task<List<string>> GetUniqueCitiesAsync()
         {
             try
             {
                 var sql = @"
-            SELECT DISTINCT a.City
-            FROM Restaurant r
-            INNER JOIN Address a ON r.AddressId = a.Id";
+                        SELECT DISTINCT a.City
+                        FROM Restaurant r
+                        INNER JOIN Address a ON r.AddressId = a.Id";
 
                 var cities = await _dataAccess.GetAll<string>(sql);
 
                 return cities ?? new List<string>();
             } catch (Exception ex) {
                 _logger.LogError(ex, "Error retrieving unique cities");
-                throw;
-            }
-        }
-
-        public async Task<CartDetailsDto?> GetCartDetails(int restaurantId, int menuItemId) {
-            try {
-                // SQL query to get the MenuItem details
-                var sql = @"
-                        SELECT Name, Image
-                        FROM MenuItem
-                        WHERE RestaurantId = @RestaurantId AND Id = @MenuItemId";
-
-                // Define parameters
-                var parameters = new {
-                    RestaurantId = restaurantId,
-                    MenuItemId = menuItemId
-                };
-
-                // Use GetById method to fetch the result
-                var cartDetails = await _dataAccess.GetById<CartDetailsDto>(sql, parameters);
-
-                // If no results are found, log a warning and return null
-                if (cartDetails == null) {
-                    _logger.LogWarning($"No menu item found for RestaurantId {restaurantId} and MenuItemId {menuItemId}");
-                }
-
-                return cartDetails;
-            } catch (Exception ex) {
-                _logger.LogError(ex, "Error fetching cart details");
                 throw;
             }
         }

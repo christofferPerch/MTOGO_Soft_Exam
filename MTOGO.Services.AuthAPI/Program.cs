@@ -40,7 +40,6 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Middleware to redirect root requests to Swagger UI
 app.Use(async (context, next) =>
 {
     if (context.Request.Path == "/")
@@ -58,8 +57,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-//ApplyMigration();
 app.Run();
+
+//This is for https but not necessary when using docker 
+
+//ApplyMigration();
+
 
 /*void ApplyMigration()
 {
