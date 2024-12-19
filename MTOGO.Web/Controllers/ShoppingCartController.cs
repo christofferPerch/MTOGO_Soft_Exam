@@ -1,8 +1,7 @@
-﻿using MTOGO.Web.Models.ShoppingCart;
-using MTOGO.Web.Services.IServices;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
 using MTOGO.Web.Models;
+using MTOGO.Web.Models.ShoppingCart;
+using MTOGO.Web.Services.IServices;
 using Newtonsoft.Json;
 
 namespace MTOGO.Web.Controllers
@@ -116,7 +115,7 @@ namespace MTOGO.Web.Controllers
                 return BadRequest("Invalid cart data.");
             }
 
-            var response = await _shoppingCartService.AddItemToCartAsync(cart.UserId, cart.Items[0]); 
+            var response = await _shoppingCartService.AddItemToCartAsync(cart.UserId, cart.Items[0]);
             if (response != null && response.IsSuccess)
             {
                 return Ok(response);

@@ -11,7 +11,7 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
         #region Constructor & Properties
         private readonly IRestaurantService _restaurantService;
         protected ResponseDto _response;
-     
+
         public RestaurantAPIController(IRestaurantService restaurantService)
         {
             _restaurantService = restaurantService;
@@ -228,7 +228,9 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
                 _response.Result = restaurants;
                 _response.Message = "Restaurants retrieved successfully.";
                 return Ok(_response);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _response.IsSuccess = false;
                 _response.Message = "An error occurred while retrieving restaurants. " + ex.Message;
                 return StatusCode(500, _response);

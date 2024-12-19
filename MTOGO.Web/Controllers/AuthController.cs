@@ -1,13 +1,13 @@
-﻿using MTOGO.Web.Services.IServices;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using MTOGO.Web.Models.Auth;
 using MTOGO.Web.Models.Order;
 using MTOGO.Web.Models.Restaurant;
+using MTOGO.Web.Services.IServices;
+using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace MTOGO.Web.Controllers
 {
@@ -85,7 +85,7 @@ namespace MTOGO.Web.Controllers
         {
             var loginResponse = await _authService.LoginAsync(new LoginRequestDto
             {
-                UserName = userDto.Email 
+                UserName = userDto.Email
             });
 
             var loginResponseDto = JsonConvert.DeserializeObject<LoginResponseDto>(Convert.ToString(loginResponse?.Result));
@@ -135,8 +135,8 @@ namespace MTOGO.Web.Controllers
                 var loginResponse = JsonConvert.DeserializeObject<LoginResponseDto>(Convert.ToString(responseDto.Result));
                 if (loginResponse != null)
                 {
-                    await SignInUser(loginResponse); 
-                    _tokenProvider.SetToken(loginResponse.Token); 
+                    await SignInUser(loginResponse);
+                    _tokenProvider.SetToken(loginResponse.Token);
                     return RedirectToAction("Index", "Home");
                 }
             }
@@ -161,7 +161,7 @@ namespace MTOGO.Web.Controllers
             {
                 if (string.IsNullOrEmpty(registrationRequest.Role))
                 {
-                    registrationRequest.Role = "Customer"; 
+                    registrationRequest.Role = "Customer";
                 }
 
                 var assignRoleResponse = await _authService.AssignRoleAsync(registrationRequest);
@@ -179,7 +179,7 @@ namespace MTOGO.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            _tokenProvider.ClearToken(); 
+            _tokenProvider.ClearToken();
             return RedirectToAction("Index", "Home");
         }
 

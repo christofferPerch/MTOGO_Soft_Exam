@@ -1,10 +1,12 @@
-﻿using MTOGO.Services.ReviewAPI.Models.Dto;
-using MTOGO.Services.ReviewAPI.Models;
+﻿using MTOGO.Services.ReviewAPI.Models;
+using MTOGO.Services.ReviewAPI.Models.Dto;
 
-namespace MTOGO.Services.ReviewAPI.Services.IServices {
-    public interface IReviewService {
+namespace MTOGO.Services.ReviewAPI.Services.IServices
+{
+    public interface IReviewService
+    {
         Task<int> AddRestaurantReviewAsync(RestaurantReviewDto restaurantReviewDto);
         Task<List<RestaurantReview>?> GetRestaurantReviewAsync(int restaurantId);
-        Task<bool> DeleteRestaurantReviewAsync(int id); 
+        Task<bool> DeleteRestaurantReviewAsync(int id);
     }
 }

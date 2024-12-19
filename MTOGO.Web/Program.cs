@@ -1,8 +1,7 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using MTOGO.Web.Services;
 using MTOGO.Web.Services.IServices;
 using MTOGO.Web.Utility;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

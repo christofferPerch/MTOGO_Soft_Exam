@@ -1,5 +1,4 @@
-﻿using MTOGO.Web.Utility;
-using static MTOGO.Web.Utility.SD;
+﻿using static MTOGO.Web.Utility.SD;
 
 namespace MTOGO.Web.Models
 {

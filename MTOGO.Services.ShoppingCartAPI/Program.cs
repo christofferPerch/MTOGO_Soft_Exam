@@ -25,7 +25,6 @@ builder.AddAppAuthetication();
 
 var app = builder.Build();
 
-// Use middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -46,7 +45,6 @@ app.Use(async (context, next) =>
         await next();
     }
 });
-
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

@@ -50,7 +50,7 @@ namespace MTOGO.Web.Services
                 ApiType = SD.ApiType.POST,
                 Data = updateProfileDto,
                 Url = $"{SD.AuthAPIBase}/api/auth/UpdateProfile?userId={userId}",
-                ContentType = SD.ContentType.Json               
+                ContentType = SD.ContentType.Json
             }, withBearer: false);
         }
 

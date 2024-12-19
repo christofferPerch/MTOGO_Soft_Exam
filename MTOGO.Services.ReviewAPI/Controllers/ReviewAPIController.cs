@@ -1,6 +1,6 @@
-﻿using MTOGO.Services.ReviewAPI.Models.Dto;
+﻿using Microsoft.AspNetCore.Mvc;
+using MTOGO.Services.ReviewAPI.Models.Dto;
 using MTOGO.Services.ReviewAPI.Services.IServices;
-using Microsoft.AspNetCore.Mvc;
 
 namespace MTOGO.Services.ReviewAPI.Controllers
 {

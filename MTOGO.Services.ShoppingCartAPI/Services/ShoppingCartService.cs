@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Configuration;
 using MTOGO.MessageBus;
 using MTOGO.Services.ShoppingCartAPI.Models;
 using MTOGO.Services.ShoppingCartAPI.Models.Dto;
@@ -103,22 +102,6 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error creating cart for user {cart.UserId}.");
-                throw;
-            }
-        }
-
-        public async Task<Cart> UpdateCart(Cart cart)
-        {
-            try
-            {
-                await _redisCache.SetStringAsync(cart.UserId, JsonConvert.SerializeObject(cart));
-
-
-                return await GetCart(cart.UserId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error updating cart for user {cart.UserId}.");
                 throw;
             }
         }

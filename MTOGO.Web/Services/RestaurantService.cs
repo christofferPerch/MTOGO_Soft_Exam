@@ -53,7 +53,7 @@ namespace MTOGO.Web.Services
             return await _baseService.SendAsync(new RequestDto()
             {
                 ApiType = SD.ApiType.GET,
-                Url = $"{SD.RestaurantAPIBase}/api/restaurant/{id}" 
+                Url = $"{SD.RestaurantAPIBase}/api/restaurant/{id}"
             });
         }
 

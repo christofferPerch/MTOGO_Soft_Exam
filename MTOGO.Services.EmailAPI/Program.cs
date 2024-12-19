@@ -8,9 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
 
-builder.Services.AddHostedService<EmailQueueListener>(); 
-builder.Services.AddScoped<IEmailService, EmailService>(); 
-builder.Services.AddSingleton<IMessageBus, MessageBus>(); 
+builder.Services.AddHostedService<EmailQueueListener>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddSingleton<IMessageBus, MessageBus>();
 
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 

@@ -1,7 +1,9 @@
 ﻿using MTOGO.Services.RestaurantAPI.Models.Dto;
 
-namespace MTOGO.Services.RestaurantAPI.Services.IServices {
-    public interface IRestaurantService {
+namespace MTOGO.Services.RestaurantAPI.Services.IServices
+{
+    public interface IRestaurantService
+    {
         Task<int> AddRestaurant(AddRestaurantDto restaurant);
         Task<int> AddMenuItem(AddMenuItemDto menuItemDto);
         Task<int> UpdateRestaurant(UpdateRestaurantDto updateRestaurantDto);

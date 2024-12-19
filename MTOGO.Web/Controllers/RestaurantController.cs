@@ -59,9 +59,9 @@ namespace MTOGO.Web.Controllers
             if (response != null && response.IsSuccess && response.Result != null)
             {
                 var cities = JsonConvert.DeserializeObject<List<string>>(response.Result.ToString());
-                return Json(cities); 
+                return Json(cities);
             }
-            return Json(new List<string>()); 
+            return Json(new List<string>());
         }
 
         [HttpGet("Restaurant/Details/{id:int}")]

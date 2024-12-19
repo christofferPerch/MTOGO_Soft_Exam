@@ -1,5 +1,7 @@
-﻿namespace MTOGO.Services.OrderAPI.Models.Dto {
-    public class OrderCreatedMessageDto {
+﻿namespace MTOGO.Services.OrderAPI.Models.Dto
+{
+    public class OrderCreatedMessageDto
+    {
         public int OrderId { get; set; }
         public string UserId { get; set; }
         public string CustomerEmail { get; set; } // New field

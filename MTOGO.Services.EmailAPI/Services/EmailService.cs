@@ -46,7 +46,7 @@ namespace MTOGO.Services.EmailAPI.Services
                 }
             }
             catch (Exception)
-            {            
+            {
                 return false;
                 throw;
             }

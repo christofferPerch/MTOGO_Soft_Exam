@@ -33,9 +33,12 @@ namespace MTOGO.Services.OrderAPI.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateOrder([FromBody] AddOrderDto orderDto) {
-            try {
-                if (orderDto == null || orderDto.Items == null || !orderDto.Items.Any()) {
+        public async Task<IActionResult> CreateOrder([FromBody] AddOrderDto orderDto)
+        {
+            try
+            {
+                if (orderDto == null || orderDto.Items == null || !orderDto.Items.Any())
+                {
                     _response.IsSuccess = false;
                     _response.Message = "Invalid order data.";
                     return BadRequest(_response);
@@ -43,7 +46,8 @@ namespace MTOGO.Services.OrderAPI.Controllers
 
                 var orderId = await _orderService.CreateOrder(orderDto);
 
-                if (orderId > 0) {
+                if (orderId > 0)
+                {
                     _response.Result = orderId;
                     _response.IsSuccess = true;
                     _response.Message = $"Order created successfully with ID: {orderId}";
@@ -53,7 +57,9 @@ namespace MTOGO.Services.OrderAPI.Controllers
                 _response.IsSuccess = false;
                 _response.Message = "Failed to create order.";
                 return BadRequest(_response);
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 _response.IsSuccess = false;
                 _response.Message = "An error occurred while creating the order.";
                 return StatusCode(500, _response);

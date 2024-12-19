@@ -152,6 +152,8 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
+    networks:
+    - app-network
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -161,6 +163,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    networks:
+    - app-network
 
 volumes:
   authdb-data:

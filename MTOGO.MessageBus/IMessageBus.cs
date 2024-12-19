@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace MTOGO.MessageBus
+﻿namespace MTOGO.MessageBus
 {
     public interface IMessageBus
     {

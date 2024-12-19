@@ -7,6 +7,6 @@
         public int Quantity { get; set; }
         public decimal Price { get; set; }
         public string Name { get; set; } // Name of the menu item
-        public byte[] ?Image { get; set; } // Image URL
+        public byte[]? Image { get; set; } // Image URL
     }
 }

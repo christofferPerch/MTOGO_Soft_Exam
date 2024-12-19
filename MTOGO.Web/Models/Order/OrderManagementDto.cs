@@ -1,6 +1,4 @@
-﻿using MTOGO.Web.Models.ShoppingCart;
-
-namespace MTOGO.Web.Models.Order
+﻿namespace MTOGO.Web.Models.Order
 {
     public class OrderManagementDto
     {

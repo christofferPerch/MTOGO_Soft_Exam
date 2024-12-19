@@ -1,6 +1,5 @@
 ﻿using MTOGO.Web.Models;
 using MTOGO.Web.Models.ShoppingCart;
-using System.Threading.Tasks;
 
 namespace MTOGO.Web.Services.IServices
 {

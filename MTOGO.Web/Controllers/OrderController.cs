@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MTOGO.Web.Models;
 using MTOGO.Web.Models.Order;
 using MTOGO.Web.Models.Restaurant;
 using MTOGO.Web.Models.ShoppingCart;

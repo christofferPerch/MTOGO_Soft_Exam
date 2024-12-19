@@ -1,15 +1,17 @@
-﻿using MTOGO.Services.ReviewAPI.Models;
+﻿using MTOGO.Services.DataAccess;
+using MTOGO.Services.ReviewAPI.Models;
 using MTOGO.Services.ReviewAPI.Models.Dto;
 using MTOGO.Services.ReviewAPI.Services.IServices;
-using MTOGO.Services.DataAccess;
-using Microsoft.Extensions.Logging;
 
-namespace MTOGO.Services.ReviewAPI.Services {
-    public class ReviewService : IReviewService {
+namespace MTOGO.Services.ReviewAPI.Services
+{
+    public class ReviewService : IReviewService
+    {
         private readonly IDataAccess _dataAccess;
         private readonly ILogger<ReviewService> _logger;
 
-        public ReviewService(IDataAccess dataAccess, ILogger<ReviewService> logger) {
+        public ReviewService(IDataAccess dataAccess, ILogger<ReviewService> logger)
+        {
             _dataAccess = dataAccess;
             _logger = logger;
         }
@@ -63,12 +65,16 @@ namespace MTOGO.Services.ReviewAPI.Services {
         }
 
 
-        public async Task<bool> DeleteRestaurantReviewAsync(int id) {
-            try {
+        public async Task<bool> DeleteRestaurantReviewAsync(int id)
+        {
+            try
+            {
                 var sql = "DELETE FROM RestaurantReview WHERE Id = @Id;";
                 var rowsAffected = await _dataAccess.Delete(sql, new { Id = id });
                 return rowsAffected > 0;
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError(ex, $"Error deleting restaurant review with ID {id}.");
                 throw;
             }

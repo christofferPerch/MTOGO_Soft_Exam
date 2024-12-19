@@ -2,8 +2,6 @@
 using MTOGO.Web.Models.ShoppingCart;
 using MTOGO.Web.Services.IServices;
 using MTOGO.Web.Utility;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
 
 namespace MTOGO.Web.Services
 {
@@ -30,7 +28,7 @@ namespace MTOGO.Web.Services
             return await _baseService.SendAsync(new RequestDto()
             {
                 ApiType = SD.ApiType.DELETE,
-                Url = $"{SD.ShoppingCartAPIBase}/api/shoppingcart?userId={userId}&menuItemId={menuItemId}" 
+                Url = $"{SD.ShoppingCartAPIBase}/api/shoppingcart?userId={userId}&menuItemId={menuItemId}"
             });
         }
 
@@ -40,7 +38,7 @@ namespace MTOGO.Web.Services
             return await _baseService.SendAsync(new RequestDto()
             {
                 ApiType = SD.ApiType.GET,
-                Url = $"{SD.ShoppingCartAPIBase}/api/shoppingcart/{userId}" 
+                Url = $"{SD.ShoppingCartAPIBase}/api/shoppingcart/{userId}"
             });
         }
 
