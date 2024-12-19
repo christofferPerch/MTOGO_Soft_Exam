@@ -39,19 +39,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTOGO.Services.EmailAPI", "
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{3DE3A233-0275-46FB-99A1-49FC499D33A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTOGO.IntegrationTests", "..\MTOGO.IntegrationTests\MTOGO.IntegrationTests.csproj", "{2089FFC1-2BEC-4027-8A1E-CB7E198FF833}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTOGO.IntegrationTests", "MTOGO.IntegrationTests\MTOGO.IntegrationTests.csproj", "{2089FFC1-2BEC-4027-8A1E-CB7E198FF833}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTOGO.SystemTests", "..\MTOGO.SystemTests\MTOGO.SystemTests.csproj", "{783A7689-A668-4A69-AA0C-DB48741A471A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTOGO.SystemTests", "MTOGO.SystemTests\MTOGO.SystemTests.csproj", "{783A7689-A668-4A69-AA0C-DB48741A471A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTOGO.AcceptanceTests", "..\MTOGO.AcceptanceTests\MTOGO.AcceptanceTests.csproj", "{79E099B6-0A19-40E4-A459-69FB1E2FB82D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTOGO.AcceptanceTests", "MTOGO.AcceptanceTests\MTOGO.AcceptanceTests.csproj", "{79E099B6-0A19-40E4-A459-69FB1E2FB82D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Monitoring", "Monitoring", "{A86F2620-F480-4277-A0B0-FA1674F84883}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTOGO.Monitoring", "..\MTOGO.Monitoring\MTOGO.Monitoring.csproj", "{92D08F81-AB63-42DB-8602-9B97E3CD5D16}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTOGO.Monitoring", "MTOGO.Monitoring\MTOGO.Monitoring.csproj", "{92D08F81-AB63-42DB-8602-9B97E3CD5D16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTOGO.Services.DeliveryAPI", "..\MTOGO.Services.DeliveryAPI\MTOGO.Services.DeliveryAPI.csproj", "{777ECFF9-16B9-42CE-93F1-9E312B909721}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTOGO.Services.DeliveryAPI", "MTOGO.Services.DeliveryAPI\MTOGO.Services.DeliveryAPI.csproj", "{777ECFF9-16B9-42CE-93F1-9E312B909721}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTOGO.Services.DashboardAPI", "..\MTOGO.Services.DashboardAPI\MTOGO.Services.DashboardAPI.csproj", "{AE68630F-0957-4064-B823-4BFF05BCFAAB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTOGO.Services.DashboardAPI", "MTOGO.Services.DashboardAPI\MTOGO.Services.DashboardAPI.csproj", "{AE68630F-0957-4064-B823-4BFF05BCFAAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
