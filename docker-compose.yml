@@ -10,6 +10,8 @@ services:
       ACCEPT_EULA: "Y"
     volumes:
       - authdb-data:/var/opt/mssql
+    networks:
+    - app-network
 
   orderdb:
     build:
@@ -22,6 +24,8 @@ services:
       ACCEPT_EULA: "Y"
     volumes:
       - orderdb-data:/var/opt/mssql
+    networks:
+    - app-network
 
   restaurantdb:
     build:
@@ -34,6 +38,8 @@ services:
       ACCEPT_EULA: "Y"
     volumes:
       - restaurantdb-data:/var/opt/mssql
+    networks:
+    - app-network
 
   reviewdb:
     build:
@@ -46,6 +52,8 @@ services:
       ACCEPT_EULA: "Y"
     volumes:
       - reviewdb-data:/var/opt/mssql
+    networks:
+    - app-network
 
   shoppingcartapi:
     build:
@@ -98,6 +106,7 @@ services:
     - reviewapi
    networks:
     - app-network
+
 
 
   authapi:

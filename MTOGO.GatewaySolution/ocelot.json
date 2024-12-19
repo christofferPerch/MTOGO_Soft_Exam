@@ -73,7 +73,7 @@
         {
           "Name": "Auth API",
           "Version": "v1",
-          "Url": "http://authapi/swagger/v1/swagger.json"
+          "Url": "http://authapi:8080/swagger/v1/swagger.json"
         }
       ]
     },
@@ -83,7 +83,7 @@
         {
           "Name": "Restaurant API",
           "Version": "v1",
-          "Url": "http://restaurantapi/swagger/v1/swagger.json"
+          "Url": "http://restaurantapi:8080/swagger/v1/swagger.json"
         }
       ]
     },
@@ -93,7 +93,7 @@
         {
           "Name": "Shopping Cart API",
           "Version": "v1",
-          "Url": "http://shoppingcartapi/swagger/v1/swagger.json"
+          "Url": "http://shoppingcartapi:8080/swagger/v1/swagger.json"
         }
       ]
     },
@@ -103,7 +103,7 @@
         {
           "Name": "Order API",
           "Version": "v1",
-          "Url": "http://orderapi/swagger/v1/swagger.json"
+          "Url": "http://orderapi:8080/swagger/v1/swagger.json"
         }
       ]
     },
@@ -113,7 +113,7 @@
         {
           "Name": "Review API",
           "Version": "v1",
-          "Url": "http://reviewapi/swagger/v1/swagger.json"
+          "Url": "http://reviewapi:8080/swagger/v1/swagger.json"
         }
       ]
     }

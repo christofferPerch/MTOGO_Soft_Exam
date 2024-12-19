@@ -46,11 +46,21 @@ namespace MTOGO.Services.AuthAPI.Services
 
         public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
         {
+            if (string.IsNullOrWhiteSpace(loginRequestDto.UserName) || string.IsNullOrWhiteSpace(loginRequestDto.Password))
+            {
+                return new LoginResponseDto() { User = null, Token = "" };
+            }
+
             var user = await _db.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
+
+            if (user == null)
+            {
+                return new LoginResponseDto() { User = null, Token = "" };
+            }
 
             bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
 
-            if (user == null || isValid == false)
+            if (!isValid)
             {
                 return new LoginResponseDto() { User = null, Token = "" };
             }
@@ -79,6 +89,7 @@ namespace MTOGO.Services.AuthAPI.Services
 
             return loginResponseDto;
         }
+
 
         public async Task<string> Register(RegistrationRequestDto registrationRequestDto)
         {

@@ -1,4 +1,6 @@
-﻿namespace MTOGO.Services.AuthAPI.Models {
+﻿namespace MTOGO.Services.AuthAPI.Models 
+{
+
     public class JwtOptions {
         public string Issuer { get; set; } = string.Empty;
 

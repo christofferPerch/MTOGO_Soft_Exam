@@ -1,8 +1,13 @@
-﻿namespace MTOGO.Services.AuthAPI.Models.Dto
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MTOGO.Services.AuthAPI.Models.Dto
 {
     public class AssignRoleDto
     {
-        public string Email { get; set; }
-        public string Role { get; set; }
+        [Required(ErrorMessage = "Email is required")]
+        public required string Email { get; set; }
+
+        [Required(ErrorMessage = "Role is required")]
+        public required string Role { get; set; }
     }
 }
