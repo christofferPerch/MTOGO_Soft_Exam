@@ -166,6 +166,35 @@ services:
     networks:
     - app-network
 
+  mtogo.monitoring:
+    image: ${DOCKER_REGISTRY-}mtogomonitoring
+    build:
+      context: MTOGO.Monitoring
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8080" 
+    networks:
+      - app-network
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090" 
+    networks:
+      - app-network
+    depends_on:
+      - mtogo.monitoring
+
+  grafana:
+   image: grafana/grafana
+   container_name: grafana
+   ports:
+    - "3000:3000"
+   networks:
+    - app-network
+   depends_on:
+    - prometheus
+
 volumes:
   authdb-data:
   orderdb-data:
