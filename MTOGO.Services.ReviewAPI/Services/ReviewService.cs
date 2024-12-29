@@ -25,10 +25,15 @@ namespace MTOGO.Services.ReviewAPI.Services
                     throw new ArgumentException("Invalid review data. RestaurantId must be provided.");
                 }
 
+                if (string.IsNullOrWhiteSpace(restaurantReviewDto.CustomerId))
+                {
+                    throw new ArgumentException("Invalid review data. CustomerId must be provided.");
+                }
+
                 var sql = @"
-                        INSERT INTO RestaurantReview (CustomerId, RestaurantId, FoodRating, Comments, ReviewTimestamp)
-                        VALUES (@CustomerId, @RestaurantId, @FoodRating, @Comments, @ReviewTimestamp);
-                        SELECT CAST(SCOPE_IDENTITY() as int);";
+                INSERT INTO RestaurantReview (CustomerId, RestaurantId, FoodRating, Comments, ReviewTimestamp)
+                VALUES (@CustomerId, @RestaurantId, @FoodRating, @Comments, @ReviewTimestamp);
+                SELECT CAST(SCOPE_IDENTITY() as int);";
 
                 var parameters = new
                 {
@@ -48,6 +53,7 @@ namespace MTOGO.Services.ReviewAPI.Services
                 throw;
             }
         }
+
 
 
         public async Task<List<RestaurantReview>?> GetRestaurantReviewAsync(int restaurantId)

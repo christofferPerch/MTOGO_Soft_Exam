@@ -21,6 +21,15 @@ namespace MTOGO.Services.RestaurantAPI.Services
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(restaurantDto.RestaurantName))
+                    throw new ArgumentException("RestaurantName is required.", nameof(restaurantDto.RestaurantName));
+
+                if (restaurantDto.Address == null)
+                    throw new ArgumentException("Address is required.", nameof(restaurantDto.Address));
+
+                if (restaurantDto.FoodCategories == null || !restaurantDto.FoodCategories.Any())
+                    throw new ArgumentException("At least one FoodCategory is required.", nameof(restaurantDto.FoodCategories));
+
                 #region parameters
                 var parameters = new DynamicParameters();
                 parameters.Add("@RestaurantName", restaurantDto.RestaurantName);
@@ -66,6 +75,7 @@ namespace MTOGO.Services.RestaurantAPI.Services
                 throw;
             }
         }
+
 
         public async Task<int> AddMenuItem(AddMenuItemDto menuItemDto)
         {
