@@ -19,7 +19,7 @@ namespace MTOGO.IntegrationTests.Restaurant
         public CustomRestaurantWebApplicationFactory()
         {
             var sqlServerHost = Environment.GetEnvironmentVariable("SQLSERVER_HOST") ?? "localhost";
-            var sqlServerPort = Environment.GetEnvironmentVariable("SQLSERVER_PORT") ?? "1433";
+            var sqlServerPort = Environment.GetEnvironmentVariable("SQLSERVER_PORT") ?? "1450";
             var sqlServerUser = Environment.GetEnvironmentVariable("SQLSERVER_USER") ?? "sa";
             var sqlServerPassword = Environment.GetEnvironmentVariable("SQLSERVER_PASSWORD") ?? "YourStrong@Password1";
 
