@@ -12,6 +12,7 @@ namespace MTOGO.IntegrationTests.Restaurant
     public class CustomRestaurantWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
         private readonly string _testConnectionString = "Server=localhost,1450;Database=RestaurantServiceTestDB;User Id=sa;Password=YourStrong@Password1;TrustServerCertificate=True;";
+        private static readonly object DbLock = new();
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -27,65 +28,80 @@ namespace MTOGO.IntegrationTests.Restaurant
 
             builder.ConfigureServices(services =>
             {
-                // Replace IDataAccess with a Dapper SQL Server connection pointing to the test database
                 services.AddScoped<IDataAccess>(_ => new DataAccess(_testConnectionString));
 
-                // Seed the test database
-                using var connection = new SqlConnection(_testConnectionString);
-                connection.Open();
-                SeedTestData(connection);
+                lock (DbLock)
+                {
+                    using var connection = new SqlConnection(_testConnectionString);
+                    connection.Open();
+
+                    using var transaction = connection.BeginTransaction();
+                    try
+                    {
+                        ResetDatabase(connection, transaction);
+                        SeedTestData(connection, transaction);
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
             });
         }
 
-        private void SeedTestData(IDbConnection connection)
+        private void ResetDatabase(IDbConnection connection, IDbTransaction transaction)
         {
             connection.Execute(@"
-        IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Address' AND xtype='U')
-        BEGIN
-            CREATE TABLE Address (
-                Id INT IDENTITY(1,1) PRIMARY KEY,
-                AddressLine1 NVARCHAR(255) NOT NULL,
-                AddressLine2 NVARCHAR(255),
-                City NVARCHAR(100) NOT NULL,
-                ZipCode NVARCHAR(20) NOT NULL,
-                Country NVARCHAR(100) NOT NULL
-            );
+                DELETE FROM MenuItem;
+                DBCC CHECKIDENT ('MenuItem', RESEED, 0);
 
-            CREATE TABLE Restaurant (
-                Id INT IDENTITY(1,1) PRIMARY KEY,
-                RestaurantName NVARCHAR(100) NOT NULL,
-                LegalName NVARCHAR(255) NOT NULL,
-                VATNumber NVARCHAR(50) NOT NULL,
-                RestaurantDescription NVARCHAR(500),
-                ContactEmail NVARCHAR(255) NOT NULL,
-                ContactPhone NVARCHAR(50) NOT NULL,
-                AddressId INT NOT NULL FOREIGN KEY REFERENCES Address(Id)
-            );
+                DELETE FROM FoodCategory;
+                DBCC CHECKIDENT ('FoodCategory', RESEED, 0);
 
-            CREATE TABLE OperatingHours (
-                Id INT IDENTITY(1,1) PRIMARY KEY,
-                RestaurantId INT NOT NULL FOREIGN KEY REFERENCES Restaurant(Id),
-                DayOfWeek NVARCHAR(20) NOT NULL,
-                OpeningTime TIME NOT NULL,
-                ClosingTime TIME NOT NULL
-            );
+                DELETE FROM OperatingHours;
+                DBCC CHECKIDENT ('OperatingHours', RESEED, 0);
 
-            INSERT INTO Address (AddressLine1, AddressLine2, City, ZipCode, Country)
-            VALUES ('123 Test St', NULL, 'Test City', '12345', 'Test Country');
+                DELETE FROM Restaurant;
+                DBCC CHECKIDENT ('Restaurant', RESEED, 0);
 
-            INSERT INTO Restaurant (RestaurantName, LegalName, VATNumber, RestaurantDescription, ContactEmail, ContactPhone, AddressId)
-            VALUES ('Test Restaurant', 'Legal Name', 'VAT123', 'A test restaurant', 'test@example.com', '123-456-7890', 1);
+                DELETE FROM Address;
+                DBCC CHECKIDENT ('Address', RESEED, 0);
+            ", transaction: transaction);
+        }
 
-            INSERT INTO OperatingHours (RestaurantId, DayOfWeek, OpeningTime, ClosingTime)
-            VALUES (1, 'Monday', '08:00:00', '22:00:00'),
-                   (1, 'Tuesday', '08:00:00', '22:00:00'),
-                   (1, 'Wednesday', '08:00:00', '22:00:00'),
-                   (1, 'Thursday', '08:00:00', '22:00:00'),
-                   (1, 'Friday', '08:00:00', '22:00:00'),
-                   (1, 'Saturday', '08:00:00', '22:00:00'),
-                   (1, 'Sunday', '08:00:00', '22:00:00');
-        END
-    ");
+        private void SeedTestData(IDbConnection connection, IDbTransaction transaction)
+        {
+            connection.Execute(@"
+                INSERT INTO Address (AddressLine1, AddressLine2, City, ZipCode, Country)
+                VALUES ('123 Test St', NULL, 'Test City', '12345', 'Test Country');
+
+                DECLARE @AddressId INT = SCOPE_IDENTITY();
+
+                INSERT INTO Restaurant (RestaurantName, LegalName, VATNumber, RestaurantDescription, ContactEmail, ContactPhone, AddressId)
+                VALUES ('Test Restaurant', 'Legal Name', 'VAT123', 'A test restaurant', 'test@example.com', '123-456-7890', @AddressId);
+
+                DECLARE @RestaurantId INT = SCOPE_IDENTITY();
+
+                INSERT INTO OperatingHours (RestaurantId, Day, OpeningHours, ClosingHours)
+                VALUES 
+                (@RestaurantId, 1, '09:00:00', '18:00:00'),
+                (@RestaurantId, 2, '09:00:00', '18:00:00'),
+                (@RestaurantId, 3, '09:00:00', '18:00:00');
+
+                INSERT INTO FoodCategory (RestaurantId, Category)
+                VALUES 
+                (@RestaurantId, 1),
+                (@RestaurantId, 2),
+                (@RestaurantId, 3);
+
+                INSERT INTO MenuItem (RestaurantId, Name, Description, Price, Image)
+                VALUES 
+                (@RestaurantId, 'Pizza', 'Delicious cheese pizza', 9.99, NULL),
+                (@RestaurantId, 'Burger', 'Classic beef burger', 7.99, NULL),
+                (@RestaurantId, 'Pasta', 'Creamy Alfredo pasta', 12.99, NULL);
+            ", transaction: transaction);
         }
     }
 }

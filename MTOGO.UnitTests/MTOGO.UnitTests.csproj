@@ -1,20 +1,38 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 
-    <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
-  </PropertyGroup>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
 
-  <ItemGroup>
+		<!-- Enable Coverage -->
+		<CollectCoverage>true</CollectCoverage>
+		<CoverletOutput>./Coverage/</CoverletOutput>
+		<CoverletOutputFormat>cobertura</CoverletOutputFormat>
+
+		<!-- Exclude all Controllers across services -->
+		<Exclude>[MTOGO.Services.*.Controllers]*</Exclude>
+		<!-- Optionally exclude using file paths -->
+		<ExcludeByFile>../MTOGO.Services.*.Controllers/**/*.cs</ExcludeByFile>
+		
+		<ExcludeByFile>**/Controllers/*.cs</ExcludeByFile>
+
+	</PropertyGroup>
+
+	<ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="coverlet.msbuild" Version="6.0.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.10" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.10" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="ReportGenerator" Version="5.4.3" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
   </ItemGroup>
