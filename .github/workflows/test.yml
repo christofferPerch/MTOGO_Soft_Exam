@@ -25,7 +25,10 @@ jobs:
 
       # Restore dependencies
       - name: Restore dependencies
-        run: dotnet restore MTOGO.sln
+        run: |
+         dotnet restore ./MTOGO.UnitTests/MTOGO.UnitTests.csproj
+         dotnet restore ./MTOGO.IntegrationTests/MTOGO.IntegrationTests.csproj
+
 
 
       # Build the solution
