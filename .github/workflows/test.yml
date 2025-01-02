@@ -23,14 +23,17 @@ jobs:
         with:
           dotnet-version: '8.0' # Adjust to your project's .NET version
 
-      # Restore dependencies
+      # Restore dependencies for individual projects
       - name: Restore dependencies
         run: |
-          dotnet restore MTOGO.sln
+          dotnet restore ./MTOGO.UnitTests/MTOGO.UnitTests.csproj
+          dotnet restore ./MTOGO.IntegrationTests/MTOGO.IntegrationTests.csproj
 
-      # Build the solution
-      - name: Build solution
-        run: dotnet build MTOGO.sln --no-restore --configuration Release
+      # Build individual test projects
+      - name: Build projects
+        run: |
+          dotnet build ./MTOGO.UnitTests/MTOGO.UnitTests.csproj --no-restore --configuration Release
+          dotnet build ./MTOGO.IntegrationTests/MTOGO.IntegrationTests.csproj --no-restore --configuration Release
 
       # Run Unit Tests
       - name: Run Unit Tests
