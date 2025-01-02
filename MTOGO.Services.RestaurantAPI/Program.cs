@@ -76,3 +76,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+namespace MTOGO.Services.RestaurantAPI
+{
+    public partial class Program { }
+}
+
