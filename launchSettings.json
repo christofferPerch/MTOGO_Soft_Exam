@@ -4,7 +4,8 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "mtogo.services.authapi": "StartDebugging"
+        "mtogo.services.authapi": "StartDebugging",
+        "mtogo.monitoring": "StartDebugging"
       }
     }
   }

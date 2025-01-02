@@ -110,6 +110,13 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
         {
             try
             {
+                var existingCart = await _redisCache.GetStringAsync(userId);
+                if (string.IsNullOrEmpty(existingCart))
+                {
+                    _logger.LogWarning($"No cart found for user {userId} to remove.");
+                    return false;
+                }
+
                 await _redisCache.RemoveAsync(userId);
                 return true;
             }
@@ -120,13 +127,19 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
             }
         }
 
+
         public async Task<Cart?> SetCart(Cart cart)
         {
+            if (cart == null)
+            {
+                throw new ArgumentException("Cart cannot be null.", nameof(cart));
+            }
+
             try
             {
-                if (cart == null || string.IsNullOrEmpty(cart.UserId))
+                if (string.IsNullOrEmpty(cart.UserId))
                 {
-                    throw new ArgumentException("Invalid cart or user ID.");
+                    throw new ArgumentException("Invalid cart or user ID.", nameof(cart.UserId));
                 }
 
                 var existingCartData = await _redisCache.GetStringAsync(cart.UserId);
@@ -171,6 +184,8 @@ namespace MTOGO.Services.ShoppingCartAPI.Services
                 throw;
             }
         }
+
+
 
         public async Task ProcessCartRequest(CartRequestMessageDto cartRequest)
         {

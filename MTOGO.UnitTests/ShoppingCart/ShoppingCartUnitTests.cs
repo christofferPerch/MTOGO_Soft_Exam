@@ -74,23 +74,6 @@ namespace MTOGO.UnitTests.ShoppingCart
         }
 
         [Fact]
-        public async Task UpdateCart()
-        {
-            var cart = new Cart { UserId = _testUserId, Items = new List<CartItem> { new CartItem { MenuItemId = 101, Quantity = 1, Price = 9.99m } } };
-            await _redisCache.SetStringAsync(_testUserId, JsonConvert.SerializeObject(cart));
-
-            cart.Items[0].Quantity = 3;
-
-            var result = await _shoppingCartService.UpdateCart(cart);
-
-            var updatedCartData = await _redisCache.GetStringAsync(_testUserId);
-            Assert.NotNull(updatedCartData);
-
-            var updatedCart = JsonConvert.DeserializeObject<Cart>(updatedCartData);
-            Assert.Equal(3, updatedCart.Items[0].Quantity);
-        }
-
-        [Fact]
         public async Task RemoveCart()
         {
             await _redisCache.SetStringAsync(_testUserId, JsonConvert.SerializeObject(new Cart { UserId = _testUserId }));
@@ -122,5 +105,120 @@ namespace MTOGO.UnitTests.ShoppingCart
 
             _messageBusMock.Verify(m => m.PublishMessage("CartResponseQueue", It.IsAny<string>()), Times.Once);
         }
+
+        [Fact]
+        public async Task SetCart_UpdatesExistingItems_AddsNewItems_RemovesZeroQuantityItems()
+        {
+            var initialCart = new Cart
+            {
+                UserId = _testUserId,
+                Items = new List<CartItem>
+        {
+            new CartItem { MenuItemId = 101, Quantity = 2, Price = 9.99m },
+            new CartItem { MenuItemId = 102, Quantity = 3, Price = 19.99m }
+        }
+            };
+
+            await _redisCache.SetStringAsync(_testUserId, JsonConvert.SerializeObject(initialCart));
+
+            var updatedCart = new Cart
+            {
+                UserId = _testUserId,
+                Items = new List<CartItem>
+        {
+            new CartItem { MenuItemId = 101, Quantity = 5, Price = 9.99m },  
+            new CartItem { MenuItemId = 103, Quantity = 2, Price = 29.99m }, 
+            new CartItem { MenuItemId = 102, Quantity = 0 } 
+        }
+            };
+
+            var result = await _shoppingCartService.SetCart(updatedCart);
+
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Items.Count);
+            Assert.Equal(5, result.Items.First(i => i.MenuItemId == 101).Quantity);
+            Assert.Equal(29.99m, result.Items.First(i => i.MenuItemId == 103).Price);
+            Assert.DoesNotContain(result.Items, i => i.MenuItemId == 102);
+        }
+
+        [Fact]
+        public async Task RemoveCart_NonExistentCart_ShouldReturnFalse()
+        {
+            var result = await _shoppingCartService.RemoveCart(_testUserId);
+
+            Assert.False(result);
+            _loggerMock.Verify(
+                log => log.Log(
+                    LogLevel.Warning,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    null,
+                    (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
+                Times.Once
+            );
+        }
+
+
+        [Fact]
+        public async Task RemoveMenuItem_NonExistentItem_ShouldReturnFalse()
+        {
+            var initialCart = new Cart
+            {
+                UserId = _testUserId,
+                Items = new List<CartItem>
+        {
+            new CartItem { MenuItemId = 101, Quantity = 2, Price = 9.99m }
+        }
+            };
+
+            await _redisCache.SetStringAsync(_testUserId, JsonConvert.SerializeObject(initialCart));
+
+            var result = await _shoppingCartService.RemoveMenuItem(_testUserId, 999);
+
+            Assert.False(result);
+            Assert.Single(initialCart.Items); 
+        }
+
+        [Fact]
+        public async Task CreateCart_CartAlreadyExists_ShouldThrowException()
+        {
+            var existingCart = new Cart { UserId = _testUserId };
+            await _redisCache.SetStringAsync(_testUserId, JsonConvert.SerializeObject(existingCart));
+
+            var newCart = new Cart { UserId = _testUserId };
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _shoppingCartService.CreateCart(newCart));
+        }
+
+        [Fact]
+        public async Task ProcessCartRequest_NonExistentCart_ShouldNotPublishMessage()
+        {
+            var cartRequest = new CartRequestMessageDto
+            {
+                UserId = _testUserId,
+                CorrelationId = Guid.NewGuid()
+            };
+
+            await _shoppingCartService.ProcessCartRequest(cartRequest);
+
+            _messageBusMock.Verify(m => m.PublishMessage(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task SetCart_NullCart_ShouldThrowArgumentException()
+        {
+            await Assert.ThrowsAsync<ArgumentException>(() => _shoppingCartService.SetCart(null));
+        }
+
+
+        [Fact]
+        public async Task SetCart_EmptyUserId_ShouldThrowArgumentException()
+        {
+            var invalidCart = new Cart { UserId = "" };
+
+            await Assert.ThrowsAsync<ArgumentException>(() => _shoppingCartService.SetCart(invalidCart));
+        }
+
+
     }
 }

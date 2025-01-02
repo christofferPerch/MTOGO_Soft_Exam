@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="coverlet.msbuild" Version="6.0.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="FluentAssertions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.11" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.11" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="ReportGenerator" Version="5.4.3" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+    <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Order\" />
+    <Folder Include="ShoppingCart\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MTOGO.MessageBus\MTOGO.MessageBus.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.AuthAPI\MTOGO.Services.AuthAPI.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.DashboardAPI\MTOGO.Services.DashboardAPI.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.DataAccess\MTOGO.Services.DataAccess.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.DeliveryAPI\MTOGO.Services.DeliveryAPI.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.EmailAPI\MTOGO.Services.EmailAPI.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.OrderAPI\MTOGO.Services.OrderAPI.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.RestaurantAPI\MTOGO.Services.RestaurantAPI.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.ReviewAPI\MTOGO.Services.ReviewAPI.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.ShoppingCartAPI\MTOGO.Services.ShoppingCartAPI.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.SmsAPI\MTOGO.Services.SmsAPI.csproj" />
+  </ItemGroup>
+
+</Project>

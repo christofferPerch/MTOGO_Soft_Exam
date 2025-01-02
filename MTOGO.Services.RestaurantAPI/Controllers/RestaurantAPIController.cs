@@ -200,6 +200,13 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
             try
             {
                 var restaurants = await _restaurantService.GetAllRestaurants();
+                if (restaurants == null || !restaurants.Any())
+                {
+                    _response.IsSuccess = false;
+                    _response.Message = "No restaurants found.";
+                    return NotFound(_response);
+                }
+
                 _response.Result = restaurants;
                 _response.Message = "All restaurants retrieved successfully.";
                 return Ok(_response);
@@ -207,10 +214,11 @@ namespace MTOGO.Services.RestaurantAPI.Controllers
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
-                _response.Message = "An error occurred while retrieving all restaurants." + ex;
+                _response.Message = $"An error occurred while retrieving all restaurants: {ex.Message}";
                 return StatusCode(500, _response);
             }
         }
+
 
         [HttpGet("SearchRestaurants")]
         public async Task<IActionResult> SearchRestaurants([FromQuery] string location, [FromQuery] int? foodCategory = null)

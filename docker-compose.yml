@@ -166,11 +166,26 @@ services:
     networks:
     - app-network
 
+  testrestaurantdb:
+    build:
+      context: ./Databases/RestaurantTest
+      dockerfile: Dockerfile
+    environment:
+      SA_PASSWORD: "YourStrong@Password1"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1450:1433"
+    networks:
+      - app-network
+    volumes:
+      - testrestaurantdb-data:/var/opt/mssql
+
 volumes:
   authdb-data:
   orderdb-data:
   restaurantdb-data:
   reviewdb-data:
+  testrestaurantdb-data:
 
 networks:
   app-network:

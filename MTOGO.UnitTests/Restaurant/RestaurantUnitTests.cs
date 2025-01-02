@@ -1,10 +1,10 @@
-﻿using Dapper;
+﻿using System.Data;
+using Dapper;
 using Microsoft.Extensions.Logging;
 using Moq;
 using MTOGO.Services.DataAccess;
 using MTOGO.Services.RestaurantAPI.Models.Dto;
 using MTOGO.Services.RestaurantAPI.Services;
-using System.Data;
 
 namespace MTOGO.UnitTests.Restaurant
 {
@@ -197,6 +197,95 @@ namespace MTOGO.UnitTests.Restaurant
 
             Assert.Equal(2, result.Count);
             _dataAccessMock.Verify(d => d.GetAll<RestaurantDto>(It.IsAny<string>(), null), Times.Once);
+        }
+
+        [Fact]
+        public async Task AddRestaurant_MissingRequiredFields_ShouldThrowException()
+        {
+            var addRestaurantDto = new AddRestaurantDto
+            {
+                RestaurantName = null, 
+                Address = new AddressDto
+                {
+                    AddressLine1 = "Street 1",
+                    City = "City",
+                    ZipCode = "12345",
+                    Country = "Country"
+                },
+                OperatingHours = new List<OperatingHoursDto>(),
+                FoodCategories = new List<FoodCategoryDto>()
+            };
+
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _restaurantService.AddRestaurant(addRestaurantDto));
+            Assert.Equal("RestaurantName is required. (Parameter 'RestaurantName')", exception.Message);
+        }
+
+
+
+        [Fact]
+        public async Task UpdateRestaurant_MissingData_ShouldThrowException()
+        {
+            var updateRestaurantDto = new UpdateRestaurantDto
+            {
+                Id = 1,
+                RestaurantName = null,
+            };
+
+            _dataAccessMock.Setup(d => d.ExecuteStoredProcedure<int>("UpdateRestaurant", It.IsAny<object>()))
+                           .Throws(new Exception("Invalid data"));
+
+            await Assert.ThrowsAsync<Exception>(() => _restaurantService.UpdateRestaurant(updateRestaurantDto));
+        }
+
+        [Fact]
+        public async Task DeleteRestaurant_NonExistentId_ShouldReturnZeroAffectedRows()
+        {
+            int nonExistentId = 999;
+
+            _dataAccessMock.Setup(d => d.Delete(It.IsAny<string>(), It.IsAny<object>()))
+                           .ReturnsAsync(0);
+
+            var result = await _restaurantService.DeleteRestaurant(nonExistentId);
+
+            Assert.Equal(0, result);
+            _dataAccessMock.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task RemoveMenuItem_NonExistentMenuItem_ShouldReturnZeroAffectedRows()
+        {
+            int restaurantId = 1;
+            int nonExistentMenuItemId = 999;
+
+            _dataAccessMock.Setup(d => d.Delete(It.IsAny<string>(), It.IsAny<object>()))
+                           .ReturnsAsync(0);
+
+            var result = await _restaurantService.RemoveMenuItem(restaurantId, nonExistentMenuItemId);
+
+            Assert.Equal(0, result);
+            _dataAccessMock.Verify(d => d.Delete(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task FindRestaurantsByLocation_WithFoodCategory_ShouldReturnMatchingRestaurants()
+        {
+            var location = "Test City";
+            int foodCategory = 1;
+
+            var restaurants = new List<RestaurantDto>
+            {
+                new RestaurantDto { Id = 1, RestaurantName = "Restaurant 1" },
+                new RestaurantDto { Id = 2, RestaurantName = "Restaurant 2" }
+            };
+
+            _dataAccessMock.Setup(d => d.GetAll<RestaurantDto>(It.IsAny<string>(), It.IsAny<object>()))
+                           .ReturnsAsync(restaurants);
+
+            var result = await _restaurantService.FindRestaurantsByLocation(location, foodCategory);
+
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count);
+            _dataAccessMock.Verify(d => d.GetAll<RestaurantDto>(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
         }
 
     }

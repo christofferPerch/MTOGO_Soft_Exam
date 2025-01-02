@@ -60,34 +60,44 @@ namespace MTOGO.UnitTests.Auth
                 new Mock<IRoleStore<IdentityRole>>().Object, null, null, null, null);
         }
 
+        private ApplicationUser CreateDefaultUser(string userId, string email)
+        {
+            return new ApplicationUser
+            {
+                Id = userId,
+                Email = email,
+                UserName = email,
+                FirstName = "DefaultFirstName",
+                LastName = "DefaultLastName",
+                Address = "Default Address",
+                City = "Default City",
+                ZipCode = "12345",
+                Country = "Default Country",
+                PhoneNumber = "1234567890"
+            };
+        }
+
+
         [Fact]
         public async Task AssignRole_UserExistsAndRoleCreated_ReturnsTrue()
         {
             string email = "testuser@example.com";
             string roleName = "Admin";
-            var user = new ApplicationUser
-            {
-                Email = email,
-                UserName = "testuser",
-                FirstName = "Test",
-                LastName = "User",
-                Address = "123 Main St",
-                City = "Test City",
-                ZipCode = "12345",
-                Country = "Test Country"
-            };
+            var user = CreateDefaultUser(Guid.NewGuid().ToString(), email);
+
             _dbContext.ApplicationUsers.Add(user);
             await _dbContext.SaveChangesAsync();
 
             _roleManagerMock.Setup(r => r.RoleExistsAsync(roleName)).ReturnsAsync(false);
             _roleManagerMock.Setup(r => r.CreateAsync(It.IsAny<IdentityRole>())).ReturnsAsync(IdentityResult.Success);
-            _userManagerMock.Setup(u => u.AddToRoleAsync(user, roleName)).ReturnsAsync(IdentityResult.Success);
+            _userManagerMock.Setup(u => u.AddToRoleAsync(It.Is<ApplicationUser>(u => u.Email == email), roleName))
+                            .ReturnsAsync(IdentityResult.Success);
 
             var result = await _authService.AssignRole(email, roleName);
 
             Assert.True(result);
             _roleManagerMock.Verify(r => r.CreateAsync(It.IsAny<IdentityRole>()), Times.Once);
-            _userManagerMock.Verify(u => u.AddToRoleAsync(user, roleName), Times.Once);
+            _userManagerMock.Verify(u => u.AddToRoleAsync(It.Is<ApplicationUser>(u => u.Email == email), roleName), Times.Once);
         }
 
         [Fact]
@@ -105,24 +115,18 @@ namespace MTOGO.UnitTests.Auth
         public async Task Login_ValidUser_ReturnsLoginResponseWithToken()
         {
             var loginRequest = new LoginRequestDto { UserName = "testuser", Password = "password" };
-            var user = new ApplicationUser
-            {
-                UserName = "testuser",
-                Email = "testuser@example.com",
-                FirstName = "Test",
-                LastName = "User",
-                Address = "123 Main St",
-                City = "Test City",
-                ZipCode = "12345",
-                Country = "Test Country"
-            };
+            var user = CreateDefaultUser(Guid.NewGuid().ToString(), "testuser");
+
             _dbContext.ApplicationUsers.Add(user);
             await _dbContext.SaveChangesAsync();
 
-            _userManagerMock.Setup(u => u.CheckPasswordAsync(It.IsAny<ApplicationUser>(), loginRequest.Password))
+            _userManagerMock.Setup(u => u.FindByNameAsync(loginRequest.UserName.ToLower()))
+                            .ReturnsAsync(user);
+
+            _userManagerMock.Setup(u => u.CheckPasswordAsync(user, loginRequest.Password))
                             .ReturnsAsync(true);
 
-            _userManagerMock.Setup(u => u.GetRolesAsync(It.IsAny<ApplicationUser>()))
+            _userManagerMock.Setup(u => u.GetRolesAsync(user))
                             .ReturnsAsync(new List<string> { "User" });
 
             var result = await _authService.Login(loginRequest);
@@ -208,7 +212,12 @@ namespace MTOGO.UnitTests.Auth
                 Email = "invaliduser@example.com",
                 Password = "password",
                 FirstName = "First",
-                LastName = "Last"
+                LastName = "Last",
+                Address = null,
+                City = null,
+                ZipCode = null,
+                Country = null,
+                PhoneNumber = "23115525"
             };
             var identityError = new IdentityError { Description = "Registration failed." };
             _userManagerMock.Setup(u => u.CreateAsync(It.IsAny<ApplicationUser>(), registrationRequest.Password))
@@ -218,5 +227,128 @@ namespace MTOGO.UnitTests.Auth
 
             Assert.Equal("Registration failed.", result);
         }
+
+        [Fact]
+        public async Task UpdateUserSettings_ValidUserId_ReturnsUpdatedUserDto()
+        {
+            var userId = Guid.NewGuid().ToString();
+            var user = CreateDefaultUser(userId, "user@example.com");
+
+            _dbContext.ApplicationUsers.Add(user);
+            await _dbContext.SaveChangesAsync();
+
+            _userManagerMock.Setup(u => u.FindByIdAsync(userId))
+                            .ReturnsAsync(user);
+
+            var updateProfileDto = new UpdateProfileDto
+            {
+                Email = "newuser@example.com",
+                PhoneNumber = "9876543210",
+                Address = "New Address",
+                City = "New City",
+                ZipCode = "54321",
+                Country = "New Country"
+            };
+
+            _userManagerMock.Setup(u => u.UpdateAsync(It.Is<ApplicationUser>(u =>
+                u.Id == userId &&
+                u.Email == updateProfileDto.Email &&
+                u.PhoneNumber == updateProfileDto.PhoneNumber &&
+                u.Address == updateProfileDto.Address &&
+                u.City == updateProfileDto.City &&
+                u.ZipCode == updateProfileDto.ZipCode &&
+                u.Country == updateProfileDto.Country
+            ))).ReturnsAsync(IdentityResult.Success);
+
+            var result = await _authService.UpdateUserSettings(userId, updateProfileDto);
+
+            Assert.NotNull(result);
+            Assert.Equal(updateProfileDto.Email, result.Email);
+            Assert.Equal(updateProfileDto.PhoneNumber, result.PhoneNumber);
+            Assert.Equal(updateProfileDto.Address, result.Address);
+            Assert.Equal(updateProfileDto.City, result.City);
+            Assert.Equal(updateProfileDto.ZipCode, result.ZipCode);
+            Assert.Equal(updateProfileDto.Country, result.Country);
+        }
+
+
+
+        [Fact]
+        public async Task UpdateUserSettings_InvalidUserId_ReturnsNull()
+        {
+            var result = await _authService.UpdateUserSettings("invalid-id", new UpdateProfileDto());
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task DeleteAccount_ValidUserId_ReturnsTrue()
+        {
+            var userId = Guid.NewGuid().ToString();
+            var user = CreateDefaultUser(userId, "user@example.com");
+
+            await _dbContext.ApplicationUsers.AddAsync(user);
+            await _dbContext.SaveChangesAsync();
+
+            _userManagerMock.Setup(u => u.FindByIdAsync(userId)).ReturnsAsync(user);
+            _userManagerMock.Setup(u => u.DeleteAsync(It.Is<ApplicationUser>(u => u.Id == userId)))
+                            .ReturnsAsync(IdentityResult.Success);
+
+            var result = await _authService.DeleteAccount(userId);
+
+            Assert.True(result);
+            _userManagerMock.Verify(u => u.FindByIdAsync(userId), Times.Once);
+            _userManagerMock.Verify(u => u.DeleteAsync(It.Is<ApplicationUser>(u => u.Id == userId)), Times.Once);
+        }
+
+
+        [Fact]
+        public async Task DeleteAccount_InvalidUserId_ReturnsFalse()
+        {
+            var result = await _authService.DeleteAccount("invalid-id");
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task AssignRole_RoleAlreadyExists_DoesNotCreateRole()
+        {
+            string email = "testuser@example.com";
+            string roleName = "ExistingRole";
+            var user = CreateDefaultUser(Guid.NewGuid().ToString(), email);
+
+            _dbContext.ApplicationUsers.Add(user);
+            await _dbContext.SaveChangesAsync();
+
+            _roleManagerMock.Setup(r => r.RoleExistsAsync(roleName)).ReturnsAsync(true);
+            _userManagerMock.Setup(u => u.AddToRoleAsync(It.Is<ApplicationUser>(u => u.Email == email), roleName))
+                            .ReturnsAsync(IdentityResult.Success);
+
+            var result = await _authService.AssignRole(email, roleName);
+
+            Assert.True(result);
+            _roleManagerMock.Verify(r => r.CreateAsync(It.IsAny<IdentityRole>()), Times.Never);
+            _userManagerMock.Verify(u => u.AddToRoleAsync(It.Is<ApplicationUser>(u => u.Email == email), roleName), Times.Once);
+        }
+
+
+        [Fact]
+        public async Task Login_InvalidPassword_ReturnsEmptyLoginResponse()
+        {
+            var loginRequest = new LoginRequestDto { UserName = "testuser", Password = "wrongpassword" };
+            var user = CreateDefaultUser(Guid.NewGuid().ToString(), "user@example.com");
+
+            _dbContext.ApplicationUsers.Add(user);
+            await _dbContext.SaveChangesAsync();
+
+            _userManagerMock.Setup(u => u.CheckPasswordAsync(user, loginRequest.Password)).ReturnsAsync(false);
+
+            var result = await _authService.Login(loginRequest);
+
+            Assert.NotNull(result);
+            Assert.Null(result.User);
+            Assert.Equal(string.Empty, result.Token);
+        }
+
     }
 }
