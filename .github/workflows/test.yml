@@ -25,7 +25,8 @@ jobs:
 
       # Restore dependencies
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore MTOGO.sln
+
 
       # Build the solution
       - name: Build solution
