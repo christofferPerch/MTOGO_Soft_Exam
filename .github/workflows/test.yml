@@ -12,6 +12,28 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+        options: > 
+          --health-cmd "redis-cli ping || exit 1" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+
+      rabbitmq:
+        image: rabbitmq:management
+        ports:
+          - 5672:5672
+          - 15672:15672
+        options: >
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       # Checkout the code
       - name: Checkout repository
@@ -21,7 +43,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0' # Adjust to your project's .NET version
+          dotnet-version: '8.0'
 
       # Restore dependencies for individual projects
       - name: Restore dependencies
@@ -37,8 +59,18 @@ jobs:
 
       # Run Unit Tests
       - name: Run Unit Tests
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          RABBITMQ_HOST: localhost
+          RABBITMQ_PORT: 5672
         run: dotnet test ./MTOGO.UnitTests/MTOGO.UnitTests.csproj --no-build --configuration Release
 
       # Run Integration Tests
       - name: Run Integration Tests
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          RABBITMQ_HOST: localhost
+          RABBITMQ_PORT: 5672
         run: dotnet test ./MTOGO.IntegrationTests/MTOGO.IntegrationTests.csproj --no-build --configuration Release
