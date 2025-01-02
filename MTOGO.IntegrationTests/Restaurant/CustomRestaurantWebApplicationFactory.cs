@@ -21,7 +21,7 @@ namespace MTOGO.IntegrationTests.Restaurant
             var sqlServerHost = Environment.GetEnvironmentVariable("SQLSERVER_HOST") ?? "localhost";
             var sqlServerPort = Environment.GetEnvironmentVariable("SQLSERVER_PORT") ?? "1433";
             var sqlServerUser = Environment.GetEnvironmentVariable("SQLSERVER_USER") ?? "sa";
-            var sqlServerPassword = Environment.GetEnvironmentVariable("SQLSERVER_PASSWORD") ?? "YourStrong!Password";
+            var sqlServerPassword = Environment.GetEnvironmentVariable("SQLSERVER_PASSWORD") ?? "YourStrong@Password1";
 
             _testConnectionString = $"Server={sqlServerHost},{sqlServerPort};Database=RestaurantServiceTestDB;User Id={sqlServerUser};Password={sqlServerPassword};TrustServerCertificate=True;";
         }
