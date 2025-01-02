@@ -22,6 +22,13 @@ jobs:
         ports:
           - 5672:5672
           - 15672:15672
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+          - 1433:1433
+        env:
+          ACCEPT_EULA: "Y"
+          SA_PASSWORD: "YourStrong!Password"
 
     steps:
       # Checkout the code
@@ -62,4 +69,8 @@ jobs:
           REDIS_PORT: 6379
           RABBITMQ_HOST: localhost
           RABBITMQ_PORT: 5672
+          SQLSERVER_HOST: localhost
+          SQLSERVER_PORT: 1433
+          SQLSERVER_USER: sa
+          SQLSERVER_PASSWORD: YourStrong!Password
         run: dotnet test ./MTOGO.IntegrationTests/MTOGO.IntegrationTests.csproj --no-build --configuration Release

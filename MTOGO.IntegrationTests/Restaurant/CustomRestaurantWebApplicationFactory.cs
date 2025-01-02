@@ -11,9 +11,20 @@ namespace MTOGO.IntegrationTests.Restaurant
 {
     public class CustomRestaurantWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
-        private readonly string _testConnectionString = "Server=localhost,1450;Database=RestaurantServiceTestDB;User Id=sa;Password=YourStrong@Password1;TrustServerCertificate=True;";
+        //private readonly string _testConnectionString = "Server=localhost,1450;Database=RestaurantServiceTestDB;User Id=sa;Password=YourStrong@Password1;TrustServerCertificate=True;";
+
+        private readonly string _testConnectionString;
         private static readonly object DbLock = new();
 
+        public CustomRestaurantWebApplicationFactory()
+        {
+            var sqlServerHost = Environment.GetEnvironmentVariable("SQLSERVER_HOST") ?? "localhost";
+            var sqlServerPort = Environment.GetEnvironmentVariable("SQLSERVER_PORT") ?? "1433";
+            var sqlServerUser = Environment.GetEnvironmentVariable("SQLSERVER_USER") ?? "sa";
+            var sqlServerPassword = Environment.GetEnvironmentVariable("SQLSERVER_PASSWORD") ?? "YourStrong!Password";
+
+            _testConnectionString = $"Server={sqlServerHost},{sqlServerPort};Database=RestaurantServiceTestDB;User Id={sqlServerUser};Password={sqlServerPassword};TrustServerCertificate=True;";
+        }
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureAppConfiguration((context, config) =>
