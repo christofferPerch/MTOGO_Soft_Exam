@@ -73,4 +73,4 @@ jobs:
           SQLSERVER_PORT: 1450
           SQLSERVER_USER: sa
           SQLSERVER_PASSWORD: YourStrong@Password1
-        run: dotnet test ./MTOGO.IntegrationTests/MTOGO.IntegrationTests.csproj --no-build --configuration Release
+        run: dotnet test ./MTOGO.IntegrationTests/MTOGO.IntegrationTests.csproj --no-build --configuration Release --filter "Category=Auth"

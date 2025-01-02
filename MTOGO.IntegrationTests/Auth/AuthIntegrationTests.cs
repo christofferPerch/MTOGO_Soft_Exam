@@ -4,6 +4,7 @@ using MTOGO.Services.AuthAPI.Models.Dto;
 
 namespace MTOGO.IntegrationTests.Auth
 {
+    [Trait("Category", "Auth")]
     public class AuthIntegrationTests : IClassFixture<CustomAuthWebApplicationFactory<MTOGO.Services.AuthAPI.Program>>
     {
         private readonly HttpClient _client;
