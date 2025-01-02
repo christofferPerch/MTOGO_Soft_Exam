@@ -72,5 +72,5 @@ jobs:
           SQLSERVER_HOST: localhost
           SQLSERVER_PORT: 1433
           SQLSERVER_USER: sa
-          SQLSERVER_PASSWORD: YourStrong!Password
+          SQLSERVER_PASSWORD: YourStrong@Password1
         run: dotnet test ./MTOGO.IntegrationTests/MTOGO.IntegrationTests.csproj --no-build --configuration Release
