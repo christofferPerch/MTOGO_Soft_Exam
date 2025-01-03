@@ -31,29 +31,24 @@ jobs:
           SA_PASSWORD: "YourStrong@Password1"
 
     steps:
-      # Checkout the code
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Setup .NET
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0'
 
-      # Restore dependencies for individual projects
       - name: Restore dependencies
         run: |
           dotnet restore ./MTOGO.UnitTests/MTOGO.UnitTests.csproj
           dotnet restore ./MTOGO.IntegrationTests/MTOGO.IntegrationTests.csproj
 
-      # Build individual test projects
       - name: Build projects
         run: |
           dotnet build ./MTOGO.UnitTests/MTOGO.UnitTests.csproj --no-restore --configuration Release
           dotnet build ./MTOGO.IntegrationTests/MTOGO.IntegrationTests.csproj --no-restore --configuration Release
 
-      # Run Unit Tests
       - name: Run Unit Tests
         env:
           REDIS_HOST: localhost
@@ -62,7 +57,6 @@ jobs:
           RABBITMQ_PORT: 5672
         run: dotnet test ./MTOGO.UnitTests/MTOGO.UnitTests.csproj --no-build --configuration Release
 
-      # Run Integration Tests
       - name: Run Integration Tests
         env:
           REDIS_HOST: localhost

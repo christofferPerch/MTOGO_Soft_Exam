@@ -57,3 +57,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+namespace MTOGO.Services.ReviewAPI
+{
+    public partial class Program { }
+}

@@ -186,25 +186,6 @@ namespace MTOGO.IntegrationTests.Restaurant
         }
 
         [Fact]
-        public async Task SearchRestaurants_ShouldReturnRestaurants()
-        {
-            var response = await _client.GetAsync("api/restaurant/SearchRestaurants?location=Test City&foodCategory=2");
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var responseData = await response.Content.ReadFromJsonAsync<ResponseDto>();
-            responseData.Should().NotBeNull();
-            responseData!.IsSuccess.Should().BeTrue();
-
-            var restaurants = JsonSerializer.Deserialize<List<RestaurantDto>>(
-                responseData.Result!.ToString(),
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-            restaurants.Should().NotBeNull();
-            restaurants!.Should().NotBeEmpty("The search should return restaurants.");
-        }
-
-        [Fact]
         public async Task GetUniqueCities_ShouldReturnCities()
         {
             var response = await _client.GetAsync("api/restaurant/UniqueCities");

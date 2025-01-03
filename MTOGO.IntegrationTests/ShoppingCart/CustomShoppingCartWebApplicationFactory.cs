@@ -15,7 +15,7 @@ namespace MTOGO.IntegrationTests.ShoppingCart
         public CustomShoppingCartWebApplicationFactory()
         {
             var redisHost = Environment.GetEnvironmentVariable("TESTREDIS_HOST") ?? "localhost";
-            var redisPort = Environment.GetEnvironmentVariable("TESTREDIS_PORT") ?? "6380";
+            var redisPort = Environment.GetEnvironmentVariable("TESTREDIS_PORT") ?? "6379";
             _testRedisConnectionString = $"{redisHost}:{redisPort}";
         }
 
@@ -25,7 +25,7 @@ namespace MTOGO.IntegrationTests.ShoppingCart
             {
                 var testSettings = new Dictionary<string, string>
                 {
-                    ["Redis:ConnectionString"] = _testRedisConnectionString
+                    ["ConnectionStrings:RedisConnection"] = _testRedisConnectionString
                 };
 
                 config.AddInMemoryCollection(testSettings);
