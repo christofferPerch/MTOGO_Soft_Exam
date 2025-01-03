@@ -64,7 +64,7 @@ public class CustomerOrderAcceptanceTests {
     public async Task CustomerCanViewOrderHistory_ShouldReturnOrders() {
         // Step 1: Create an order
         var orderPayload = new {
-            userId = "history_user",
+            userId = "1",
             correlationId = Guid.NewGuid(),
             totalAmount = 120.00m, // Change to decimal
             items = new[]
@@ -87,7 +87,7 @@ public class CustomerOrderAcceptanceTests {
         Assert.True(orderResponse.IsSuccessStatusCode, "Order creation failed");
 
         // Step 2: Retrieve the order history for the user
-        var historyResponse = await _client.GetAsync($"/order/order-history/history_user");
+        var historyResponse = await _client.GetAsync($"/order/order-history/1");
 
         Assert.True(historyResponse.IsSuccessStatusCode, "Retrieving order history failed");
 
