@@ -185,7 +185,7 @@ namespace MTOGO.IntegrationTests.Restaurant
             responseData!.IsSuccess.Should().BeTrue();
         }
 
-      /*  [Fact]
+        [Fact]
         public async Task SearchRestaurants_ShouldReturnRestaurants()
         {
             var response = await _client.GetAsync("api/restaurant/SearchRestaurants?location=Test City&foodCategory=2");
@@ -202,7 +202,7 @@ namespace MTOGO.IntegrationTests.Restaurant
 
             restaurants.Should().NotBeNull();
             restaurants!.Should().NotBeEmpty("The search should return restaurants.");
-        }*/
+        }
 
         [Fact]
         public async Task GetUniqueCities_ShouldReturnCities()

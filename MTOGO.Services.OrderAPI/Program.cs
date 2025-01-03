@@ -77,3 +77,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+namespace MTOGO.Services.OrderAPI
+{
+    public partial class Program { }
+}

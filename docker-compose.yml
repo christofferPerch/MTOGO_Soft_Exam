@@ -179,6 +179,21 @@ services:
       - app-network
     volumes:
       - testrestaurantdb-data:/var/opt/mssql
+  
+  testorderdb:
+    build:
+      context: ./Databases/OrderTest
+      dockerfile: Dockerfile
+    environment:
+      SA_PASSWORD: "YourStrong@Password1"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1451:1433"
+    networks:
+      - app-network
+    volumes:
+      - testorderdb-data:/var/opt/mssql
+
 
 volumes:
   authdb-data:
@@ -186,6 +201,7 @@ volumes:
   restaurantdb-data:
   reviewdb-data:
   testrestaurantdb-data:
+  testorderdb-data:
 
 networks:
   app-network:
