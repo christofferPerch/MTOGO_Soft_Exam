@@ -73,3 +73,8 @@ app.Run();
         db.Database.Migrate();
     }
 }*/
+
+namespace MTOGO.Services.AuthAPI
+{
+    public partial class Program { }
+}

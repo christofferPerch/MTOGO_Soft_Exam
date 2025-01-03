@@ -20,10 +20,14 @@ namespace MTOGO.UnitTests.ShoppingCart
 
         public ShoppingCartUnitTests()
         {
+            var redisHost = Environment.GetEnvironmentVariable("REDIS_HOST") ?? "localhost";
+            var redisPort = Environment.GetEnvironmentVariable("REDIS_PORT") ?? "6379";
+            var redisConfiguration = $"{redisHost}:{redisPort}";
+
             var serviceProvider = new ServiceCollection()
                 .AddStackExchangeRedisCache(options =>
                 {
-                    options.Configuration = "localhost:6379";
+                    options.Configuration = redisConfiguration;
                     options.InstanceName = "ShoppingCartTests_";
                 })
                 .BuildServiceProvider();
@@ -39,6 +43,7 @@ namespace MTOGO.UnitTests.ShoppingCart
 
             _testUserId = $"user_{Guid.NewGuid()}";
         }
+
 
         public void Dispose()
         {

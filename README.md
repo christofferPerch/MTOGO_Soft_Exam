@@ -172,7 +172,7 @@ This diagram below illustrates the domain model for the MTOGO system, including 
 
 **Auth Service:**
 
-![Domain Diagram](Documentation/Diagrams/AuthServiceEERDiagram.png)
+![EER Diagram](Documentation/Diagrams/AuthServiceEERDiagram.png)
 
 **OrderServiceDB:**
 
@@ -190,7 +190,9 @@ This diagram below illustrates the domain model for the MTOGO system, including 
 
 ![Domain Diagram](Documentation/Diagrams/ReviewEERDiagram.png)
 
+**System Architecture Diagram:**
 
+![System Architecture Diagram](Documentation/Diagrams/diagram3.png)
 
 ## **Test Strategy and Design**
 

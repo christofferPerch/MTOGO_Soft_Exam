@@ -1,0 +1,70 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+      rabbitmq:
+        image: rabbitmq:management
+        ports:
+          - 5672:5672
+          - 15672:15672
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+          - 1450:1450
+        env:
+          ACCEPT_EULA: "Y"
+          SA_PASSWORD: "YourStrong@Password1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0'
+
+      - name: Restore dependencies
+        run: |
+          dotnet restore ./MTOGO.UnitTests/MTOGO.UnitTests.csproj
+          dotnet restore ./MTOGO.IntegrationTests/MTOGO.IntegrationTests.csproj
+
+      - name: Build projects
+        run: |
+          dotnet build ./MTOGO.UnitTests/MTOGO.UnitTests.csproj --no-restore --configuration Release
+          dotnet build ./MTOGO.IntegrationTests/MTOGO.IntegrationTests.csproj --no-restore --configuration Release
+
+      - name: Run Unit Tests
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          RABBITMQ_HOST: localhost
+          RABBITMQ_PORT: 5672
+        run: dotnet test ./MTOGO.UnitTests/MTOGO.UnitTests.csproj --no-build --configuration Release
+
+      - name: Run Integration Tests
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          RABBITMQ_HOST: localhost
+          RABBITMQ_PORT: 5672
+          SQLSERVER_HOST: localhost
+          SQLSERVER_PORT: 1450
+          SQLSERVER_USER: sa
+          SQLSERVER_PASSWORD: YourStrong@Password1
+        run: dotnet test ./MTOGO.IntegrationTests/MTOGO.IntegrationTests.csproj --no-build --configuration Release --filter "Category=Auth"

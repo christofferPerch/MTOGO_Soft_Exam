@@ -1,70 +1,98 @@
-﻿/* using System.Net.Http.Json;
-using System.Threading.Tasks;
-using Xunit;
-using Microsoft.AspNetCore.Mvc.Testing;
-using MTOGO.Services.AuthAPI;
+﻿using System.Net.Http.Json;
+using FluentAssertions;
 using MTOGO.Services.AuthAPI.Models.Dto;
-using System.Net;
 
 namespace MTOGO.IntegrationTests.Auth
 {
-    public class AuthIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+    [Trait("Category", "Auth")]
+    public class AuthIntegrationTests : IClassFixture<CustomAuthWebApplicationFactory<MTOGO.Services.AuthAPI.Program>>
     {
-        private readonly WebApplicationFactory<Program> _factory;
         private readonly HttpClient _client;
 
-        public AuthIntegrationTests(WebApplicationFactory<Program> factory)
+        public AuthIntegrationTests(CustomAuthWebApplicationFactory<MTOGO.Services.AuthAPI.Program> factory)
         {
-            _factory = factory.WithWebHostBuilder(builder =>
-            {
-                // Configure test-specific services here, if needed
-            });
-            _client = _factory.CreateClient();
+            _client = factory.CreateClient();
         }
 
         [Fact]
-        public async Task Register_ValidUser_ReturnsOk()
+        public async Task Register_ValidInput_ShouldReturnOk()
         {
             var registrationRequest = new RegistrationRequestDto
             {
                 Email = "testuser@example.com",
-                Password = "Test@1234",
-                FirstName = "Test",
-                LastName = "User",
+                FirstName = "John",
+                LastName = "Doe",
                 Address = "123 Main St",
-                City = "Test City",
+                City = "Metropolis",
                 ZipCode = "12345",
-                Country = "Test Country",
-                PhoneNumber = "1234567890"
+                Country = "USA",
+                PhoneNumber = "123-456-7890",
+                Password = "StrongP@ssword1"
             };
 
-            var response = await _client.PostAsJsonAsync("/api/auth/Register", registrationRequest);
+            var response = await _client.PostAsJsonAsync("api/auth/Register", registrationRequest);
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var content = await response.Content.ReadAsStringAsync();
-            Assert.Contains("isSuccess", content);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         }
 
         [Fact]
-        public async Task Login_ValidCredentials_ReturnsToken()
+        public async Task Register_MissingRequiredFields_ShouldReturnBadRequest()
+        {
+            var invalidRegistrationRequest = new RegistrationRequestDto
+            {
+                Email = "",
+                FirstName = "John",
+                LastName = "Doe",
+                Address = "123 Main St",
+                City = "Metropolis",
+                ZipCode = "12345",
+                Country = "USA",
+                PhoneNumber = "123-456-7890",
+                Password = "StrongP@ssword1"
+            };
+
+            var response = await _client.PostAsJsonAsync("api/auth/Register", invalidRegistrationRequest);
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task Login_ValidCredentials_ShouldReturnOk()
         {
             var loginRequest = new LoginRequestDto
             {
-                UserName = "testuser@example.com",
-                Password = "Test@1234"
+                UserName = "testuser",
+                Password = "StrongP@ssword1"
             };
 
-            var response = await _client.PostAsJsonAsync("/api/auth/Login", loginRequest);
+            var response = await _client.PostAsJsonAsync("api/auth/Login", loginRequest);
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
-
-            Assert.NotNull(loginResponse);
-            Assert.False(string.IsNullOrEmpty(loginResponse.Token));
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+            var loginResponse = await response.Content.ReadFromJsonAsync<ResponseDto>();
+            loginResponse.Should().NotBeNull();
+            loginResponse!.IsSuccess.Should().BeTrue();
         }
 
         [Fact]
-        public async Task AssignRole_ValidRequest_ReturnsOk()
+        public async Task Login_InvalidCredentials_ShouldReturnBadRequest()
+        {
+
+            var loginRequest = new LoginRequestDto
+            {
+                UserName = "nonexistentuser",
+                Password = "WrongPassword123!"
+            };
+
+            var response = await _client.PostAsJsonAsync("api/auth/Login", loginRequest);
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            var responseContent = await response.Content.ReadFromJsonAsync<ResponseDto>();
+            responseContent.Should().NotBeNull();
+            responseContent!.IsSuccess.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task AssignRole_ValidInput_ShouldReturnOk()
         {
             var assignRoleRequest = new AssignRoleDto
             {
@@ -72,10 +100,81 @@ namespace MTOGO.IntegrationTests.Auth
                 Role = "Admin"
             };
 
-            var response = await _client.PostAsJsonAsync("/api/auth/AssignRole", assignRoleRequest);
+            var response = await _client.PostAsJsonAsync("api/auth/AssignRole", assignRoleRequest);
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         }
+
+        [Fact]
+        public async Task AssignRole_NonExistentUser_ShouldReturnBadRequest()
+        {
+            var assignRoleRequest = new AssignRoleDto
+            {
+                Email = "nonexistent@example.com",
+                Role = "Admin"
+            };
+
+            var response = await _client.PostAsJsonAsync("api/auth/AssignRole", assignRoleRequest);
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            var responseContent = await response.Content.ReadFromJsonAsync<ResponseDto>();
+            responseContent.Should().NotBeNull();
+            responseContent!.IsSuccess.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task UpdateProfile_ValidInput_ShouldReturnOk()
+        {
+            var updateProfileDto = new UpdateProfileDto
+            {
+                Address = "789 Updated St",
+                City = "UpdatedCity",
+                ZipCode = "UpdatedZip",
+                Country = "UpdatedCountry",
+                PhoneNumber = "UpdatedPhone"
+            };
+
+            var userId = CustomAuthWebApplicationFactory<MTOGO.Services.AuthAPI.Program>.TestUserId;
+
+            var response = await _client.PostAsJsonAsync($"api/auth/UpdateProfile?userId={userId}", updateProfileDto);
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task UpdateProfile_MissingUserId_ShouldReturnBadRequest()
+        {
+            var updateProfileDto = new UpdateProfileDto
+            {
+                Address = "789 Updated St",
+                City = "UpdatedCity",
+                ZipCode = "UpdatedZip",
+                Country = "UpdatedCountry",
+                PhoneNumber = "UpdatedPhone"
+            };
+
+            var response = await _client.PostAsJsonAsync("api/auth/UpdateProfile", updateProfileDto);
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task DeleteProfile_ValidUserId_ShouldReturnOk()
+        {
+            var userId = CustomAuthWebApplicationFactory<MTOGO.Services.AuthAPI.Program>.TestUserId;
+
+            var response = await _client.DeleteAsync($"api/auth/DeleteProfile?userId={userId}");
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task DeleteProfile_InvalidUserId_ShouldReturnBadRequest()
+        {
+            var response = await _client.DeleteAsync("api/auth/DeleteProfile?userId=invalid-user-id");
+
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        }
+
     }
 }
-*/

@@ -50,3 +50,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+namespace MTOGO.Services.ShoppingCartAPI
+{
+    public partial class Program { }
+}
