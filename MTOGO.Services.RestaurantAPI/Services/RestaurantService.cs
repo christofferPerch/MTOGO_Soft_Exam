@@ -1,8 +1,8 @@
-﻿using Dapper;
+﻿using System.Data;
+using Dapper;
 using MTOGO.Services.DataAccess;
 using MTOGO.Services.RestaurantAPI.Models.Dto;
 using MTOGO.Services.RestaurantAPI.Services.IServices;
-using System.Data;
 
 namespace MTOGO.Services.RestaurantAPI.Services
 {

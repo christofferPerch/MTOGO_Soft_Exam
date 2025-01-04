@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using MTOGO.Web.Models.Auth;
@@ -6,8 +8,6 @@ using MTOGO.Web.Models.Order;
 using MTOGO.Web.Models.Restaurant;
 using MTOGO.Web.Services.IServices;
 using Newtonsoft.Json;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace MTOGO.Web.Controllers
 {

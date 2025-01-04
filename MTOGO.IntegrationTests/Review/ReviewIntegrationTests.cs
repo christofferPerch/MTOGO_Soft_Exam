@@ -34,7 +34,7 @@ namespace MTOGO.IntegrationTests.Review
             responseData.Should().NotBeNull();
             responseData!.IsSuccess.Should().BeTrue();
             responseData.Message.Should().Be("Restaurant Review added successfully.");
-            responseData.Result.Should().NotBeNull(); 
+            responseData.Result.Should().NotBeNull();
         }
 
         [Fact]
@@ -62,7 +62,7 @@ namespace MTOGO.IntegrationTests.Review
         [Fact]
         public async Task GetRestaurantReview_ShouldReturnNotFound_WhenNoReviewsExist()
         {
-            var restaurantId = 9999; 
+            var restaurantId = 9999;
 
             var response = await _client.GetAsync($"api/review/restaurant/{restaurantId}");
 
@@ -102,7 +102,7 @@ namespace MTOGO.IntegrationTests.Review
         [Fact]
         public async Task DeleteRestaurantReview_ShouldReturnNotFound_WhenReviewDoesNotExist()
         {
-            var nonExistentReviewId = 99999; 
+            var nonExistentReviewId = 99999;
 
             var response = await _client.DeleteAsync($"api/review/restaurant/{nonExistentReviewId}");
 

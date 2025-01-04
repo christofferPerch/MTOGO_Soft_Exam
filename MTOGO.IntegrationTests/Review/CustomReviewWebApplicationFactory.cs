@@ -1,15 +1,13 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Linq;
-using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
+﻿using System.Data;
 using Dapper;
-using MTOGO.Services.DataAccess;
-using MTOGO.MessageBus;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using MTOGO.IntegrationTests.Mocks;
+using MTOGO.MessageBus;
+using MTOGO.Services.DataAccess;
 
 namespace MTOGO.IntegrationTests.Review
 {
@@ -21,7 +19,7 @@ namespace MTOGO.IntegrationTests.Review
         public CustomReviewWebApplicationFactory()
         {
             var sqlServerHost = Environment.GetEnvironmentVariable("SQLSERVER_HOST") ?? "localhost";
-            var sqlServerPort = Environment.GetEnvironmentVariable("SQLSERVER_PORT") ?? "1452"; 
+            var sqlServerPort = Environment.GetEnvironmentVariable("SQLSERVER_PORT") ?? "1452";
             var sqlServerUser = Environment.GetEnvironmentVariable("SQLSERVER_USER") ?? "sa";
             var sqlServerPassword = Environment.GetEnvironmentVariable("SQLSERVER_PASSWORD") ?? "YourStrong@Password1";
 

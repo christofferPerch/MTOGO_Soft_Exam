@@ -131,9 +131,9 @@ namespace MTOGO.UnitTests.ShoppingCart
                 UserId = _testUserId,
                 Items = new List<CartItem>
         {
-            new CartItem { MenuItemId = 101, Quantity = 5, Price = 9.99m },  
-            new CartItem { MenuItemId = 103, Quantity = 2, Price = 29.99m }, 
-            new CartItem { MenuItemId = 102, Quantity = 0 } 
+            new CartItem { MenuItemId = 101, Quantity = 5, Price = 9.99m },
+            new CartItem { MenuItemId = 103, Quantity = 2, Price = 29.99m },
+            new CartItem { MenuItemId = 102, Quantity = 0 }
         }
             };
 
@@ -181,7 +181,7 @@ namespace MTOGO.UnitTests.ShoppingCart
             var result = await _shoppingCartService.RemoveMenuItem(_testUserId, 999);
 
             Assert.False(result);
-            Assert.Single(initialCart.Items); 
+            Assert.Single(initialCart.Items);
         }
 
         [Fact]

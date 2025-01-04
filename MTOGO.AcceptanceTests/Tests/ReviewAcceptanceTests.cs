@@ -1,21 +1,23 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Xunit;
 using FluentAssertions;
-using Newtonsoft.Json;
-using MTOGO.Services.ReviewAPI.Models.Dto;
 using MTOGO.Services.ReviewAPI.Models;
+using MTOGO.Services.ReviewAPI.Models.Dto;
+using Newtonsoft.Json;
 
-public class ReviewAcceptanceTests {
+public class ReviewAcceptanceTests
+{
     private readonly HttpClient _client;
 
-    public ReviewAcceptanceTests() {
-        // Use the correct Review API base URL from appsettings
+    public ReviewAcceptanceTests()
+    {
         _client = new HttpClient { BaseAddress = new Uri("http://localhost:5005/api/review/") };
     }
 
-    private async Task<long> AddTestRestaurantReview() {
-        var review = new {
+    private async Task<long> AddTestRestaurantReview()
+    {
+        var review = new
+        {
             CustomerId = "test-customer",
             RestaurantId = 1,
             FoodRating = 5,
@@ -31,17 +33,20 @@ public class ReviewAcceptanceTests {
         result.IsSuccess.Should().BeTrue("Response should indicate success");
         result.Result.Should().NotBeNull("Result should not be null");
 
-        return Convert.ToInt64(result.Result); // Handle long values for review ID
+        return Convert.ToInt64(result.Result);
     }
 
-    private async Task DeleteTestRestaurantReview(long reviewId) {
+    private async Task DeleteTestRestaurantReview(long reviewId)
+    {
         var response = await _client.DeleteAsync($"restaurant/{reviewId}");
         response.StatusCode.Should().Be(HttpStatusCode.OK, "Deleting the test review should succeed");
     }
 
     [Fact]
-    public async Task CustomerCanAddRestaurantReview_ShouldSucceed() {
-        var review = new {
+    public async Task CustomerCanAddRestaurantReview_ShouldSucceed()
+    {
+        var review = new
+        {
             CustomerId = "test-customer",
             RestaurantId = 1,
             FoodRating = 5,
@@ -60,7 +65,8 @@ public class ReviewAcceptanceTests {
     }
 
     [Fact]
-    public async Task CustomerCanRetrieveRestaurantReviews_ShouldReturnReviews() {
+    public async Task CustomerCanRetrieveRestaurantReviews_ShouldReturnReviews()
+    {
         var reviewId = await AddTestRestaurantReview();
 
         var response = await _client.GetAsync("restaurant/1");
@@ -80,7 +86,8 @@ public class ReviewAcceptanceTests {
     }
 
     [Fact]
-    public async Task CustomerCanDeleteRestaurantReview_ShouldSucceed() {
+    public async Task CustomerCanDeleteRestaurantReview_ShouldSucceed()
+    {
         var reviewId = await AddTestRestaurantReview();
 
         var response = await _client.DeleteAsync($"restaurant/{reviewId}");
@@ -96,14 +103,16 @@ public class ReviewAcceptanceTests {
         var validateBody = await validateResponse.Content.ReadAsStringAsync();
         var validateResult = JsonConvert.DeserializeObject<ResponseDto>(validateBody);
 
-        if (validateResult?.Result != null) {
+        if (validateResult?.Result != null)
+        {
             var reviews = JsonConvert.DeserializeObject<List<RestaurantReview>>(validateResult.Result.ToString());
             reviews.Should().NotContain(r => r.Id == reviewId, "The review should no longer exist");
         }
     }
 
     [Fact]
-    public async Task RetrievingNonExistentReviews_ShouldReturnNotFound() {
+    public async Task RetrievingNonExistentReviews_ShouldReturnNotFound()
+    {
         int invalidRestaurantId = -1;
 
         var response = await _client.GetAsync($"restaurant/{invalidRestaurantId}");

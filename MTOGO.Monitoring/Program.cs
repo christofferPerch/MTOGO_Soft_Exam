@@ -5,11 +5,11 @@ var app = builder.Build();
 
 
 app.UseRouting();
-app.UseHttpMetrics(); 
+app.UseHttpMetrics();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapMetrics(); 
+    endpoints.MapMetrics();
 });
 
 app.Run();

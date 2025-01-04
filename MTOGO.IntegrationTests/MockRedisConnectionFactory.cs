@@ -1,7 +1,6 @@
-﻿using Moq;
+﻿using System.Collections.Concurrent;
+using Moq;
 using StackExchange.Redis;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
 
 namespace MTOGO.IntegrationTests
 {

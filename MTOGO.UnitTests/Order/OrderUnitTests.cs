@@ -1,14 +1,13 @@
-﻿using Moq;
-using Xunit;
+﻿using System.Data;
+using Dapper;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Moq;
 using MTOGO.MessageBus;
 using MTOGO.Services.DataAccess;
 using MTOGO.Services.OrderAPI.Models;
 using MTOGO.Services.OrderAPI.Models.Dto;
 using MTOGO.Services.OrderAPI.Services;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using System.Data;
-using Dapper;
 
 namespace MTOGO.UnitTests.Order
 {
@@ -98,7 +97,7 @@ namespace MTOGO.UnitTests.Order
                 {
                     if (queue == "CartResponseQueue")
                     {
-                        callback(cartResponse); 
+                        callback(cartResponse);
                     }
                 });
 

@@ -2,8 +2,6 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using FluentAssertions;
-using MTOGO.IntegrationTests.Mocks;
-using MTOGO.Services.OrderAPI.Models;
 using MTOGO.Services.OrderAPI.Models.Dto;
 
 

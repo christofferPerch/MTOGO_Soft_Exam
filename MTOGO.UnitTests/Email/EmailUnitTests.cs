@@ -1,12 +1,8 @@
-﻿using Moq;
-using Xunit;
-using MTOGO.Services.EmailAPI.Services;
+﻿using Microsoft.Extensions.Configuration;
+using Moq;
 using MTOGO.Services.EmailAPI.Models.Dto;
-using Microsoft.Extensions.Configuration;
+using MTOGO.Services.EmailAPI.Services;
 using RestSharp;
-using RestSharp.Authenticators;
-using System;
-using System.Threading.Tasks;
 
 namespace MTOGO.UnitTests.Email
 {
@@ -26,7 +22,7 @@ namespace MTOGO.UnitTests.Email
         {
             var order = new OrderCreatedMessageDto
             {
-                OrderId = 0, 
+                OrderId = 0,
                 CustomerEmail = "",
                 TotalAmount = 0.0m,
                 Items = new List<OrderItemDto>()

@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using StackExchange.Redis;
-using MTOGO.MessageBus;
 using MTOGO.IntegrationTests.Mocks;
+using MTOGO.MessageBus;
+using StackExchange.Redis;
 
 namespace MTOGO.IntegrationTests.ShoppingCart
 {

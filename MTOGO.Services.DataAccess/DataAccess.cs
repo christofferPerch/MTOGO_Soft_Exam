@@ -1,6 +1,6 @@
-﻿using Dapper;
+﻿using System.Data;
+using Dapper;
 using Microsoft.Data.SqlClient;
-using System.Data;
 
 namespace MTOGO.Services.DataAccess
 {
