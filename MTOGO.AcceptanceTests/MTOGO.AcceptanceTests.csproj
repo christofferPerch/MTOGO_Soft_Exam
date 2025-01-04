@@ -10,10 +10,37 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="FluentAssertions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="RestSharp" Version="112.1.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="xunit" Version="2.5.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MTOGO.Services.AuthAPI\MTOGO.Services.AuthAPI.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.DataAccess\MTOGO.Services.DataAccess.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.DeliveryAPI\MTOGO.Services.DeliveryAPI.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.EmailAPI\MTOGO.Services.EmailAPI.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.OrderAPI\MTOGO.Services.OrderAPI.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.RestaurantAPI\MTOGO.Services.RestaurantAPI.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.ReviewAPI\MTOGO.Services.ReviewAPI.csproj" />
+    <ProjectReference Include="..\MTOGO.Services.ShoppingCartAPI\MTOGO.Services.ShoppingCartAPI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
