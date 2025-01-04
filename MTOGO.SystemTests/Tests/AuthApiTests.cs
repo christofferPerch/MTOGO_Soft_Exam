@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Xunit;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json;
 
 public class AuthAPITests {
     private readonly HttpClient _client;
@@ -17,8 +18,11 @@ public class AuthAPITests {
 
     [Fact]
     public async Task Register_NewUser_ShouldReturnSuccess() {
+        // Generate a unique email address for the test
+        var uniqueEmail = $"newuser-{Guid.NewGuid()}@example.com";
+
         var user = new {
-            email = "newuser@example.com",
+            email = uniqueEmail,
             firstName = "John",
             lastName = "Doe",
             address = "123 Main St",
@@ -29,14 +33,24 @@ public class AuthAPITests {
             password = "Password123!"
         };
 
+        // Act
         var response = await _client.PostAsJsonAsync("/api/auth/Register", user);
 
-        // Assert the response status and content
+        // Assert the response status
         response.StatusCode.Should().Be(HttpStatusCode.OK, "Registration should succeed for valid data");
 
-        var result = await response.Content.ReadFromJsonAsync<dynamic>();
-        result.isSuccess.Should().BeTrue("Response should indicate success");
+        // Parse the response content
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var jsonResponse = JsonDocument.Parse(responseContent);
+
+        // Check the 'isSuccess' property in the top-level JSON
+        jsonResponse.RootElement.GetProperty("isSuccess").GetBoolean().Should().BeTrue("Response should indicate success");
     }
+
+
+
+
+
 
     [Fact]
     public async Task Login_ValidCredentials_ShouldReturnToken() {
