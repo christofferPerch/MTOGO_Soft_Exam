@@ -28,7 +28,6 @@ public class ShoppingCartAPITests {
         response.StatusCode.Should().Be(HttpStatusCode.OK, "Adding items to the cart should succeed");
     }
 
-
     [Fact]
     public async Task RemoveItemFromCart_ShouldReturnSuccess() {
         string userId = "test-user";
