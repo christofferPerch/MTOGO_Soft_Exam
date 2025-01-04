@@ -1,10 +1,9 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
 using MTOGO.Services.DataAccess;
 using MTOGO.Services.ReviewAPI.Models;
 using MTOGO.Services.ReviewAPI.Models.Dto;
 using MTOGO.Services.ReviewAPI.Services;
-using Xunit;
-using Microsoft.Extensions.Logging;
 
 namespace MTOGO.UnitTests.Review
 {
@@ -46,7 +45,7 @@ namespace MTOGO.UnitTests.Review
         {
             var reviewDto = new RestaurantReviewDto
             {
-                CustomerId = null, 
+                CustomerId = null,
                 RestaurantId = 101,
                 FoodRating = 4,
                 Comments = "Great food!"
@@ -81,7 +80,7 @@ namespace MTOGO.UnitTests.Review
         [Fact]
         public async Task GetRestaurantReviewAsync_InvalidRestaurantId_ReturnsEmptyList()
         {
-            var restaurantId = 999; 
+            var restaurantId = 999;
 
             _dataAccessMock.Setup(d => d.GetAll<RestaurantReview>(It.IsAny<string>(), It.IsAny<object>()))
                            .ReturnsAsync(new List<RestaurantReview>());

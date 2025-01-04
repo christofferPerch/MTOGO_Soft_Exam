@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MTOGO.Services.AuthAPI.Models;
 using MTOGO.Services.AuthAPI.Services.IServices;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace MTOGO.Services.AuthAPI.Services
 {

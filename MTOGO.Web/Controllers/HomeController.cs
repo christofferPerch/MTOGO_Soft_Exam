@@ -1,8 +1,8 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MTOGO.Web.Models;
 using MTOGO.Web.Services.IServices;
 using Newtonsoft.Json;
-using System.Diagnostics;
 
 namespace MTOGO.Web.Controllers
 {

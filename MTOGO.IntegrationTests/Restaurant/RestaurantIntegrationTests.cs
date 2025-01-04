@@ -2,7 +2,6 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using FluentAssertions;
-using Microsoft.Data.SqlClient;
 using MTOGO.Services.RestaurantAPI.Models.Dto;
 
 
@@ -60,13 +59,13 @@ namespace MTOGO.IntegrationTests.Restaurant
                     new FoodCategoryDto { Category = Category.Pizza },
                     new FoodCategoryDto { Category = Category.Burger }
                 },
-                        OperatingHours = new List<OperatingHoursDto>
+                OperatingHours = new List<OperatingHoursDto>
                 {
                     new OperatingHoursDto { Day = DayEnum.Monday, OpeningHours = new TimeSpan(9, 0, 0), ClosingHours = new TimeSpan(21, 0, 0) },
                     new OperatingHoursDto { Day = DayEnum.Tuesday, OpeningHours = new TimeSpan(9, 0, 0), ClosingHours = new TimeSpan(21, 0, 0) },
                     new OperatingHoursDto { Day = DayEnum.Wednesday, OpeningHours = new TimeSpan(9, 0, 0), ClosingHours = new TimeSpan(21, 0, 0) }
                 }
-                };
+            };
 
             var response = await _client.PostAsJsonAsync("api/restaurant/AddRestaurant", newRestaurant);
 
@@ -184,25 +183,6 @@ namespace MTOGO.IntegrationTests.Restaurant
             responseData.Should().NotBeNull();
             responseData!.IsSuccess.Should().BeTrue();
         }
-
-      /*  [Fact]
-        public async Task SearchRestaurants_ShouldReturnRestaurants()
-        {
-            var response = await _client.GetAsync("api/restaurant/SearchRestaurants?location=Test City&foodCategory=2");
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var responseData = await response.Content.ReadFromJsonAsync<ResponseDto>();
-            responseData.Should().NotBeNull();
-            responseData!.IsSuccess.Should().BeTrue();
-
-            var restaurants = JsonSerializer.Deserialize<List<RestaurantDto>>(
-                responseData.Result!.ToString(),
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-            restaurants.Should().NotBeNull();
-            restaurants!.Should().NotBeEmpty("The search should return restaurants.");
-        }*/
 
         [Fact]
         public async Task GetUniqueCities_ShouldReturnCities()

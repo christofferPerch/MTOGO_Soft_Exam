@@ -38,7 +38,7 @@ namespace MTOGO.Services.ShoppingCartAPI.Controllers
                     _response.Result = new Cart
                     {
                         UserId = userId,
-                        Items = new List<CartItem>() 
+                        Items = new List<CartItem>()
                     };
                     _response.Message = "Cart is empty.";
                     return Ok(_response);

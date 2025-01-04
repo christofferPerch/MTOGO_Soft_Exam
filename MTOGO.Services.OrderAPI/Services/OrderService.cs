@@ -1,11 +1,11 @@
-﻿using Dapper;
+﻿using System.Data;
+using Dapper;
 using MTOGO.MessageBus;
 using MTOGO.Services.DataAccess;
 using MTOGO.Services.OrderAPI.Models;
 using MTOGO.Services.OrderAPI.Models.Dto;
 using MTOGO.Services.OrderAPI.Services.IServices;
 using Newtonsoft.Json;
-using System.Data;
 
 namespace MTOGO.Services.OrderAPI.Services
 {

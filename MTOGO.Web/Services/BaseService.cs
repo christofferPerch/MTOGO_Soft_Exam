@@ -1,8 +1,8 @@
-﻿using MTOGO.Web.Models;
+﻿using System.Net;
+using System.Text;
+using MTOGO.Web.Models;
 using MTOGO.Web.Services.IServices;
 using Newtonsoft.Json;
-using System.Net;
-using System.Text;
 using static MTOGO.Web.Utility.SD;
 
 namespace MTOGO.Web.Services

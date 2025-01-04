@@ -7,23 +7,13 @@
 
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
-
-		<!-- Enable Coverage -->
-		<CollectCoverage>true</CollectCoverage>
-		<CoverletOutput>./Coverage/</CoverletOutput>
-		<CoverletOutputFormat>cobertura</CoverletOutputFormat>
-
-		<!-- Exclude all Controllers across services -->
-		<Exclude>[MTOGO.Services.*.Controllers]*</Exclude>
-		<!-- Optionally exclude using file paths -->
-		<ExcludeByFile>../MTOGO.Services.*.Controllers/**/*.cs</ExcludeByFile>
-		
-		<ExcludeByFile>**/Controllers/*.cs</ExcludeByFile>
-
 	</PropertyGroup>
 
 	<ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="coverlet.collector" Version="6.0.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="coverlet.msbuild" Version="6.0.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

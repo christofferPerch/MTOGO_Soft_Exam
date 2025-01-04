@@ -204,7 +204,7 @@ namespace MTOGO.UnitTests.Restaurant
         {
             var addRestaurantDto = new AddRestaurantDto
             {
-                RestaurantName = null, 
+                RestaurantName = null,
                 Address = new AddressDto
                 {
                     AddressLine1 = "Street 1",
