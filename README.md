@@ -3,7 +3,7 @@
 ### **How to run our project**
 
 **Docker Compose:**  
-Have Docker installed on your desktop and run docker-compose up \--build in the root of the project. (Not fully implemented yet).
+Have Docker installed on your desktop and right click on the docker-compose in the project and select "Compose Up". You might have to clean the solution and build it first if any errors occour. 
 
 **Run without Docker:**
 
@@ -21,11 +21,96 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
      
 7. It should now open the API Gateway and Web Project when running the application.
 
+---
+# Test Strategy for MTOGO Project
 
+## 1. Testing Scope
+The MTOGO project delivers a scalable and reliable food delivery platform built using a microservices architecture. The system encompasses services such as `OrderService`, `AuthService`, `RestaurantService`, `ReviewService`, and `EmailService`. This strategy outlines the testing approaches for validating core functionalities, ensuring seamless inter-service communication, and meeting performance and quality benchmarks.
 
+To ensure that our code is not only functional but also adheres to high-quality standards, we will apply the **SQALE** (Software Quality Assessment based on Lifecycle Expectations) Method. This approach provides a structured framework for assessing key aspects of software quality throughout its lifecycle. Our focus will include:
 
-### **Technology Stack**
+- **Changeability:** Ensuring the codebase can be updated or modified efficiently when changes are required.
+- **Maintainability:** Minimizing the effort needed to identify and resolve bugs, ensuring the system remains stable and reliable over time.
+- **Portability:** Enhancing the system’s adaptability, allowing it to run across different platforms or environments with minimal modifications.
+- **Reusability:** Designing code components that can be leveraged across multiple features or projects to reduce duplication and improve development efficiency.
+- **Technical Debt:** Monitoring and addressing areas that may require additional effort to improve or refactor, with a proactive focus on preventing long-term maintenance challenges.
 
+## 2. Types of Tests
+
+### **Unit Tests**
+- **Scope:** Validate individual functions, classes, and methods in isolation (e.g., order validation, payment processing, and delivery status updates).
+- **Objective:** Ensure each component behaves as expected independently, focusing on key logic such as order creation and error handling.
+
+### **Integration Tests**
+- **Scope:** Assess interactions between services, such as communication between `OrderService`, `PaymentService`, and `DeliveryService`.
+- **Objective:** Confirm that services communicate correctly, including message exchanges via RabbitMQ and interactions with external APIs and databases.
+
+### **Acceptance Tests**
+- **Scope:** Verify end-to-end workflows to ensure the application meets user expectations for functionality and usability.
+- **Objective:** Ensure that essential workflows, such as order submission and notifications, function correctly from a user’s perspective.
+
+### **System Tests**
+- **Scope:** Validate complete user workflows, such as registration, login, and HTTP status code handling.
+- **Objective:** Confirm that the system performs as expected across all integrated components and user scenarios.
+
+### **Mutation Tests**
+- **Scope:** Evaluate the effectiveness of the test suite by introducing small, deliberate code mutations.
+- **Objective:** Detect weaknesses in test cases and improve coverage to ensure they catch code changes and potential errors.
+
+### **Performance and Load Tests**
+- **Scope:** Measure the system’s performance, stability, and scalability under expected user growth (e.g., scaling from 300,000 to 1.5 million users and up to 18 million orders).
+- **Objective:** Ensure that the application maintains responsiveness and reliability during peak loads.
+
+### **Regression Tests**
+- **Scope:** Continuously validate existing features to ensure that new changes do not introduce defects.
+- **Implementation:** Automated regression tests run in the CI/CD pipeline to quickly detect and prevent regressions.
+
+## 3. Test Coverage Goals
+- A minimum **70% overall code coverage** is set, with an emphasis on business-critical areas such as order placement, payment processing, and notifications.
+- Track mutation score improvements to identify and close coverage gaps.
+- Use integrated reports to monitor code coverage and provide insights into the quality and robustness of the test suite.
+
+---
+
+# Test Plan for MTOGO Project
+
+## 1. Objectives
+The test plan aims to implement a robust testing framework that ensures:
+- Consistency across unit, integration, and system tests.
+- The system’s scalability and flexibility, meeting both functional and non-functional requirements.
+- Compliance with security, reliability, and performance standards.
+
+## 2. Execution Plan
+
+### CI/CD Integration
+- **Automation:** Tests will run automatically via GitHub Actions on every code push or pull request.
+- **Containerization:** Docker is used to ensure consistent testing environments across local and cloud-based systems.
+
+### Code Coverage and Mutation Testing
+- **Code Coverage:** Coverlet is used to track code coverage, ensuring reports are integrated into the CI/CD pipeline.
+- **Mutation Testing:** Stryker.NET is used to introduce controlled mutations to the source code, helping to assess the robustness of tests and highlight any gaps in coverage.
+
+## 3. Tooling and Automation
+
+### **Testing Tools:**
+- **xUnit:** Primary framework for unit and integration tests.
+- **Moq:** For creating mock dependencies.
+- **Stryker.NET:** For mutation testing.
+- **Swagger/Postman:** For manual validation of APIs.
+- **K6:** For load and performance testing.
+
+### **CI/CD and Code Quality:**
+- **GitHub Actions:** Used for automating test execution and ensuring continuous integration and delivery.
+- **Docker:** Enables consistent test environments using containerization.
+- **FxCop:** Used for static code analysis to detect potential issues and enforce adherence to coding standards.
+
+## 4. Regression Testing
+- Regression tests are integrated into the CI/CD pipeline to automatically validate that new changes do not introduce bugs or break existing features.
+- Critical workflows, such as order placement and payment handling, are prioritized.
+
+---
+
+# **Technology Stack**
 
 #### **Version Control Platform:**
 
@@ -74,7 +159,7 @@ Have Docker installed on your desktop and run docker-compose up \--build in the 
 #### **CI/CD Pipeline:**
 
 
-* **In Progress:** Will be used to make code analysis, run tests and docker. 
+* **Dapper:** Used for automated tests and pushing docker images to Docker HUb
 
 
 ## **Ubiquitous Language** 
@@ -126,8 +211,6 @@ This project contains our RabbitMQ logic which we use in our microservices to pu
 
 * **MTOGO.MessageBus**
 
-**TODO \- TESTS**
-
 ---
 
 ## **Project Structure**
@@ -162,114 +245,36 @@ This project contains our RabbitMQ logic which we use in our microservices to pu
 
 **Domain Diagram:**
 
-![Domain Diagram](Documentation/Diagrams/DomainDiagram.png)
-
 This diagram below illustrates the domain model for the MTOGO system, including a potential DeliveryAgent entity. Although not currently implemented, the DeliveryAgent entity represents a future enhancement where restaurants could outsource deliveries to dedicated agents.
 
 ![Domain Diagram](Documentation/Diagrams/DomainDiagram2.png)
-
-**EER Diagrams:**
-
-**Auth Service:**
-
-![EER Diagram](Documentation/Diagrams/AuthServiceEERDiagram.png)
-
-**OrderServiceDB:**
-
-![Domain Diagram](Documentation/Diagrams/OrderServiceEERDiagram.png)
-
-**PaymentDB:**
-
-![Domain Diagram](Documentation/Diagrams/PaymentEERDiagram.png)
-
-**RestaurantServiceDB:** 
-
-![Domain Diagram](Documentation/Diagrams/RestaurantEERDiagram.png)
-
-**ReviewServiceDB:**
-
-![Domain Diagram](Documentation/Diagrams/ReviewEERDiagram.png)
 
 **System Architecture Diagram:**
 
 ![System Architecture Diagram](Documentation/Diagrams/diagram3.png)
 
-## **Test Strategy and Design**
+<details>
+  <summary>EER Diagrams (Click to Expand)</summary>
 
-### **Testing Goals:**
+  **Auth Service:**
 
-1. **Functional Testing:** Verify business logic works as intended.  
-2. **Performance Testing:** Ensure scalability and responsiveness.  
-3. **Reliability Testing:** Handle and recover gracefully from failures.
+  ![EER Diagram](Documentation/Diagrams/AuthServiceEERDiagram.png)
 
-### **Types of Tests:**
+  **OrderServiceDB:**
 
-* **Unit Tests:** For isolated business logic.  
-* **Integration Tests:** Verify interactions between components.
+  ![Domain Diagram](Documentation/Diagrams/OrderServiceEERDiagram.png)
 
-### **Tools:**
+  **PaymentDB:**
 
-* **xUnit** for testing in C\#.  
-* **Swagger** for API testing.
+  ![Domain Diagram](Documentation/Diagrams/PaymentEERDiagram.png)
 
-### **Test Coverage:**
+  **RestaurantServiceDB:** 
 
-* 70-80% for critical business logic.
+  ![Domain Diagram](Documentation/Diagrams/RestaurantEERDiagram.png)
 
----
+  **ReviewServiceDB:**
 
-## **Branching Strategy**
+  ![Domain Diagram](Documentation/Diagrams/ReviewEERDiagram.png)
 
-We follow **GitHub Flow**:
+</details>
 
-* Feature branches for individual tasks.  
-* Pull requests to merge changes into the main branch.
-
----
-
-## **Agile Practices**
-
-We use **XP Practices**:
-
-* Pair Programming.  
-* Continuous Integration and Delivery.
-
----
-
-## **Non-Functional Requirements (FURPS Model)**
-
-**Usability**
-
-
-\- Comprehensive API documentation is available via Swagger for developers to easily interact with the system.
-
-\- Secure and user-friendly error handling ensures clear feedback for users and developers in case of issues.
-
-\- Redis is used to store shopping cart data temporarily, enhancing user experience during browsing.
-
-**Reliability**
-
-
-\- Ensures the integrity of order data across services through RabbitMQ-based message queuing.
-
-\- Logging and monitoring in all services to track errors and critical events, with detailed logs to assist in debugging.
-
-**Performance**
-
-
-\- Load testing planned for high concurrency scenarios to simulate realistic user load.
-
-\- Optimized database queries (SQL Server) for better performance and faster response times.
-
-\- Caching using Redis improves performance for frequently accessed data, such as shopping cart operations.
-
-
-**Supportability**
-
-\- Developer-friendly project structure with clear separation of concerns across services.
-
-\- Comprehensive developer documentation, including code organization, API usage, and message queue setup.
-
-\- Configurable environment variables and Docker support to streamline deployment and scaling.
-
-## 
