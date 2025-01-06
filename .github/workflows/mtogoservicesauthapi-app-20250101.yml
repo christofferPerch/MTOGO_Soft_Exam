@@ -2,13 +2,13 @@ name: Build and deploy .NET application to container app mtogoservicesauthapi-ap
 on:
   push:
     branches:
-    - main
+    - Developing-Large-Systems
 env:
-  CONTAINER_APP_CONTAINER_NAME: mtogoservicesauthapi
+  CONTAINER_APP_CONTAINER_NAME: mtogoservicesauthapis
   CONTAINER_APP_NAME: mtogoservicesauthapi-app-2025010
-  CONTAINER_APP_RESOURCE_GROUP_NAME: AuthMTOGO
-  CONTAINER_REGISTRY_LOGIN_SERVER: mtogoservicesauthapi20250106140605.azurecr.io
-  DOTNET_CORE_VERSION: 8.0.x
+  CONTAINER_APP_RESOURCE_GROUP_NAME: AuthDeployMTOGO
+  CONTAINER_REGISTRY_LOGIN_SERVER: mtogoservicesauthapi20250106143200.azurecr.io
+  DOCKER_FILE_PATH: MTOGO.Services.AuthAPI/Dockerfile
   PROJECT_NAME_FOR_DOCKER: mtogoservicesauthapi
 jobs:
   build:
@@ -16,25 +16,20 @@ jobs:
     steps:
     - name: Checkout to the branch
       uses: actions/checkout@v4
-    - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v1.8.0
-      with:
-        include-prerelease: True
-        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
     - name: Log in to container registry
-      uses: azure/docker-login@v2
+      uses: docker/login-action@v3
       with:
-        login-server: ${{ env.CONTAINER_REGISTRY_LOGIN_SERVER }}
-        username: ${{ secrets.MTOGOServicesAuthAPI20250106140605_USERNAME_D0F5 }}
-        password: ${{ secrets.MTOGOServicesAuthAPI20250106140605_PASSWORD_D0F5 }}
+        registry: ${{ env.CONTAINER_REGISTRY_LOGIN_SERVER }}
+        username: ${{ secrets.MTOGOServicesAuthAPI20250106143200_USERNAME_9740 }}
+        password: ${{ secrets.MTOGOServicesAuthAPI20250106143200_PASSWORD_9740 }}
     - name: Build and push container image to registry
-      run: dotnet publish -c Release -r linux-x64 -p:PublishProfile=DefaultContainer -p:ContainerImageTag=${{ github.sha }} --no-self-contained -p:ContainerRegistry=${{ env.CONTAINER_REGISTRY_LOGIN_SERVER }} -bl
-    - name: Upload binlog for investigation
-      uses: actions/upload-artifact@v4
+      uses: docker/build-push-action@v6
       with:
-        if-no-files-found: error
-        name: binlog
-        path: msbuild.binlog
+        push: true
+        tags: ${{ env.CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }}
+        file: ${{ env.DOCKER_FILE_PATH }}
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -49,7 +44,7 @@ jobs:
         inlineScript: >
           az config set extension.use_dynamic_install=yes_without_prompt
 
-          az containerapp registry set --name ${{ env.CONTAINER_APP_NAME }} --resource-group ${{ env.CONTAINER_APP_RESOURCE_GROUP_NAME }} --server ${{ env.CONTAINER_REGISTRY_LOGIN_SERVER }} --username ${{ secrets.MTOGOServicesAuthAPI20250106140605_USERNAME_D0F5 }} --password ${{ secrets.MTOGOServicesAuthAPI20250106140605_PASSWORD_D0F5 }}
+          az containerapp registry set --name ${{ env.CONTAINER_APP_NAME }} --resource-group ${{ env.CONTAINER_APP_RESOURCE_GROUP_NAME }} --server ${{ env.CONTAINER_REGISTRY_LOGIN_SERVER }} --username ${{ secrets.MTOGOServicesAuthAPI20250106143200_USERNAME_9740 }} --password ${{ secrets.MTOGOServicesAuthAPI20250106143200_PASSWORD_9740 }}
 
           az containerapp update --name ${{ env.CONTAINER_APP_NAME }} --container-name ${{ env.CONTAINER_APP_CONTAINER_NAME }} --resource-group ${{ env.CONTAINER_APP_RESOURCE_GROUP_NAME }} --image ${{ env.CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.PROJECT_NAME_FOR_DOCKER }}:${{ github.sha }}
     - name: logout
