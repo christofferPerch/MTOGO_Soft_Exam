@@ -2,6 +2,8 @@ using Microsoft.OpenApi.Models;
 using MTOGO.GatewaySolution.Extensions;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+//using OpenTelemetry.Metrics;
+//using OpenTelemetry.Resources;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,22 @@ if (!File.Exists(ocelotConfigFile))
 }
 
 builder.Configuration.AddJsonFile(ocelotConfigFile, optional: false, reloadOnChange: true);
+
+/*builder.Services.AddOpenTelemetry()
+    .WithMetrics(opt =>
+        opt
+            .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("MTOGO.GatewaySolution")) 
+            .AddMeter(builder.Configuration.GetValue<string>("MTOGO.GatewaySolution.MeterName")) 
+            .AddAspNetCoreInstrumentation()
+            .AddRuntimeInstrumentation()
+            .AddProcessInstrumentation()
+            .AddOtlpExporter(opts =>
+            {
+                opts.Endpoint = new Uri(builder.Configuration["Otel:Endpoint"]); 
+            })
+    );
+
+*/
 
 builder.Services.AddMvcCore();
 builder.Services.AddEndpointsApiExplorer();

@@ -2,7 +2,22 @@ global:
   scrape_interval: 15s
 
 scrape_configs:
-  - job_name: 'monitoring-service'
-    metrics_path: '/metrics'
+  - job_name: "auth_service"
     static_configs:
-      - targets: ['monitoring:8080'] 
+      - targets: ["host.docker.internal:5003"]
+
+  - job_name: "order_service"
+    static_configs:
+      - targets: ["host.docker.internal:5002"]
+
+  - job_name: "restaurant_service"
+    static_configs:
+      - targets: ["host.docker.internal:5004"]
+
+  - job_name: "shopping_cart_service"
+    static_configs:
+      - targets: ["host.docker.internal:5001"]
+    
+  - job_name: "review_service"
+    static_configs:
+      - targets: ["host.docker.internal:5005"]
