@@ -209,6 +209,28 @@ services:
       - testreviewdb-data:/var/opt/mssql
 
 
+  webapp:
+    build:
+      context: .
+      dockerfile: ./MTOGO.Web/Dockerfile
+    ports:
+      - "5000:8080"  
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ServiceUrls__AuthAPI: "http://authapi:8080"
+      ServiceUrls__RestaurantAPI: "http://restaurantapi:8080"
+      ServiceUrls__ShoppingCartAPI: "http://shoppingcartapi:8080"
+      ServiceUrls__OrderAPI: "http://orderapi:8080"
+      ServiceUrls__ReviewAPI: "http://reviewapi:8080"
+    depends_on:
+      - authapi
+      - restaurantapi
+      - shoppingcartapi
+      - orderapi
+      - reviewapi
+    networks:
+      - app-network
+
 volumes:
   authdb-data:
   orderdb-data:

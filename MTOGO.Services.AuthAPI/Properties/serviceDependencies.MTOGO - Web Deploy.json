@@ -1,11 +1,8 @@
 {
   "dependencies": {
-    "identityapp1": {
-      "type": "identityapp",
-      "connectionId": "AzureAD:ClientSecret"
-    },
     "mssql1": {
-      "type": "mssql",
+      "secretStore": "AzureAppSettings",
+      "type": "mssql.onprem",
       "connectionId": "ConnectionStrings:DatabaseConnection",
       "dynamicId": null
     }
