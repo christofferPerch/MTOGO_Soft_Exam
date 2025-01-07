@@ -21,6 +21,8 @@ Have Docker installed on your desktop and right click on the docker-compose in t
      
 7. It should now open the API Gateway and Web Project when running the application.
 
+<details>
+  <summary>User stories (Click to Expand)</summary>
 
 # User Stories
 
@@ -273,7 +275,9 @@ Below are examples of user stories from our project with detailed acceptance cri
 - **Scenario: Invalid email address**  
   Given that a customer has placed an order  
   When the system detects an invalid or unverified email address  
-  Then the system logs the issue, and the customer is notified in their account to update their email information.  
+  Then the system logs the issue, and the customer is notified in their account to update their email information.
+
+  </details>
 ---
 # Test Strategy for MTOGO Project
 
